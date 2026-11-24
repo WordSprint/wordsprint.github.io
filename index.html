@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WordSprint — языки это просто | Тренажёр английского и экзамен CEFR</title>
+  <style>
+    :root {
+      --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --muted: #64748b;
+      --border: #e2e8f0; --primary: #2563eb; --primary-hover: #1d4ed8;
+      --accent-soft: #eff6ff; --success: #16a34a; --danger: #dc2626;
+      --warning-bg: #fef3c7; --warning-text: #b45309;
+      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06);
+    }
+    body.dark {
+      --bg: #0b1120; --card: #1e293b; --text: #f8fafc; --muted: #94a3b8;
+      --border: #334155; --primary: #3b82f6; --primary-hover: #60a5fa;
+      --accent-soft: #172554; --warning-bg: #451a03; --warning-text: #fbbf24;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); line-height: 1.55; transition: background 0.25s, color 0.25s; }
+    a { text-decoration: none; color: inherit; }
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
+    header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    body.dark header { background: rgba(11,17,32,0.88); }
+    .nav { display: flex; justify-content: space-between; align-items: center; height: 68px; gap: 14px; }
+    .logo { font-size: 21px; font-weight: 850; color: var(--primary); display: flex; align-items: center; gap: 6px; }
+    .nav-links { display: flex; gap: 18px; font-size: 13.5px; font-weight: 600; color: var(--muted); }
+    .nav-links a:hover { color: var(--primary); }
+    .nav-actions { display: flex; gap: 10px; align-items: center; }
+    .btn-icon { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+    .btn-primary { background: var(--primary); color: #fff; padding: 11px 18px; border-radius: 12px; font-weight: 700; font-size: 14px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s, background 0.2s; }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-outline { background: var(--card); color: var(--text); padding: 11px 16px; border-radius: 12px; font-weight: 700; font-size: 14px; border: 1.5px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: border-color 0.2s; }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .hero { padding: 56px 0 44px; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 36px; align-items: center; }
+    .badge { display: inline-block; background: var(--accent-soft); color: var(--primary); padding: 6px 14px; border-radius: 99px; font-size: 12.5px; font-weight: 700; margin-bottom: 14px; }
+    .hero h1 { font-size: 40px; line-height: 1.15; font-weight: 850; margin-bottom: 16px; letter-spacing: -0.02em; }
+    .hero p { font-size: 16.5px; color: var(--muted); margin-bottom: 24px; max-width: 540px; }
+    .store-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    .hero-note { font-size: 13px; color: var(--muted); }
+    .demo-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); }
+    .demo-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .demo-tag { font-size: 12px; font-weight: 700; color: var(--primary); background: var(--accent-soft); padding: 4px 10px; border-radius: 8px; }
+    .demo-word-box { text-align: center; padding: 20px 14px; background: var(--bg); border-radius: 18px; margin-bottom: 14px; border: 1px solid var(--border); }
+    .demo-word { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+    .demo-trans { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
+    .demo-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .demo-opt { padding: 11px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--card); color: var(--text); font-weight: 600; font-size: 13.5px; cursor: pointer; transition: all 0.15s; }
+    .demo-opt:hover { border-color: var(--primary); }
+    .demo-opt.correct { background: #dcfce7; border-color: var(--success); color: #15803d; }
+    .demo-opt.wrong { background: #fee2e2; border-color: var(--danger); color: #b91c1c; }
+    section { padding: 52px 0; border-top: 1px solid var(--border); }
+    .section-head { text-align: center; max-width: 660px; margin: 0 auto 32px; }
+    .section-head h2 { font-size: 29px; font-weight: 800; margin-bottom: 10px; }
+    .section-head p { color: var(--muted); font-size: 15px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .feature-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); }
+    .feature-icon { font-size: 26px; margin-bottom: 10px; display: block; }
+    .feature-card h3 { font-size: 16.5px; font-weight: 750; margin-bottom: 6px; }
+    .feature-card p { font-size: 13.5px; color: var(--muted); }
+    .table-wrap { overflow-x: auto; background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    th, td { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+    th { background: var(--accent-soft); color: var(--primary); font-weight: 750; }
+    tr:last-child td { border-bottom: none; }
+    .verify-box, .empty-catalog-box { max-width: 680px; margin: 0 auto; background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; padding: 28px; box-shadow: var(--shadow); }
+    .empty-catalog-box { text-align: center; }
+    .verify-form { display: flex; gap: 10px; margin-bottom: 10px; }
+    .verify-input, select, textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--bg); color: var(--text); font-size: 14px; font-weight: 500; }
+    .cert-result { margin-top: 18px; padding: 20px; border-radius: 16px; border: 1.5px solid var(--success); background: rgba(22,163,74,0.06); display: none; }
+    .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; font-size: 13.5px; }
+    .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .promo-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; padding: 26px; box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: space-between; }
+    .promo-card h3 { font-size: 21px; font-weight: 800; margin-bottom: 10px; }
+    .promo-card p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.6); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
+    .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 24px; max-width: 520px; width: 100%; padding: 26px; box-shadow: var(--shadow); margin: auto; }
+    .role-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+    .role-card { padding: 18px 14px; border-radius: 16px; border: 1.5px solid var(--border); background: var(--bg); cursor: pointer; text-align: center; transition: border-color 0.2s, transform 0.15s; }
+    .role-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+    footer { border-top: 1px solid var(--border); padding: 30px 0; margin-top: 20px; font-size: 13.5px; color: var(--muted); }
+    .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    @media (max-width: 920px) {
+      .hero, .grid-4, .split-2, .role-choice { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero h1 { font-size: 31px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container nav">
+      <a href="#" class="logo">⚡ WordSprint</a>
+      <nav class="nav-links">
+        <a href="#features">Возможности</a>
+        <a href="#exam">Экзамен CEFR</a>
+        <a href="#verify">Проверка сертификата</a>
+        <a href="#catalog">Репетиторы и школы</a>
+        <a href="#boosty">Boosty</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn-icon" onclick="toggleTheme()" title="Сменить тему">🌓</button>
+        <a href="#download" class="btn-primary">Скачать</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" id="download" style="border-top:none;">
+      <div>
+        <span class="badge">100% офлайн • Без рекламы и платных барьеров</span>
+        <h1>Учите английский легко и подтверждайте свой уровень</h1>
+        <p>Более 2 005 слов от A1 до C2 с озвучкой, проверка произношения микрофоном, интерактивные рассказы с диалогами и независимое тестирование по шкале CEFR.</p>
+        <div class="store-buttons">
+          <a id="link-rustore" href="#" class="btn-primary" onclick="handleStoreClick(event, 'RuStore')">📱 Скачать в RuStore</a>
+          <a id="link-nashstore" href="#" class="btn-outline" onclick="handleStoreClick(event, 'NashStore')">📦 NashStore</a>
+          <a href="#verify" class="btn-outline">🏆 Проверить сертификат</a>
+        </div>
+        <div class="hero-note">Версия 1.1 • Android • Работает полностью без интернета</div>
+      </div>
+
+      <div class="demo-card">
+        <div class="demo-top">
+          <span class="demo-tag">Демо-тренажёр прямо на сайте</span>
+          <span style="font-size:13px; color:var(--muted);" id="demo-counter">Слово 1 / 4</span>
+        </div>
+        <div class="demo-word-box">
+          <div class="demo-word" id="demo-word">accomplish</div>
+          <div class="demo-trans" id="demo-trans">[əˈkʌmplɪʃ] • Уровень B2</div>
+          <button class="btn-outline" style="padding:7px 14px; font-size:13px;" onclick="speakDemo()">🔊 Послушать произношение</button>
+        </div>
+        <div class="demo-options" id="demo-options"></div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-head">
+        <h2>Почему выбирают WordSprint</h2>
+        <p>Создано для тех, кто хочет реального результата без навязчивых подписок и «жизней»</p>
+      </div>
+      <div class="grid-4">
+        <div class="feature-card">
+          <span class="feature-icon">📚</span>
+          <h3>2 005+ слов (A1–C2)</h3>
+          <p>Словарь от базовых фраз для путешествий до продвинутой лексики с озвучкой и транскрипцией.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🎙</span>
+          <h3>6 режимов тренировки</h3>
+          <p>Тесты, карточки, аудирование, проверка произношения микрофоном, подстановка в текст и сборка слов.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📖</span>
+          <h3>Рассказы и диалоги</h3>
+          <p>Нажимайте на любое незнакомое слово в тексте для мгновенного перевода и заполняйте пропуски.</p>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">✈️</span>
+          <h3>Полный офлайн</h3>
+          <p>Занимайтесь в метро, самолёте или за городом — приложению не нужен постоянный интернет.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="exam">
+      <div class="section-head">
+        <h2>Экзамен и шкала CEFR</h2>
+        <p>Таблица соответствия баллов WordSprint уровням владения языком и международным стандартам</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Балл WordSprint</th>
+              <th>Уровень CEFR</th>
+              <th>Описание владения языком</th>
+              <th>Ориентир IELTS / TOEFL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><b>10 – 30</b></td><td><b>A1 (Beginner)</b></td><td>Понимание базовых слов и простых бытовых фраз</td><td>—</td></tr>
+            <tr><td><b>35 – 55</b></td><td><b>A2 (Elementary)</b></td><td>Общение на знакомые повседневные темы и чтение коротких текстов</td><td>IELTS ~3.0 – 3.5</td></tr>
+            <tr><td><b>60 – 85</b></td><td><b>B1 (Intermediate)</b></td><td>Уверенное общение в поездках, переписке и понимание сути фильмов</td><td>IELTS ~4.0 – 5.0 / TOEFL ~42–71</td></tr>
+            <tr><td><b>90 – 115</b></td><td><b>B2 (Upper-Intermediate)</b></td><td>Свободная дискуссия с носителями, чтение статей и аргументация</td><td>IELTS ~5.5 – 6.5 / TOEFL ~72–94</td></tr>
+            <tr><td><b>120 – 140</b></td><td><b>C1 (Advanced)</b></td><td>Понимание сложных текстов, идиом и скрытого подтекста</td><td>IELTS ~7.0 – 8.0 / TOEFL ~95–114</td></tr>
+            <tr><td><b>145 – 160</b></td><td><b>C2 (Proficiency)</b></td><td>Владение языком практически на уровне образованного носителя</td><td>IELTS ~8.5 – 9.0 / TOEFL ~115–120</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+        <section id="verify">
+      <div class="section-head">
+        <h2>Проверка подлинности сертификата</h2>
+        <p>Введите уникальный номер сертификата WordSprint или отсканируйте QR-код на документе</p>
+      </div>
+      <div class="verify-box">
+        <div class="verify-form">
+          <input type="text" id="cert-input" class="verify-input" placeholder="Например: WS-2026-8492" value="WS-2026-8492" />
+          <button class="btn-primary" style="width:auto;" onclick="checkCert()">Проверить</button>
+        </div>
+        <div style="font-size:12px; color:var(--muted);">Демо-база: нажмите «Проверить» с тестовым номером <b>WS-2026-8492</b></div>
+
+        <div class="cert-result" id="cert-result">
+          <div style="font-weight:800; color:var(--success); font-size:16px;">✅ Сертификат действителен и подтверждён</div>
+          <div class="cert-grid">
+            <div><b>Кандидат:</b> Алексей Смирнов</div>
+            <div><b>Итоговый уровень:</b> B2 (105 / 160 баллов)</div>
+            <div><b>Дата сдачи:</b> 24.11.2026</div>
+            <div><b>ID документа:</b> WS-2026-8492</div>
+            <div><b>Лексика и грамматика:</b> 110 / 160</div>
+            <div><b>Аудирование и письмо:</b> 100 / 160</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="catalog">
+      <div class="section-head">
+        <h2>Репетиторы и школы-партнёры</h2>
+        <p>Каталог проверенных преподавателей и языковых школ, работающих с платформой WordSprint</p>
+      </div>
+
+      <div class="empty-catalog-box">
+        <div style="font-size:34px; margin-bottom:10px;">🎓</div>
+        <h3 style="font-size:19px; font-weight:800; margin-bottom:8px;">Набор первых партнёров открыт</h3>
+        <p style="color:var(--muted); font-size:14.5px; margin-bottom:20px;">
+          Здесь будут отображаться анкеты преподавателей и школ с подтверждённым уровнем языка, средним баллом учеников и примерами поступлений.
+        </p>
+        <button class="btn-primary" onclick="openPartnerModal()">Зарегистрироваться как репетитор или школа</button>
+      </div>
+    </section>
+
+    <section id="boosty">
+      <div class="split-2">
+        <div class="promo-card">
+          <div>
+            <span class="badge">Партнёрская программа</span>
+            <h3>Инструменты для преподавателей и школ</h3>
+            <p>Создавайте домашние задания по коду урока с уведомлениями ученикам, ведите учебные группы и получайте заявки от новых студентов.</p>
+          </div>
+          <div>
+            <button class="btn-primary" onclick="openPartnerModal()">Подать заявку на регистрацию</button>
+          </div>
+        </div>
+
+        <div class="promo-card">
+          <div>
+            <span class="badge" style="background:var(--warning-bg); color:var(--warning-text);">Поддержка проекта</span>
+            <h3>Эксклюзивные материалы на Boosty</h3>
+            <p>Дизайнерские PDF-шпаргалки по неправильным глаголам и временам, разборы живого сленга из культовых фильмов и ранний доступ к новым версиям WordSprint.</p>
+          </div>
+          <div>
+            <a href="https://boosty.to" target="_blank" class="btn-outline">Поддержать на Boosty ⚡</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div><b>⚡ WordSprint</b> — языки это просто © 2026</div>
+      <div style="display:flex; gap:20px;">
+        <a href="https://netlify.app" target="_blank">Политика конфиденциальности</a>
+        <a href="https://boosty.to" target="_blank">Boosty проекта</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-backdrop" id="partner-modal">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="font-size:20px; font-weight:800;" id="modal-title">Регистрация партнёра</h3>
+        <button class="btn-icon" onclick="closePartnerModal()">✕</button>
+      </div>
+
+      <!-- Шаг 1: Выбор роли -->
+      <div id="partner-step-role">
+        <p style="font-size:14px; color:var(--muted); margin-bottom:12px;">Выберите формат вашего профиля, чтобы открыть соответствующую анкету:</p>
+        <div class="role-choice">
+          <div class="role-card" onclick="selectPartnerRole('tutor')">
+            <div style="font-size:30px; margin-bottom:8px;">👤</div>
+            <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Я репетитор</div>
+            <div style="font-size:12.5px; color:var(--muted);">Индивидуальный преподаватель</div>
+          </div>
+          <div class="role-card" onclick="selectPartnerRole('school')">
+            <div style="font-size:30px; margin-bottom:8px;">🏢</div>
+            <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Я языковая школа</div>
+            <div style="font-size:12.5px; color:var(--muted);">Курсы, студия или онлайн-школа</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Шаг 2А: Анкета репетитора -->
+      <div id="partner-form-tutor" style="display:none;">
+        <div class="form-group">
+          <label>Имя и фамилия</label>
+          <input type="text" id="tutor-name" class="verify-input" placeholder="Введите ваши имя и фамилию" />
+        </div>
+        <div class="form-group">
+          <label>Город и формат занятий (Онлайн / Офлайн)</label>
+          <input type="text" id="tutor-format" class="verify-input" placeholder="Укажите формат проведения уроков" />
+        </div>
+        <div class="form-group">
+          <label>Подтверждение уровня (ID сертификата WordSprint или ссылка на диплом / IELTS / ЕГЭ)</label>
+          <input type="text" id="tutor-proof" class="verify-input" placeholder="Необходимо для проверки квалификации" />
+        </div>
+        <div class="form-group">
+          <label>Краткое описание и куда поступали ваши ученики</label>
+          <textarea id="tutor-bio" rows="3" placeholder="Расскажите о специализации и результатах учеников"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Контакт для связи (Telegram или VK)</label>
+          <input type="text" id="tutor-contact" class="verify-input" placeholder="@username или ссылка" />
+        </div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <button class="btn-outline" onclick="backToRoleChoice()">← Назад</button>
+          <button class="btn-primary" style="flex:1;" onclick="submitPartnerForm('tutor')">Отправить анкету репетитора</button>
+        </div>
+      </div>
+
+      <!-- Шаг 2Б: Анкета языковой школы -->
+      <div id="partner-form-school" style="display:none;">
+        <div class="form-group">
+          <label>Официальное название языковой школы</label>
+          <input type="text" id="school-name" class="verify-input" placeholder="Введите название школы или студии" />
+        </div>
+        <div class="form-group">
+          <label>Город / регион или онлайн-формат</label>
+          <input type="text" id="school-city" class="verify-input" placeholder="Укажите расположение филиалов или формат" />
+        </div>
+        <div class="form-group">
+          <label>Подтверждение школы (ИНН организации или номер образовательной лицензии)</label>
+
+          <input type="text" id="school-proof" class="verify-input" placeholder="Обязательно для верификации школы" />
+        </div>
+        <div class="form-group">
+          <label>Описание программ и достижения студентов</label>
+          <textarea id="school-bio" rows="3" placeholder="Направления обучения, возраст групп и результаты выпускников"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Контакт руководителя или методиста (Telegram / Email / Телефон)</label>
+          <input type="text" id="school-contact" class="verify-input" placeholder="Контакт для связи" />
+        </div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <button class="btn-outline" onclick="backToRoleChoice()">← Назад</button>
+          <button class="btn-primary" style="flex:1;" onclick="submitPartnerForm('school')">Отправить анкету школы</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script>
+    const STORE_URLS = {
+      RuStore: "",
+      NashStore: ""
+    };
+
+    function handleStoreClick(e, storeName) {
+      if (!STORE_URLS[storeName]) {
+        e.preventDefault();
+        alert("Приложение сейчас завершает проверку модерации в " + storeName + ". Прямая ссылка появится здесь сразу после публикации!");
+      } else {
+        e.currentTarget.href = STORE_URLS[storeName];
+      }
+    }
+
+    const demoWords = [
+      { word: "accomplish", trans: "[əˈkʌmplɪʃ] • Уровень B2", correct: "достигать, выполнять", options: ["достигать, выполнять", "одалживать деньги", "притворяться", "шептать"] },
+      { word: "inevitable", trans: "[ɪnˈevɪtəbl] • Уровень B2", correct: "неизбежный", options: ["хрупкий", "неизбежный", "устаревший", "невидимый"] },
+      { word: "postpone", trans: "[pəʊstˈpəʊn] • Уровень B1", correct: "откладывать на потом", options: ["подтверждать", "откладывать на потом", "исследовать", "запрещать"] },
+      { word: "coherent", trans: "[kəʊˈhɪərənt] • Уровень C1", correct: "связный, логичный", options: ["случайный", "враждебный", "связный, логичный", "временный"] }
+    ];
+    let demoIdx = 0;
+
+    function renderDemo() {
+      const item = demoWords[demoIdx];
+      document.getElementById("demo-counter").textContent = `Слово ${demoIdx + 1} / ${demoWords.length}`;
+      document.getElementById("demo-word").textContent = item.word;
+      document.getElementById("demo-trans").textContent = item.trans;
+      const box = document.getElementById("demo-options");
+      box.innerHTML = "";
+      item.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "demo-opt";
+        btn.textContent = opt;
+        btn.onclick = () => {
+          if (opt === item.correct) {
+            btn.classList.add("correct");
+            setTimeout(() => { demoIdx = (demoIdx + 1) % demoWords.length; renderDemo(); }, 650);
+          } else {
+            btn.classList.add("wrong");
+          }
+        };
+        box.appendChild(btn);
+      });
+    }
+
+    function speakDemo() {
+      if ("speechSynthesis" in window) {
+        const u = new SpeechSynthesisUtterance(demoWords[demoIdx].word);
+        u.lang = "en-US";
+        speechSynthesis.speak(u);
+      }
+    }
+
+    function checkCert() {
+      const val = document.getElementById("cert-input").value.trim().toUpperCase();
+      const res = document.getElementById("cert-result");
+      if (val === "WS-2026-8492") {
+        res.style.display = "block";
+      } else {
+        res.style.display = "none";
+        alert("Сертификат с таким номером не найден. Для теста введите WS-2026-8492.");
+      }
+    }
+
+    function openPartnerModal() {
+      backToRoleChoice();
+      document.getElementById("partner-modal").style.display = "flex";
+    }
+
+    function closePartnerModal() {
+      document.getElementById("partner-modal").style.display = "none";
+    }
+
+    function backToRoleChoice() {
+      document.getElementById("modal-title").textContent = "Регистрация партнёра";
+      document.getElementById("partner-step-role").style.display = "block";
+      document.getElementById("partner-form-tutor").style.display = "none";
+      document.getElementById("partner-form-school").style.display = "none";
+    }
+
+    function selectPartnerRole(role) {
+      document.getElementById("partner-step-role").style.display = "none";
+      if (role === "tutor") {
+        document.getElementById("modal-title").textContent = "Анкета репетитора";
+        document.getElementById("partner-form-tutor").style.display = "block";
+      } else {
+        document.getElementById("modal-title").textContent = "Анкета языковой школы";
+        document.getElementById("partner-form-school").style.display = "block";
+      }
+    }
+
+    function submitPartnerForm(role) {
+      const nameId = role === "tutor" ? "tutor-name" : "school-name";
+      const proofId = role === "tutor" ? "tutor-proof" : "school-proof";
+      if (!document.getElementById(nameId).value.trim()) {
+        return alert("Пожалуйста, заполните обязательное поле названия / имени.");
+      }
+      if (!document.getElementById(proofId).value.trim()) {
+        return alert("Пожалуйста, укажите данные для подтверждения квалификации или школы.");
+      }
+      alert("Спасибо! Ваша анкета отправлена на проверку. После подтверждения карточка появится в каталоге.");
+      closePartnerModal();
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+    }
+
+    renderDemo();
+  </script>
+</body>
+</html>
