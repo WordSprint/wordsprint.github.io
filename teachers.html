@@ -144,6 +144,18 @@
         </div>
       </div>
     </div>
+    <section class="card" style="margin-bottom: 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2>👥 Прикреплённые ученики</h2>
+        <span style="font-size:0.85rem; color:var(--muted);">Ученики, указавшие ваш код</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Ученик</th><th>Контакт</th><th>Дата прикрепления</th></tr></thead>
+          <tbody id="studentsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
 
     <section class="card" style="margin-bottom: 48px;">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -260,16 +272,20 @@
     } catch (e) { alert('Ошибка: ' + e.message); }
   }
 
-  function logoutTeacher() {
+   function logoutTeacher() {
     localStorage.removeItem('ws_teacher_code'); currentTeacher = null;
+    document.querySelector('.hero h1').textContent = 'Кабинет преподавателя';
     document.getElementById('profileHeaderCard').classList.add('hidden');
     document.getElementById('verifiedWorkspace').classList.add('hidden');
     document.getElementById('guestLoginBar').classList.remove('hidden');
     document.getElementById('guestRegisterCard').classList.remove('hidden');
   }
 
-  function setActiveTeacher(t) {
+   function setActiveTeacher(t) {
     currentTeacher = t;
+    const isSchool = t.code.startsWith('SCH-') || t.name.startsWith('🏫');
+    document.querySelector('.hero h1').textContent = isSchool ? 'Кабинет школы' : 'Кабинет преподавателя';
+
     document.getElementById('guestLoginBar').classList.add('hidden');
     document.getElementById('guestRegisterCard').classList.add('hidden');
     document.getElementById('profileHeaderCard').classList.remove('hidden');
@@ -281,31 +297,60 @@
     const notice = document.getElementById('pendingNoticeText');
     const workspace = document.getElementById('verifiedWorkspace');
 
-    if (t.verified) {
+    if (t.status === 'approved' || t.verified) {
       badge.className = 'tag-ok';
       badge.textContent = '✅ Подтверждён';
       notice.classList.add('hidden');
       workspace.classList.remove('hidden');
       loadTeacherData();
+    } else if (t.status === 'rejected') {
+      badge.className = 'mistake-word';
+      badge.style.padding = '4px 10px';
+      badge.textContent = '❌ Заявка не одобрена';
+      notice.classList.remove('hidden');
+      notice.style.color = 'var(--danger)';
+      notice.textContent = 'Ваша заявка не одобрена. Причину отказа мы отправили вам на почту, указанную при регистрации.';
+      workspace.classList.add('hidden');
     } else {
       badge.className = 'tag-wait';
       badge.textContent = '⏳ На проверке';
       notice.classList.remove('hidden');
+      notice.style.color = 'var(--muted)';
+      notice.textContent = 'Ваша анкета и документы находятся на проверке. Как только модератор одобрит заявку, вам придёт уведомление на почту и здесь откроется конструктор уроков и журнал учеников.';
       workspace.classList.add('hidden');
     }
   }
 
-  async function loadTeacherData() {
-    if (!currentTeacher || !currentTeacher.verified) return;
+
+   async function loadTeacherData() {
+    if (!currentTeacher || (!currentTeacher.verified && currentTeacher.status !== 'approved')) return;
     try {
-      const lessons = await sbFetch('lessons', { query: `teacher_code=eq.${encodeURIComponent(currentTeacher.code)}&order=created_at.desc` });
+      const [lessons, attachedStudents] = await Promise.all([
+        sbFetch('lessons', { query: `teacher_code=eq.${encodeURIComponent(currentTeacher.code)}&order=created_at.desc` }),
+        sbFetch('teacher_students', { query: `teacher_code=eq.${encodeURIComponent(currentTeacher.code)}&order=created_at.desc` })
+      ]);
+
       document.getElementById('statLessonsCount').textContent = lessons.length;
+
+      const sBody = document.getElementById('studentsTableBody');
+      sBody.innerHTML = attachedStudents.length ? attachedStudents.map(s => `
+        <tr>
+          <td><b>${s.student_name}</b></td>
+          <td>${s.student_contact || '—'}</td>
+          <td style="color:var(--muted);">${new Date(s.created_at).toLocaleDateString('ru-RU')}</td>
+        </tr>
+      `).join('') : '<tr><td colspan="3" style="color:var(--muted); text-align:center;">Пока нет прикреплённых учеников. Передайте им ваш код!</td></tr>';
+
       let allResults = [];
       if (lessons.length > 0) {
         const codes = lessons.map(l => l.code).join(',');
         allResults = await sbFetch('lesson_results', { query: `lesson_code=in.(${codes})&order=created_at.desc` });
       }
-      const unique = new Set(allResults.map(r => r.student_name.toLowerCase()));
+
+      const unique = new Set([
+        ...attachedStudents.map(s => s.student_name.toLowerCase()),
+        ...allResults.map(r => r.student_name.toLowerCase())
+      ]);
       document.getElementById('statResultsCount').textContent = allResults.length;
       document.getElementById('statAmbassadorProgress').textContent = `${Math.max(unique.size, currentTeacher.students_count || 0)} / 10`;
 
@@ -321,6 +366,7 @@
       }).join('');
     } catch (e) { console.error(e); }
   }
+
 
   window.addEventListener('DOMContentLoaded', async () => {
     const saved = localStorage.getItem('ws_teacher_code');

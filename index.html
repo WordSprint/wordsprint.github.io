@@ -177,7 +177,6 @@
       </table>
     </div>
   </section>
-
   <section id="verify">
     <h2 class="sec-title">Проверка подлинности сертификата</h2>
     <p class="sec-sub">Введите уникальный номер сертификата WordSprint или отсканируйте QR-код на документе</p>
@@ -206,10 +205,11 @@
       </div>
       <div class="card">
         <div style="font-size:1.6rem;">📚</div>
-        <h3>Уроки от преподавателей</h3>
-        <p style="margin-bottom:14px;">Получили код домашнего задания от своего репетитора или школы? Введите его и пройдите тренировку.</p>
+        <h3>Уроки и прикрепление</h3>
+        <p style="margin-bottom:14px;">Пройдите домашнее задание по коду или прикрепитесь к своему репетитору / школе.</p>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn btn-secondary btn-sm" onclick="openLessonModal()">Пройти урок</button>
+          <button class="btn btn-sm" onclick="openAttachModal()">Прикрепиться по коду</button>
           <a href="groups.html" class="btn btn-secondary btn-sm">Группы</a>
         </div>
       </div>
@@ -235,7 +235,8 @@
 </footer>
 <div class="modal-bg" id="downloadModal" onclick="if(event.target===this) this.style.display='none'">
   <div class="modal">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+
       <h3 style="font-size:1.25rem;">📱 Скачать WordSprint (Android)</h3>
       <button onclick="document.getElementById('downloadModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
     </div>
@@ -259,6 +260,23 @@
     <button class="btn" style="width:100%; margin-top:14px;" onclick="goToLesson()">▶ Открыть задание</button>
   </div>
 </div>
+
+<div class="modal-bg" id="attachStudentModal" onclick="if(event.target===this) this.style.display='none'">
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h3 style="font-size:1.2rem;">🎓 Прикрепиться к репетитору или школе</h3>
+      <button onclick="document.getElementById('attachStudentModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
+    </div>
+    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:10px;">Введите код вашего преподавателя или школы, чтобы отображаться в их журнале учеников:</p>
+    <label>Код преподавателя или школы</label>
+    <input type="text" id="attachTeacherCode" placeholder="Код партнёра" style="text-transform:uppercase; font-family:monospace; font-weight:700;">
+    <label>Ваше имя и фамилия</label>
+    <input type="text" id="attachStudentName" placeholder="Введите имя и фамилию">
+    <label>Контакт для связи (необязательно)</label>
+    <input type="text" id="attachStudentContact" placeholder="Telegram или телефон">
+    <button class="btn btn-accent" style="width:100%; margin-top:14px;" id="attachSubmitBtn" onclick="submitAttachStudent()">✅ Прикрепиться</button>
+  </div>
+</div>
 <div class="modal-bg" id="partnerModal" onclick="if(event.target===this) this.style.display='none'">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -277,9 +295,8 @@
     <div id="tutorFormStep" class="hidden">
       <label>Имя и фамилия</label>
       <input type="text" id="tName" placeholder="Введите имя и фамилию">
-            <label>Email (сюда придёт уведомление об одобрении)</label>
+      <label>Email (сюда придёт уведомление об одобрении)</label>
       <input type="email" id="tEmail" placeholder="Введите ваш Email">
-
       <label>Город и формат (онлайн / офлайн)</label>
       <input type="text" id="tCity" placeholder="Город или формат занятий">
       <label>Уровень английского (CEFR)</label>
@@ -297,14 +314,13 @@
       <button class="btn btn-accent" style="width:100%; margin-top:14px;" onclick="submitPartnerForm('tutor')">🚀 Отправить анкету</button>
     </div>
 
-       <div id="schoolFormStep" class="hidden">
+    <div id="schoolFormStep" class="hidden">
       <label>Полное или сокращённое название школы / организации</label>
       <input type="text" id="sName" placeholder="Введите официальное название">
-            <label>Email организации (сюда придёт уведомление об одобрении)</label>
+      <label>Email организации (сюда придёт уведомление об одобрении)</label>
       <input type="email" id="sEmail" placeholder="Введите Email школы">
-
       <label>ИНН и ОГРН организации</label>
-      <input type="text" id="sInn" placeholder="Укажите ИНН и ОГРН для проверки по базе ФНС">
+      <input type="text" id="sInn" placeholder="Укажите ИНН и ОГРН для проверки">
       <label>Номер образовательной лицензии или ссылка на скан / выписку</label>
       <input type="text" id="sProof" placeholder="Номер лицензии или ссылка на документ">
       <label>Город / регион или онлайн-формат</label>
@@ -321,9 +337,9 @@
     <div id="partnerSuccessStep" class="hidden" style="text-align:center; padding:10px 0;">
       <div style="font-size:2.4rem;">✅</div>
       <h4 style="margin:8px 0;">Заявка отправлена на проверку!</h4>
-      <p style="color:var(--muted); font-size:0.9rem;">Ваш персональный код для входа в кабинет преподавателя:</p>
+      <p style="color:var(--muted); font-size:0.9rem;">Ваш персональный код для входа в кабинет:</p>
       <div id="newPartnerCode" style="font-family:monospace; font-size:1.3rem; font-weight:800; color:var(--accent); margin:10px 0;">WS-000</div>
-      <a href="teachers.html" class="btn btn-sm">Перейти в кабинет преподавателя →</a>
+      <a href="teachers.html" class="btn btn-sm">Перейти в кабинет →</a>
     </div>
   </div>
 </div>
@@ -379,12 +395,14 @@
   function showStoryTip(text) { document.getElementById('storyTipBox').textContent = '📖 Перевод: ' + text; }
   function openDownloadModal() { document.getElementById('downloadModal').style.display = 'flex'; }
   function openLessonModal() { document.getElementById('lessonCodeModal').style.display = 'flex'; }
+  function openAttachModal() { document.getElementById('attachStudentModal').style.display = 'flex'; }
 
   function goToLesson() {
     const code = document.getElementById('quickLessonCode').value.trim().toUpperCase();
     if (!code) return alert('Введите код урока!');
     location.href = `lesson.html?code=${encodeURIComponent(code)}`;
   }
+
   function openPartnerChoiceModal() {
     document.getElementById('partnerModalTitle').textContent = '🎓 Регистрация партнёра';
     document.getElementById('partnerRoleStep').classList.remove('hidden');
@@ -405,7 +423,7 @@
     }
   }
 
-   async function submitPartnerForm(role) {
+  async function submitPartnerForm(role) {
     const isTutor = role === 'tutor';
     const name = document.getElementById(isTutor ? 'tName' : 'sName').value.trim();
     const email = document.getElementById(isTutor ? 'tEmail' : 'sEmail').value.trim();
@@ -428,18 +446,38 @@
     try {
       await sbFetch('teachers', {
         method: 'POST',
-        body: { code, name: fullName, email, city_format, level, proof_url, telegram, bio, verified: false }
+        body: { code, name: fullName, email, city_format, level, proof_url, telegram, bio, verified: false, status: 'pending' }
       });
       localStorage.setItem('ws_teacher_code', code);
       document.getElementById('tutorFormStep').classList.add('hidden');
       document.getElementById('schoolFormStep').classList.add('hidden');
       document.getElementById('partnerSuccessStep').classList.remove('hidden');
       document.getElementById('newPartnerCode').textContent = code;
-    } catch (e) {
-      alert('Ошибка отправки: ' + e.message);
-    }
+    } catch (e) { alert('Ошибка отправки: ' + e.message); }
   }
+  async function submitAttachStudent() {
+    const teacher_code = document.getElementById('attachTeacherCode').value.trim().toUpperCase();
+    const student_name = document.getElementById('attachStudentName').value.trim();
+    const student_contact = document.getElementById('attachStudentContact').value.trim();
 
+    if (!teacher_code || !student_name) return alert('Введите код преподавателя/школы и ваше имя!');
+
+    const btn = document.getElementById('attachSubmitBtn');
+    btn.disabled = true; btn.textContent = '⏳ Проверяем код...';
+    try {
+      const teachers = await sbFetch('teachers', { query: `code=eq.${encodeURIComponent(teacher_code)}` });
+      if (!teachers || !teachers.length) {
+        return alert('Преподаватель или школа с таким кодом не найдены.');
+      }
+      await sbFetch('teacher_students', {
+        method: 'POST',
+        body: { teacher_code, student_name, student_contact }
+      });
+      document.getElementById('attachStudentModal').style.display = 'none';
+      alert(`Готово! Вы успешно прикреплены к: ${teachers.name}`);
+    } catch (e) { alert('Ошибка: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = '✅ Прикрепиться'; }
+  }
 
   async function verifyCertificate() {
     const id = document.getElementById('certInput').value.trim().toUpperCase();
@@ -455,7 +493,7 @@
         box.innerHTML = `❌ Сертификат с номером <b>${id}</b> не найден в реестре.`;
         return;
       }
-      const c = rows[0];
+      const c = rows;
       const s = c.skills || {};
       box.style.borderColor = 'rgba(16, 185, 129, 0.4)';
       box.style.background = 'rgba(16, 185, 129, 0.1)';
