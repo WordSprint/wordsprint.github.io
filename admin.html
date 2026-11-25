@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель — WordSprint</title>
+  <script src="config.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f19; --card: #131a2a; --border: #232d45; --text: #f1f5f9;
+      --muted: #94a3b8; --primary: #6366f1; --accent: #10b981; --danger: #ef4444; --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    header { border-bottom: 1px solid var(--border); background: rgba(11, 15, 25, 0.9); position: sticky; top: 0; z-index: 50; }
+    .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+    .logo { font-weight: 800; font-size: 1.2rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-top: 24px; }
+    h1 { font-size: 1.7rem; font-weight: 800; margin-bottom: 6px; }
+    h2 { font-size: 1.2rem; margin-bottom: 12px; }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin: 12px 0 5px; }
+    input, select {
+      width: 100%; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--border);
+      background: #0d1322; color: var(--text); font-size: 0.95rem; outline: none;
+    }
+    .btn {
+      padding: 11px 18px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.92rem;
+      cursor: pointer; background: var(--primary); color: #fff; margin-top: 14px;
+    }
+    .btn-sm { padding: 6px 11px; font-size: 0.82rem; margin-top: 0; }
+    .btn-ok { background: var(--accent); color: #052e16; }
+    .btn-del { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; }
+    @media (max-width: 760px) { .stats { grid-template-columns: 1fr 1fr; } }
+    .stat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .stat-num { font-size: 1.8rem; font-weight: 800; color: #fff; }
+    .stat-name { font-size: 0.84rem; color: var(--muted); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.88rem; }
+    th, td { text-align: left; padding: 11px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; }
+    .badge-ok { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.78rem; }
+    .badge-wait { background: rgba(245, 158, 11, 0.15); color: #fbbf24; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.78rem; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo">⚡ WordSprint <span style="color:#a5b4fc; font-size:0.85rem;">ADMIN</span></a>
+    <a href="index.html" style="color:var(--muted); font-size:0.9rem;">← На сайт</a>
+  </div>
+</header>
+
+<main class="container">
+  <div id="authBox" class="card" style="max-width:420px; margin: 60px auto;">
+    <h2>🔐 Вход для основателя</h2>
+    <p style="color:var(--muted); font-size:0.9rem;">Введите пароль администратора из файла <code>config.js</code>.</p>
+    <label>Пароль</label>
+    <input type="password" id="adminPass" placeholder="••••••••••••" onkeydown="if(event.key==='Enter') checkAdmin()">
+    <button class="btn" style="width:100%;" onclick="checkAdmin()">Войти в панель</button>
+  </div>
+  <div id="adminPanel" class="hidden" style="padding-bottom: 60px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:28px;">
+      <div>
+        <h1>Центр управления WordSprint</h1>
+        <p style="color:var(--muted); font-size:0.92rem;">Модерация преподавателей, выпуск сертификатов и живая аналитика базы.</p>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-sm" onclick="loadAllAdmin()">🔄 Обновить всё</button>
+        <button class="btn btn-sm btn-del" onclick="logoutAdmin()">Выйти</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="stTeachers">0</div><div class="stat-name">Преподавателей в базе</div></div>
+      <div class="stat"><div class="stat-num" id="stLessons">0</div><div class="stat-name">Создано уроков (ДЗ)</div></div>
+      <div class="stat"><div class="stat-num" id="stResults">0</div><div class="stat-name">Сдано работ учениками</div></div>
+      <div class="stat"><div class="stat-num" id="stCerts">0</div><div class="stat-name">Выдано сертификатов</div></div>
+    </div>
+
+    <div class="card">
+      <h2>🎓 Заявки и каталог преподавателей</h2>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Код / Имя</th>
+              <th>Город / Уровень</th>
+              <th>Подтверждение</th>
+              <th>Контакт</th>
+              <th>Статус</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody id="teachersTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🏆 Выпустить официальный сертификат CEFR</h2>
+      <p style="color:var(--muted); font-size:0.9rem;">Сертификат сразу попадёт в облачную базу и станет доступен для проверки по ID и QR-ссылке.</p>
+      <div class="grid-2">
+        <div>
+          <label>Имя и фамилия кандидата</label>
+          <input type="text" id="certName" placeholder="Иван Петров">
+        </div>
+        <div>
+          <label>Общий балл (10 – 160)</label>
+          <input type="number" id="certScore" value="105" min="10" max="160">
+        </div>
+        <div>
+          <label>Уровень CEFR</label>
+          <select id="certLevel">
+            <option value="A1 (Beginner)">A1 (Beginner) — 10–30</option>
+            <option value="A2 (Elementary)">A2 (Elementary) — 35–55</option>
+            <option value="B1 (Intermediate)">B1 (Intermediate) — 60–85</option>
+            <option value="B2 (Upper-Intermediate)" selected>B2 (Upper-Intermediate) — 90–115</option>
+            <option value="C1 (Advanced)">C1 (Advanced) — 120–140</option>
+            <option value="C2 (Proficiency)">C2 (Proficiency) — 145–160</option>
+          </select>
+        </div>
+        <div>
+          <label>Детализация (Vocab / Gram / List / Prod)</label>
+          <input type="text" id="certSkills" value="110, 105, 100, 105">
+        </div>
+      </div>
+      <button class="btn btn-ok" onclick="issueCertificate()">✨ Выписать и зарегистрировать сертификат</button>
+      <div id="certIssuedBox" style="margin-top:14px; display:none; padding:12px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.35); border-radius:10px; font-size:0.9rem;"></div>
+    </div>
+
+    <div class="card">
+      <h2>📜 Реестр выданных сертификатов</h2>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>ID документа</th><th>Кандидат</th><th>Уровень и балл</th><th>Дата</th><th>Ссылка для QR</th></tr></thead>
+          <tbody id="certsTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  function checkAdmin() {
+    const pass = document.getElementById('adminPass').value;
+    if (pass === WS_CONFIG.ADMIN_PASSWORD) {
+      sessionStorage.setItem('ws_admin', '1');
+      openPanel();
+    } else {
+      alert('Неверный пароль!');
+    }
+  }
+
+  function logoutAdmin() {
+    sessionStorage.removeItem('ws_admin');
+    location.reload();
+  }
+
+  function openPanel() {
+    document.getElementById('authBox').classList.add('hidden');
+    document.getElementById('adminPanel').classList.remove('hidden');
+    loadAllAdmin();
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('ws_admin') === '1') openPanel();
+  });
+
+  async function loadAllAdmin() {
+    try {
+      const [teachers, lessons, results, certs] = await Promise.all([
+        sbFetch('teachers', { query: 'order=created_at.desc' }),
+        sbFetch('lessons', { query: 'select=id' }),
+        sbFetch('lesson_results', { query: 'select=id' }),
+        sbFetch('certificates', { query: 'order=issued_at.desc' })
+      ]);
+
+      document.getElementById('stTeachers').textContent = teachers.length;
+      document.getElementById('stLessons').textContent = lessons.length;
+      document.getElementById('stResults').textContent = results.length;
+      document.getElementById('stCerts').textContent = certs.length;
+
+      const tBody = document.getElementById('teachersTable');
+      tBody.innerHTML = teachers.length ? teachers.map(t => `
+        <tr>
+          <td><b>${t.name}</b><br><span style="font-family:monospace; color:#34d399;">${t.code}</span></td>
+          <td>${t.city_format || '—'}<br><small style="color:var(--muted);">${t.level || ''}</small></td>
+          <td style="max-width:220px; word-break:break-all;">${t.proof_url || '—'}<br><small style="color:var(--muted);">${t.bio || ''}</small></td>
+          <td>${t.telegram || '—'}</td>
+          <td>${t.verified ? '<span class="badge-ok">✅ В каталоге</span>' : '<span class="badge-wait">⏳ Ожидает</span>'}</td>
+          <td style="display:flex; gap:6px; flex-wrap:wrap;">
+            ${!t.verified ? `<button class="btn btn-sm btn-ok" onclick="verifyTeacher('${t.id}', true)">Одобрить</button>` : `<button class="btn btn-sm" onclick="verifyTeacher('${t.id}', false)">Скрыть</button>`}
+            <button class="btn btn-sm btn-del" onclick="deleteTeacher('${t.id}')">Удалить</button>
+          </td>
+        </tr>
+      `).join('') : '<tr><td colspan="6" style="color:var(--muted); text-align:center;">Заявок пока нет</td></tr>';
+
+      const cBody = document.getElementById('certsTable');
+      cBody.innerHTML = certs.map(c => {
+        const verifyUrl = `${window.location.origin}${window.location.pathname.replace('admin.html', 'index.html')}?cert=${c.id}#verify`;
+        return `
+          <tr>
+            <td><b style="font-family:monospace;">${c.id}</b></td>
+            <td>${c.full_name}</td>
+            <td><span class="badge-ok">${c.cefr_level} • ${c.score}/160</span></td>
+            <td style="color:var(--muted);">${c.issued_at}</td>
+            <td><button class="btn btn-sm" onclick="navigator.clipboard.writeText('${verifyUrl}'); alert('Ссылка для QR скопирована!')">🔗 Копировать URL</button></td>
+          </tr>
+        `;
+      }).join('');
+    } catch (e) {
+      alert('Ошибка загрузки данных: ' + e.message);
+    }
+  }
+
+   async function verifyTeacher(id, status) {
+    const updated = await sbFetch('teachers', { method: 'PATCH', query: `id=eq.${id}`, body: { verified: status } });
+    if (status && updated && updated && updated.email) {
+      const t = updated;
+      const subject = encodeURIComponent('WordSprint — Ваша заявка партнёра одобрена!');
+      const body = encodeURIComponent(
+        `Здравствуйте, ${t.name}!\n\n` +
+        `Ваша заявка в образовательной экосистеме WordSprint успешно прошла проверку.\n` +
+        `Ваш персональный код доступа: ${t.code}\n\n` +
+        `Теперь вам доступны конструктор домашних заданий, журнал успеваемости учеников и размещение в каталоге: https://github.io\n\n` +
+        `С уважением, команда WordSprint.`
+      );
+      window.open(`mailto:${t.email}?subject=${subject}&body=${body}`, '_blank');
+    }
+    loadAllAdmin();
+  }
+
+
+  async function deleteTeacher(id) {
+    if (!confirm('Точно удалить эту анкету?')) return;
+    await sbFetch('teachers', { method: 'DELETE', query: `id=eq.${id}` });
+    loadAllAdmin();
+  }
+
+  async function issueCertificate() {
+    const full_name = document.getElementById('certName').value.trim();
+    const score = parseInt(document.getElementById('certScore').value, 10);
+    const cefr_level = document.getElementById('certLevel').value;
+    const nums = document.getElementById('certSkills').value.split(',').map(n => parseInt(n.trim(), 10) || score);
+    if (!full_name) return alert('Введите имя кандидата!');
+
+    const id = `WS-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const skills = { vocabulary: nums, grammar: nums, listening: nums, production: nums };
+
+    try {
+      await sbFetch('certificates', { method: 'POST', body: { id, full_name, score, cefr_level, skills } });
+      const verifyUrl = `${window.location.origin}${window.location.pathname.replace('admin.html', 'index.html')}?cert=${id}#verify`;
+      const box = document.getElementById('certIssuedBox');
+      box.style.display = 'block';
+      box.innerHTML = `✅ Сертификат <b>${id}</b> зарегистрирован! Ссылка для QR-кода: <br><code>${verifyUrl}</code>`;
+      loadAllAdmin();
+    } catch (e) {
+      alert('Ошибка выпуска: ' + e.message);
+    }
+  }
+</script>
+</body>
+</html>

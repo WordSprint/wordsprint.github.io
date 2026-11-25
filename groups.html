@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Учебные группы — WordSprint</title>
+  <script src="config.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f19; --card: #131a2a; --input-bg: #0d1322; --border: #232d45;
+      --text: #f1f5f9; --muted: #94a3b8; --primary: #6366f1; --primary-hover: #4f46e5;
+      --accent: #10b981;
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc; --card: #ffffff; --input-bg: #f1f5f9; --border: #cbd5e1;
+      --text: #0f172a; --muted: #475569; --primary: #4f46e5; --primary-hover: #4338ca;
+      --accent: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+    header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
+    .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; flex-wrap: wrap; gap: 10px; }
+    .logo { font-weight: 800; font-size: 1.25rem; }
+    .nav-links { display: flex; gap: 15px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); font-weight: 600; }
+    .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+    .hero { padding: 36px 0 20px; text-align: center; }
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    .subtitle { color: var(--muted); max-width: 640px; margin: 0 auto; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+    @media (max-width: 780px) { .grid-2 { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+    .card h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    .desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
+    label { display: block; font-size: 0.88rem; color: var(--muted); margin: 12px 0 6px; }
+    input, select {
+      width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--input-bg); color: var(--text); font-size: 1rem; outline: none;
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 18px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.95rem;
+      cursor: pointer; background: var(--primary); color: #fff; width: 100%; margin-top: 16px;
+    }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-sm { padding: 7px 12px; font-size: 0.84rem; width: auto; margin-top: 0; }
+    .code-pill { font-family: monospace; font-size: 1.3rem; font-weight: 800; background: var(--input-bg); padding: 6px 14px; border-radius: 8px; color: var(--accent); border: 1px solid var(--border); display: inline-block; letter-spacing: 2px; }
+    .member-row { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+    .member-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+    .bar-bg { width: 100%; height: 10px; background: var(--border); border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 999px; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo">⚡ WordSprint</a>
+    <nav class="nav-links">
+      <a href="index.html">Главная</a>
+      <a href="teachers.html">Кабинет преподавателя</a>
+      <a href="lesson.html">Пройти урок</a>
+      <a href="groups.html" class="active">Группы</a>
+      <a href="duel.html">Веб-дуэль</a>
+      <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">☀️</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>Учебные группы WordSprint</h1>
+    <p class="subtitle">Учите английский вместе с друзьями или классом и отслеживайте общий прогресс.</p>
+  </section>
+
+  <div id="groupSetup" class="grid-2">
+    <div class="card">
+      <h2>🔑 Войти в группу</h2>
+      <p class="desc">Введите 6-значный код группы от друга или преподавателя.</p>
+      <label>Код группы</label>
+      <input type="text" id="joinCode" maxlength="6" placeholder="XXXXXX" style="text-transform:uppercase; font-family:monospace; font-weight:800; font-size:1.15rem; letter-spacing:3px; text-align:center;">
+      <button class="btn" id="joinBtn" onclick="joinGroup()">🚀 Войти в группу</button>
+    </div>
+
+    <div class="card">
+      <h2>✨ Создать новую группу</h2>
+      <p class="desc">Создайте закрытую комнату и пригласите участников по коду.</p>
+      <label>Название группы</label>
+      <input type="text" id="createTitle" placeholder="Введите название группы">
+      <label>Цель на неделю для каждого (XP)</label>
+      <select id="createGoal">
+        <option value="150">150 XP — Лёгкий старт</option>
+        <option value="350" selected>350 XP — Уверенный темп</option>
+        <option value="700">700 XP — Интенсив</option>
+      </select>
+      <label>Ваше имя</label>
+      <input type="text" id="createCreator" placeholder="Введите ваше имя">
+      <button class="btn btn-accent" id="createBtn" onclick="createGroup()">🏆 Создать группу</button>
+    </div>
+  </div>
+
+  <div id="groupRoom" class="card hidden" style="margin: 24px 0 60px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; border-bottom:1px solid var(--border); padding-bottom:18px; margin-bottom:20px;">
+      <div>
+        <div style="font-size:0.85rem; color:var(--muted);">Недельная цель: <b id="roomGoal">350</b> XP</div>
+        <h2 id="roomTitle" style="font-size:1.5rem; margin:4px 0;">—</h2>
+        <div>Код группы: <span class="code-pill" id="roomCode">000000</span></div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-accent btn-sm" onclick="copyInviteLink()">🔗 Пригласить</button>
+        <button class="btn btn-secondary btn-sm" onclick="refreshGroup()">🔄 Обновить</button>
+        <button class="btn btn-secondary btn-sm" onclick="leaveGroup()">Выйти</button>
+      </div>
+    </div>
+
+        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:22px;">
+      <div style="font-weight:700; margin-bottom:4px;">📲 Синхронизировать XP из приложения WordSprint</div>
+      <div style="font-size:0.85rem; color:var(--muted); margin-bottom:10px;">Откройте Профиль в приложении WordSprint → «Код прогресса для группы» и вставьте его сюда:</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input type="text" id="xpSyncCodeInput" placeholder="Вставьте код из приложения" style="flex:1; min-width:200px; font-family:monospace; text-transform:uppercase;">
+        <button class="btn btn-sm" onclick="syncXpFromCode()">🔄 Обновить XP</button>
+      </div>
+    </div>
+
+
+    <h3 style="margin-bottom:14px;">🏅 Участники группы</h3>
+    <div id="membersList"></div>
+  </div>
+</main>
+
+<script>
+  let currentGroup = null;
+
+  function gen6Code() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let res = '';
+    for (let i = 0; i < 6; i++) res += chars[Math.floor(Math.random() * chars.length)];
+    return res;
+  }
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    const urlCode = new URLSearchParams(window.location.search).get('code');
+    if (urlCode) {
+      document.getElementById('joinCode').value = urlCode.toUpperCase();
+      await joinGroup();
+      return;
+    }
+    const saved = localStorage.getItem('ws_active_group_code');
+    if (saved) await loadGroupByCode(saved);
+  });
+
+  async function createGroup() {
+    const title = document.getElementById('createTitle').value.trim();
+    const weekly_goal = parseInt(document.getElementById('createGoal').value, 10);
+    const creator = document.getElementById('createCreator').value.trim();
+    if (!title || !creator) return alert('Введите название группы и ваше имя!');
+
+    const btn = document.getElementById('createBtn');
+    btn.disabled = true; btn.textContent = '⏳ Создаём...';
+    try {
+      const code = gen6Code();
+      const members = [{ name: creator, xp: 0 }];
+      const rows = await sbFetch('groups', { method: 'POST', body: { code, title, weekly_goal, members } });
+      localStorage.setItem('ws_active_group_code', code);
+      localStorage.setItem('ws_group_user', creator);
+      openRoom(rows[0]);
+    } catch (e) { alert('Ошибка: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = '🏆 Создать группу'; }
+  }
+
+  async function joinGroup() {
+    const code = document.getElementById('joinCode').value.trim().toUpperCase();
+    if (!code || code.length < 4) return alert('Введите код группы!');
+
+    const btn = document.getElementById('joinBtn');
+    btn.disabled = true; btn.textContent = '⏳ Поиск группы...';
+    try {
+      const rows = await sbFetch('groups', { query: `code=eq.${encodeURIComponent(code)}` });
+      if (!rows || !rows.length) return alert('Группа с таким кодом не найдена.');
+      localStorage.setItem('ws_active_group_code', code);
+      openRoom(rows[0]);
+    } catch (e) { alert('Ошибка: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = '🚀 Войти в группу'; }
+  }
+
+  async function loadGroupByCode(code) {
+    try {
+      const rows = await sbFetch('groups', { query: `code=eq.${encodeURIComponent(code)}` });
+      if (rows && rows.length) openRoom(rows[0]);
+    } catch (e) { console.error(e); }
+  }
+
+  function openRoom(group) {
+    currentGroup = group;
+    document.getElementById('groupSetup').classList.add('hidden');
+    document.getElementById('groupRoom').classList.remove('hidden');
+    document.getElementById('roomTitle').textContent = group.title;
+    document.getElementById('roomCode').textContent = group.code;
+    document.getElementById('roomGoal').textContent = group.weekly_goal;
+
+    const savedName = localStorage.getItem('ws_group_user') || '';
+    document.getElementById('memberNameInput').value = savedName;
+
+    const members = (group.members || []).sort((a, b) => b.xp - a.xp);
+    const list = document.getElementById('membersList');
+    list.innerHTML = members.length ? members.map((m, i) => {
+      const pct = Math.min(100, Math.round((m.xp / group.weekly_goal) * 100));
+      const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
+      return `
+        <div class="member-row">
+          <div class="member-top">
+            <div><b>${medal} ${m.name}</b> ${pct >= 100 ? '<span style="color:var(--accent); font-weight:700;">✅ Цель выполнена!</span>' : ''}</div>
+            <div style="font-weight:700;">${m.xp} / ${group.weekly_goal} XP (${pct}%)</div>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      `;
+    }).join('') : '<p style="color:var(--muted);">Пока нет участников. Впишите своё имя и XP выше!</p>';
+  }
+
+    async function syncXpFromCode() {
+    if (!currentGroup) return;
+    const raw = document.getElementById('xpSyncCodeInput').value.trim().toUpperCase();
+    // Формат кода из приложения: WSXP-ИМЯ-XP-КОНТРОЛЬНАЯ_СУММА
+    const parts = raw.split('-');
+    if (parts.length !== 4 || parts !== 'WSXP') {
+      return alert('Неверный формат кода. Скопируйте код прогресса из приложения WordSprint.');
+    }
+    const name = parts;
+    const newXp = parseInt(parts, 10);
+    const check = parseInt(parts, 10);
+    const expectedCheck = (newXp * 7 + name.length * 13) % 97;
+
+    if (isNaN(newXp) || check !== expectedCheck) {
+      return alert('Ошибка проверки кода: данные повреждены или изменены вручную.');
+    }
+
+    const members = [...(currentGroup.members || [])];
+    const idx = members.findIndex(m => m.name.toLowerCase() === name.toLowerCase());
+    if (idx >= 0) members[idx].xp = newXp;
+    else members.push({ name, xp: newXp });
+
+    const updated = await sbFetch('groups', { method: 'PATCH', query: `id=eq.${currentGroup.id}`, body: { members } });
+    document.getElementById('xpSyncCodeInput').value = '';
+    openRoom((updated && updated) || { ...currentGroup, members });
+    alert(`Прогресс синхронизирован: ${name} — ${newXp} XP!`);
+  }
+
+  async function refreshGroup() { if (currentGroup) await loadGroupByCode(currentGroup.code); }
+  function leaveGroup() {
+    localStorage.removeItem('ws_active_group_code'); currentGroup = null;
+    document.getElementById('groupRoom').classList.add('hidden');
+    document.getElementById('groupSetup').classList.remove('hidden');
+  }
+  function copyInviteLink() {
+    const base = window.location.protocol === 'file:' ? `${WS_CONFIG.SITE_URL}/groups.html` : `${window.location.origin}${window.location.pathname}`;
+    navigator.clipboard.writeText(`Присоединяйся к нашей группе «${currentGroup.title}» в WordSprint! Код: ${currentGroup.code}\n${base}?code=${currentGroup.code}`);
+    alert('Приглашение скопировано!');
+  }
+</script>
+</body>
+</html>

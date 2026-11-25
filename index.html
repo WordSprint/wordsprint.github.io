@@ -1,472 +1,507 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WordSprint — языки это просто | Тренажёр английского и экзамен CEFR</title>
+  <script src="config.js"></script>
   <style>
     :root {
-      --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --muted: #64748b;
-      --border: #e2e8f0; --primary: #2563eb; --primary-hover: #1d4ed8;
-      --accent-soft: #eff6ff; --success: #16a34a; --danger: #dc2626;
-      --warning-bg: #fef3c7; --warning-text: #b45309;
-      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06);
+      --bg: #0b0f19; --card: #131a2a; --input-bg: #0d1322; --border: #232d45;
+      --text: #f1f5f9; --muted: #94a3b8; --primary: #6366f1; --primary-hover: #4f46e5;
+      --accent: #10b981; --danger: #ef4444;
     }
-    body.dark {
-      --bg: #0b1120; --card: #1e293b; --text: #f8fafc; --muted: #94a3b8;
-      --border: #334155; --primary: #3b82f6; --primary-hover: #60a5fa;
-      --accent-soft: #172554; --warning-bg: #451a03; --warning-text: #fbbf24;
-      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+    [data-theme="light"] {
+      --bg: #f8fafc; --card: #ffffff; --input-bg: #f1f5f9; --border: #cbd5e1;
+      --text: #0f172a; --muted: #475569; --primary: #4f46e5; --primary-hover: #4338ca;
+      --accent: #059669; --danger: #dc2626;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); line-height: 1.55; transition: background 0.25s, color 0.25s; }
-    a { text-decoration: none; color: inherit; }
-    .container { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
-    header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
-    body.dark header { background: rgba(11,17,32,0.88); }
-    .nav { display: flex; justify-content: space-between; align-items: center; height: 68px; gap: 14px; }
-    .logo { font-size: 21px; font-weight: 850; color: var(--primary); display: flex; align-items: center; gap: 6px; }
-    .nav-links { display: flex; gap: 18px; font-size: 13.5px; font-weight: 600; color: var(--muted); }
+    body { background: var(--bg); color: var(--text); line-height: 1.6; transition: background 0.2s, color 0.2s; }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+    header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
+    .nav { display: flex; justify-content: space-between; align-items: center; min-height: 68px; flex-wrap: wrap; gap: 12px; padding: 8px 0; }
+    .logo { font-weight: 800; font-size: 1.25rem; display: flex; align-items: center; gap: 6px; }
+    .nav-links { display: flex; gap: 15px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
     .nav-links a:hover { color: var(--primary); }
-    .nav-actions { display: flex; gap: 10px; align-items: center; }
-    .btn-icon { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
-    .btn-primary { background: var(--primary); color: #fff; padding: 11px 18px; border-radius: 12px; font-weight: 700; font-size: 14px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s, background 0.2s; }
-    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
-    .btn-outline { background: var(--card); color: var(--text); padding: 11px 16px; border-radius: 12px; font-weight: 700; font-size: 14px; border: 1.5px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: border-color 0.2s; }
-    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-    .hero { padding: 56px 0 44px; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 36px; align-items: center; }
-    .badge { display: inline-block; background: var(--accent-soft); color: var(--primary); padding: 6px 14px; border-radius: 99px; font-size: 12.5px; font-weight: 700; margin-bottom: 14px; }
-    .hero h1 { font-size: 40px; line-height: 1.15; font-weight: 850; margin-bottom: 16px; letter-spacing: -0.02em; }
-    .hero p { font-size: 16.5px; color: var(--muted); margin-bottom: 24px; max-width: 540px; }
-    .store-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
-    .hero-note { font-size: 13px; color: var(--muted); }
-    .demo-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); }
-    .demo-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .demo-tag { font-size: 12px; font-weight: 700; color: var(--primary); background: var(--accent-soft); padding: 4px 10px; border-radius: 8px; }
-    .demo-word-box { text-align: center; padding: 20px 14px; background: var(--bg); border-radius: 18px; margin-bottom: 14px; border: 1px solid var(--border); }
-    .demo-word { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
-    .demo-trans { font-size: 13.5px; color: var(--muted); margin-bottom: 12px; }
-    .demo-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-    .demo-opt { padding: 11px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--card); color: var(--text); font-weight: 600; font-size: 13.5px; cursor: pointer; transition: all 0.15s; }
-    .demo-opt:hover { border-color: var(--primary); }
-    .demo-opt.correct { background: #dcfce7; border-color: var(--success); color: #15803d; }
-    .demo-opt.wrong { background: #fee2e2; border-color: var(--danger); color: #b91c1c; }
-    section { padding: 52px 0; border-top: 1px solid var(--border); }
-    .section-head { text-align: center; max-width: 660px; margin: 0 auto 32px; }
-    .section-head h2 { font-size: 29px; font-weight: 800; margin-bottom: 10px; }
-    .section-head p { color: var(--muted); font-size: 15px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .feature-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); }
-    .feature-icon { font-size: 26px; margin-bottom: 10px; display: block; }
-    .feature-card h3 { font-size: 16.5px; font-weight: 750; margin-bottom: 6px; }
-    .feature-card p { font-size: 13.5px; color: var(--muted); }
-    .table-wrap { overflow-x: auto; background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); }
-    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-    th, td { padding: 14px 18px; border-bottom: 1px solid var(--border); }
-    th { background: var(--accent-soft); color: var(--primary); font-weight: 750; }
-    tr:last-child td { border-bottom: none; }
-    .verify-box, .empty-catalog-box { max-width: 680px; margin: 0 auto; background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; padding: 28px; box-shadow: var(--shadow); }
-    .empty-catalog-box { text-align: center; }
-    .verify-form { display: flex; gap: 10px; margin-bottom: 10px; }
-    .verify-input, select, textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--bg); color: var(--text); font-size: 14px; font-weight: 500; }
-    .cert-result { margin-top: 18px; padding: 20px; border-radius: 16px; border: 1.5px solid var(--success); background: rgba(22,163,74,0.06); display: none; }
-    .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; font-size: 13.5px; }
-    .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
-    .promo-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 24px; padding: 26px; box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: space-between; }
-    .promo-card h3 { font-size: 21px; font-weight: 800; margin-bottom: 10px; }
-    .promo-card p { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.6); z-index: 100; display: none; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
-    .modal-box { background: var(--card); border: 1px solid var(--border); border-radius: 24px; max-width: 520px; width: 100%; padding: 26px; box-shadow: var(--shadow); margin: auto; }
-    .role-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-    .role-card { padding: 18px 14px; border-radius: 16px; border: 1.5px solid var(--border); background: var(--bg); cursor: pointer; text-align: center; transition: border-color 0.2s, transform 0.15s; }
-    .role-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 5px; }
-    footer { border-top: 1px solid var(--border); padding: 30px 0; margin-top: 20px; font-size: 13.5px; color: var(--muted); }
-    .footer-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-    @media (max-width: 920px) {
-      .hero, .grid-4, .split-2, .role-choice { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      .hero h1 { font-size: 31px; }
+    .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 20px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.95rem;
+      cursor: pointer; background: var(--primary); color: #fff; transition: 0.2s;
     }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-sm { padding: 8px 14px; font-size: 0.86rem; border-radius: 9px; }
+    .hero { padding: 52px 0 40px; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 36px; align-items: center; }
+    @media (max-width: 880px) { .hero { grid-template-columns: 1fr; padding-top: 32px; } }
+    .pill { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(16, 185, 129, 0.14); color: var(--accent); font-size: 0.84rem; font-weight: 600; margin-bottom: 16px; border: 1px solid rgba(16, 185, 129, 0.3); }
+    h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.18; margin-bottom: 16px; }
+    @media (max-width: 540px) { h1 { font-size: 1.9rem; } }
+    .hero-sub { color: var(--muted); font-size: 1.05rem; margin-bottom: 24px; }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-meta { margin-top: 14px; font-size: 0.85rem; color: var(--muted); }
+
+    .demo-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
+    .demo-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .d-tab { flex: 1; padding: 8px; border-radius: 9px; border: 1px solid var(--border); background: var(--input-bg); color: var(--muted); cursor: pointer; font-weight: 600; font-size: 0.86rem; }
+    .d-tab.active { background: rgba(99, 102, 241, 0.18); border-color: var(--primary); color: var(--primary); }
+    .demo-word-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 22px; text-align: center; }
+    .story-word { cursor: pointer; border-bottom: 1px dashed var(--primary); padding: 1px 3px; border-radius: 4px; display: inline-block; }
+    .story-word:hover { background: rgba(99, 102, 241, 0.22); }
+
+    section { padding: 48px 0; border-top: 1px solid var(--border); }
+    .sec-title { font-size: 1.85rem; font-weight: 800; margin-bottom: 8px; text-align: center; }
+    .sec-sub { color: var(--muted); text-align: center; max-width: 660px; margin: 0 auto 32px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    @media (max-width: 900px) { .grid-4 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .grid-4 { grid-template-columns: 1fr; } }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 840px) { .grid-3 { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+    .card h3 { font-size: 1.12rem; margin: 10px 0 6px; }
+    .card p { color: var(--muted); font-size: 0.92rem; }
+
+    table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+    th, td { padding: 13px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+    th { background: var(--input-bg); color: var(--muted); font-size: 0.82rem; text-transform: uppercase; }
+
+    .verify-box { max-width: 680px; margin: 0 auto; background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 26px; }
+    .verify-row { display: flex; gap: 10px; margin-top: 12px; }
+    input, select, textarea { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.98rem; outline: none; }
+    label { display: block; font-size: 0.86rem; color: var(--muted); margin: 12px 0 5px; }
+    .cert-valid { margin-top: 18px; padding: 18px; border-radius: 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.35); display: none; }
+    .cert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; font-size: 0.92rem; }
+
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 18px; max-width: 480px; width: 100%; padding: 26px; max-height: 90vh; overflow-y: auto; }
+    .hidden { display: none !important; }
   </style>
 </head>
-
 <body>
-  <header>
-    <div class="container nav">
-      <a href="#" class="logo">⚡ WordSprint</a>
-      <nav class="nav-links">
-        <a href="#features">Возможности</a>
-        <a href="#exam">Экзамен CEFR</a>
-        <a href="#verify">Проверка сертификата</a>
-        <a href="#catalog">Репетиторы и школы</a>
-        <a href="#boosty">Boosty</a>
-      </nav>
-      <div class="nav-actions">
-        <button class="btn-icon" onclick="toggleTheme()" title="Сменить тему">🌓</button>
-        <a href="#download" class="btn-primary">Скачать</a>
+
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo">⚡ WordSprint</a>
+    <nav class="nav-links">
+      <a href="#features">Возможности</a>
+      <a href="#cefr">Шкала CEFR</a>
+      <a href="#verify">Сертификат</a>
+      <a href="teachers.html" style="color:var(--primary); font-weight:600;">Кабинет преподавателя</a>
+      <a href="#" onclick="openLessonModal(); return false;">Пройти урок</a>
+      <a href="groups.html">Группы</a>
+      <a href="duel.html">Веб-дуэль</a>
+      <a href="https://boosty.to/wordsprint/donate" target="_blank">Boosty</a>
+      <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Сменить тему">☀️</button>
+    </nav>
+    <button class="btn btn-sm" onclick="openDownloadModal()">📱 Скачать</button>
+  </div>
+</header>
+
+<main class="container">
+  <div class="hero">
+    <div>
+      <span class="pill">100% офлайн • Без рекламы и платных барьеров</span>
+      <h1>Учите английский легко и подтверждайте свой уровень</h1>
+      <p class="hero-sub">Более 2 005 слов от A1 до C2 с озвучкой, проверка произношения микрофоном, интерактивные рассказы с диалогами и независимое тестирование по шкале CEFR.</p>
+      <div class="hero-btns">
+        <button class="btn" onclick="openDownloadModal()">📱 Скачать приложение</button>
+        <a href="duel.html" class="btn btn-accent">⚔️ Веб-дуэль с другом</a>
+        <a href="#verify" class="btn btn-secondary">🏆 Проверить сертификат</a>
       </div>
+      <div class="hero-meta">Версия 1.1 • Android • Работает полностью без интернета</div>
     </div>
-  </header>
 
-  <main class="container">
-    <section class="hero" id="download" style="border-top:none;">
-      <div>
-        <span class="badge">100% офлайн • Без рекламы и платных барьеров</span>
-        <h1>Учите английский легко и подтверждайте свой уровень</h1>
-        <p>Более 2 005 слов от A1 до C2 с озвучкой, проверка произношения микрофоном, интерактивные рассказы с диалогами и независимое тестирование по шкале CEFR.</p>
-        <div class="store-buttons">
-          <a id="link-rustore" href="#" class="btn-primary" onclick="handleStoreClick(event, 'RuStore')">📱 Скачать в RuStore</a>
-          <a id="link-nashstore" href="#" class="btn-outline" onclick="handleStoreClick(event, 'NashStore')">📦 NashStore</a>
-          <a href="#verify" class="btn-outline">🏆 Проверить сертификат</a>
-        </div>
-        <div class="hero-note">Версия 1.1 • Android • Работает полностью без интернета</div>
+    <div class="demo-card">
+      <div class="demo-tabs">
+        <button class="d-tab active" id="tabWords" onclick="switchDemoTab('words')">🎴 Тренажёр слов</button>
+        <button class="d-tab" id="tabStory" onclick="switchDemoTab('story')">📖 Рассказ по клику</button>
       </div>
 
-      <div class="demo-card">
-        <div class="demo-top">
-          <span class="demo-tag">Демо-тренажёр прямо на сайте</span>
-          <span style="font-size:13px; color:var(--muted);" id="demo-counter">Слово 1 / 4</span>
+      <div id="demoWordsPane">
+        <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">
+          <span>Демо-режим прямо на сайте</span>
+          <span id="demoCounter">Слово 1 / 4</span>
         </div>
         <div class="demo-word-box">
-          <div class="demo-word" id="demo-word">accomplish</div>
-          <div class="demo-trans" id="demo-trans">[əˈkʌmplɪʃ] • Уровень B2</div>
-          <button class="btn-outline" style="padding:7px 14px; font-size:13px;" onclick="speakDemo()">🔊 Послушать произношение</button>
+          <div id="demoEn" style="font-size:1.85rem; font-weight:800;">accomplish</div>
+          <div id="demoTr" style="color:var(--muted); font-size:0.9rem; margin:4px 0 12px;">[əˈkʌmplɪʃ] • Уровень B2</div>
+          <button class="btn btn-secondary btn-sm" onclick="speakDemo()">🔊 Послушать произношение</button>
+          <div id="demoRu" style="margin-top:14px; font-weight:700; color:var(--accent); font-size:1.1rem;" class="hidden">достигать, выполнять</div>
         </div>
-        <div class="demo-options" id="demo-options"></div>
-      </div>
-    </section>
-
-    <section id="features">
-      <div class="section-head">
-        <h2>Почему выбирают WordSprint</h2>
-        <p>Создано для тех, кто хочет реального результата без навязчивых подписок и «жизней»</p>
-      </div>
-      <div class="grid-4">
-        <div class="feature-card">
-          <span class="feature-icon">📚</span>
-          <h3>2 005+ слов (A1–C2)</h3>
-          <p>Словарь от базовых фраз для путешествий до продвинутой лексики с озвучкой и транскрипцией.</p>
-        </div>
-        <div class="feature-card">
-          <span class="feature-icon">🎙</span>
-          <h3>6 режимов тренировки</h3>
-          <p>Тесты, карточки, аудирование, проверка произношения микрофоном, подстановка в текст и сборка слов.</p>
-        </div>
-        <div class="feature-card">
-          <span class="feature-icon">📖</span>
-          <h3>Рассказы и диалоги</h3>
-          <p>Нажимайте на любое незнакомое слово в тексте для мгновенного перевода и заполняйте пропуски.</p>
-        </div>
-        <div class="feature-card">
-          <span class="feature-icon">✈️</span>
-          <h3>Полный офлайн</h3>
-          <p>Занимайтесь в метро, самолёте или за городом — приложению не нужен постоянный интернет.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="exam">
-      <div class="section-head">
-        <h2>Экзамен и шкала CEFR</h2>
-        <p>Таблица соответствия баллов WordSprint уровням владения языком и международным стандартам</p>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Балл WordSprint</th>
-              <th>Уровень CEFR</th>
-              <th>Описание владения языком</th>
-              <th>Ориентир IELTS / TOEFL</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td><b>10 – 30</b></td><td><b>A1 (Beginner)</b></td><td>Понимание базовых слов и простых бытовых фраз</td><td>—</td></tr>
-            <tr><td><b>35 – 55</b></td><td><b>A2 (Elementary)</b></td><td>Общение на знакомые повседневные темы и чтение коротких текстов</td><td>IELTS ~3.0 – 3.5</td></tr>
-            <tr><td><b>60 – 85</b></td><td><b>B1 (Intermediate)</b></td><td>Уверенное общение в поездках, переписке и понимание сути фильмов</td><td>IELTS ~4.0 – 5.0 / TOEFL ~42–71</td></tr>
-            <tr><td><b>90 – 115</b></td><td><b>B2 (Upper-Intermediate)</b></td><td>Свободная дискуссия с носителями, чтение статей и аргументация</td><td>IELTS ~5.5 – 6.5 / TOEFL ~72–94</td></tr>
-            <tr><td><b>120 – 140</b></td><td><b>C1 (Advanced)</b></td><td>Понимание сложных текстов, идиом и скрытого подтекста</td><td>IELTS ~7.0 – 8.0 / TOEFL ~95–114</td></tr>
-            <tr><td><b>145 – 160</b></td><td><b>C2 (Proficiency)</b></td><td>Владение языком практически на уровне образованного носителя</td><td>IELTS ~8.5 – 9.0 / TOEFL ~115–120</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-        <section id="verify">
-      <div class="section-head">
-        <h2>Проверка подлинности сертификата</h2>
-        <p>Введите уникальный номер сертификата WordSprint или отсканируйте QR-код на документе</p>
-      </div>
-      <div class="verify-box">
-        <div class="verify-form">
-          <input type="text" id="cert-input" class="verify-input" placeholder="Например: WS-2026-8492" value="WS-2026-8492" />
-          <button class="btn-primary" style="width:auto;" onclick="checkCert()">Проверить</button>
-        </div>
-        <div style="font-size:12px; color:var(--muted);">Демо-база: нажмите «Проверить» с тестовым номером <b>WS-2026-8492</b></div>
-
-        <div class="cert-result" id="cert-result">
-          <div style="font-weight:800; color:var(--success); font-size:16px;">✅ Сертификат действителен и подтверждён</div>
-          <div class="cert-grid">
-            <div><b>Кандидат:</b> Алексей Смирнов</div>
-            <div><b>Итоговый уровень:</b> B2 (105 / 160 баллов)</div>
-            <div><b>Дата сдачи:</b> 24.11.2026</div>
-            <div><b>ID документа:</b> WS-2026-8492</div>
-            <div><b>Лексика и грамматика:</b> 110 / 160</div>
-            <div><b>Аудирование и письмо:</b> 100 / 160</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="catalog">
-      <div class="section-head">
-        <h2>Репетиторы и школы-партнёры</h2>
-        <p>Каталог проверенных преподавателей и языковых школ, работающих с платформой WordSprint</p>
-      </div>
-
-      <div class="empty-catalog-box">
-        <div style="font-size:34px; margin-bottom:10px;">🎓</div>
-        <h3 style="font-size:19px; font-weight:800; margin-bottom:8px;">Набор первых партнёров открыт</h3>
-        <p style="color:var(--muted); font-size:14.5px; margin-bottom:20px;">
-          Здесь будут отображаться анкеты преподавателей и школ с подтверждённым уровнем языка, средним баллом учеников и примерами поступлений.
-        </p>
-        <button class="btn-primary" onclick="openPartnerModal()">Зарегистрироваться как репетитор или школа</button>
-      </div>
-    </section>
-
-    <section id="boosty">
-      <div class="split-2">
-        <div class="promo-card">
-          <div>
-            <span class="badge">Партнёрская программа</span>
-            <h3>Инструменты для преподавателей и школ</h3>
-            <p>Создавайте домашние задания по коду урока с уведомлениями ученикам, ведите учебные группы и получайте заявки от новых студентов.</p>
-          </div>
-          <div>
-            <button class="btn-primary" onclick="openPartnerModal()">Подать заявку на регистрацию</button>
-          </div>
-        </div>
-
-        <div class="promo-card">
-          <div>
-            <span class="badge" style="background:var(--warning-bg); color:var(--warning-text);">Поддержка проекта</span>
-            <h3>Эксклюзивные материалы на Boosty</h3>
-            <p>Дизайнерские PDF-шпаргалки по неправильным глаголам и временам, разборы живого сленга из культовых фильмов и ранний доступ к новым версиям WordSprint.</p>
-          </div>
-          <div>
-            <a href="https://boosty.to" target="_blank" class="btn-outline">Поддержать на Boosty ⚡</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container footer-inner">
-      <div><b>⚡ WordSprint</b> — языки это просто © 2026</div>
-      <div style="display:flex; gap:20px;">
-        <a href="https://netlify.app" target="_blank">Политика конфиденциальности</a>
-        <a href="https://boosty.to" target="_blank">Boosty проекта</a>
-      </div>
-    </div>
-  </footer>
-
-  <div class="modal-backdrop" id="partner-modal">
-    <div class="modal-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h3 style="font-size:20px; font-weight:800;" id="modal-title">Регистрация партнёра</h3>
-        <button class="btn-icon" onclick="closePartnerModal()">✕</button>
-      </div>
-
-      <!-- Шаг 1: Выбор роли -->
-      <div id="partner-step-role">
-        <p style="font-size:14px; color:var(--muted); margin-bottom:12px;">Выберите формат вашего профиля, чтобы открыть соответствующую анкету:</p>
-        <div class="role-choice">
-          <div class="role-card" onclick="selectPartnerRole('tutor')">
-            <div style="font-size:30px; margin-bottom:8px;">👤</div>
-            <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Я репетитор</div>
-            <div style="font-size:12.5px; color:var(--muted);">Индивидуальный преподаватель</div>
-          </div>
-          <div class="role-card" onclick="selectPartnerRole('school')">
-            <div style="font-size:30px; margin-bottom:8px;">🏢</div>
-            <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Я языковая школа</div>
-            <div style="font-size:12.5px; color:var(--muted);">Курсы, студия или онлайн-школа</div>
-          </div>
+        <div style="display:flex; gap:10px; margin-top:14px;">
+          <button class="btn btn-secondary" style="flex:1;" onclick="toggleDemoTranslate()">👁 Показать перевод</button>
+          <button class="btn" style="flex:1;" onclick="nextDemoWord()">Следующее →</button>
         </div>
       </div>
 
-      <!-- Шаг 2А: Анкета репетитора -->
-      <div id="partner-form-tutor" style="display:none;">
-        <div class="form-group">
-          <label>Имя и фамилия</label>
-          <input type="text" id="tutor-name" class="verify-input" placeholder="Введите ваши имя и фамилию" />
-        </div>
-        <div class="form-group">
-          <label>Город и формат занятий (Онлайн / Офлайн)</label>
-          <input type="text" id="tutor-format" class="verify-input" placeholder="Укажите формат проведения уроков" />
-        </div>
-        <div class="form-group">
-          <label>Подтверждение уровня (ID сертификата WordSprint или ссылка на диплом / IELTS / ЕГЭ)</label>
-          <input type="text" id="tutor-proof" class="verify-input" placeholder="Необходимо для проверки квалификации" />
-        </div>
-        <div class="form-group">
-          <label>Краткое описание и куда поступали ваши ученики</label>
-          <textarea id="tutor-bio" rows="3" placeholder="Расскажите о специализации и результатах учеников"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Контакт для связи (Telegram или VK)</label>
-          <input type="text" id="tutor-contact" class="verify-input" placeholder="@username или ссылка" />
-        </div>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-          <button class="btn-outline" onclick="backToRoleChoice()">← Назад</button>
-          <button class="btn-primary" style="flex:1;" onclick="submitPartnerForm('tutor')">Отправить анкету репетитора</button>
-        </div>
-      </div>
-
-      <!-- Шаг 2Б: Анкета языковой школы -->
-      <div id="partner-form-school" style="display:none;">
-        <div class="form-group">
-          <label>Официальное название языковой школы</label>
-          <input type="text" id="school-name" class="verify-input" placeholder="Введите название школы или студии" />
-        </div>
-        <div class="form-group">
-          <label>Город / регион или онлайн-формат</label>
-          <input type="text" id="school-city" class="verify-input" placeholder="Укажите расположение филиалов или формат" />
-        </div>
-        <div class="form-group">
-          <label>Подтверждение школы (ИНН организации или номер образовательной лицензии)</label>
-
-          <input type="text" id="school-proof" class="verify-input" placeholder="Обязательно для верификации школы" />
-        </div>
-        <div class="form-group">
-          <label>Описание программ и достижения студентов</label>
-          <textarea id="school-bio" rows="3" placeholder="Направления обучения, возраст групп и результаты выпускников"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Контакт руководителя или методиста (Telegram / Email / Телефон)</label>
-          <input type="text" id="school-contact" class="verify-input" placeholder="Контакт для связи" />
-        </div>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-          <button class="btn-outline" onclick="backToRoleChoice()">← Назад</button>
-          <button class="btn-primary" style="flex:1;" onclick="submitPartnerForm('school')">Отправить анкету школы</button>
+      <div id="demoStoryPane" class="hidden">
+        <div style="font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Нажмите на любое слово в рассказе, чтобы увидеть перевод:</div>
+        <div class="demo-word-box" id="storyContainer" style="text-align:left; line-height:1.9; font-size:1.05rem;"></div>
+        <div id="storyTipBox" style="margin-top:12px; padding:10px 14px; border-radius:10px; background:rgba(99,102,241,0.15); color:var(--primary); font-weight:600; font-size:0.92rem;">
+          💡 Нажмите на любое слово в тексте выше
         </div>
       </div>
     </div>
   </div>
+  <section id="features">
+    <h2 class="sec-title">Почему выбирают WordSprint</h2>
+    <p class="sec-sub">Создано для тех, кто хочет реального результата без навязчивых подписок и «жизней»</p>
+    <div class="grid-4">
+      <div class="card"><div style="font-size:1.7rem;">📚</div><h3>2 005+ слов (A1–C2)</h3><p>Словарь от базовых фраз для путешествий до продвинутой лексики с озвучкой и транскрипцией.</p></div>
+      <div class="card"><div style="font-size:1.7rem;">🎙</div><h3>6 режимов тренировки</h3><p>Тесты, карточки, аудирование, проверка произношения микрофоном, подстановка в текст и сборка слов.</p></div>
+      <div class="card"><div style="font-size:1.7rem;">📖</div><h3>Рассказы и диалоги</h3><p>Нажимайте на любое незнакомое слово в тексте для мгновенного перевода и заполняйте пропуски.</p></div>
+      <div class="card"><div style="font-size:1.7rem;">✈️</div><h3>Полный офлайн</h3><p>Занимайтесь в метро, самолёте или за городом — приложению не нужен постоянный интернет.</p></div>
+    </div>
+  </section>
 
-    <script>
-    const STORE_URLS = {
-      RuStore: "",
-      NashStore: ""
-    };
+  <section id="cefr">
+    <h2 class="sec-title">Экзамен и шкала CEFR</h2>
+    <p class="sec-sub">Таблица соответствия баллов WordSprint уровням владения языком и международным стандартам</p>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Балл WordSprint</th><th>Уровень CEFR</th><th>Описание владения языком</th><th>Ориентир IELTS / TOEFL</th></tr></thead>
+        <tbody>
+          <tr><td><b>10 – 30</b></td><td><b>A1 (Beginner)</b></td><td>Понимание базовых слов и простых бытовых фраз</td><td>—</td></tr>
+          <tr><td><b>35 – 55</b></td><td><b>A2 (Elementary)</b></td><td>Общение на знакомые повседневные темы и чтение коротких текстов</td><td>IELTS ~3.0 – 3.5</td></tr>
+          <tr><td><b>60 – 85</b></td><td><b>B1 (Intermediate)</b></td><td>Уверенное общение в поездках, переписке и понимание сути фильмов</td><td>IELTS ~4.0 – 5.0 / TOEFL ~42–71</td></tr>
+          <tr><td><b>90 – 115</b></td><td><b>B2 (Upper-Intermediate)</b></td><td>Свободная дискуссия с носителями, чтение статей и аргументация</td><td>IELTS ~5.5 – 6.5 / TOEFL ~72–94</td></tr>
+          <tr><td><b>120 – 140</b></td><td><b>C1 (Advanced)</b></td><td>Понимание сложных текстов, идиом и скрытого подтекста</td><td>IELTS ~7.0 – 8.0 / TOEFL ~95–114</td></tr>
+          <tr><td><b>145 – 160</b></td><td><b>C2 (Proficiency)</b></td><td>Владение языком практически на уровне образованного носителя</td><td>IELTS ~8.5 – 9.0 / TOEFL ~115–120</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-    function handleStoreClick(e, storeName) {
-      if (!STORE_URLS[storeName]) {
-        e.preventDefault();
-        alert("Приложение сейчас завершает проверку модерации в " + storeName + ". Прямая ссылка появится здесь сразу после публикации!");
-      } else {
-        e.currentTarget.href = STORE_URLS[storeName];
-      }
+  <section id="verify">
+    <h2 class="sec-title">Проверка подлинности сертификата</h2>
+    <p class="sec-sub">Введите уникальный номер сертификата WordSprint или отсканируйте QR-код на документе</p>
+    <div class="verify-box">
+      <div class="verify-row">
+        <input type="text" id="certInput" value="WS-2026-8492" placeholder="WS-2026-XXXX" style="text-transform:uppercase; font-family:monospace; font-weight:700;">
+        <button class="btn" style="width:auto;" onclick="verifyCertificate()">Проверить</button>
+      </div>
+      <div style="font-size:0.84rem; color:var(--muted); margin-top:8px;">Демо-база: нажмите «Проверить» с тестовым номером <b>WS-2026-8492</b></div>
+      <div id="certResultBox" class="cert-valid"></div>
+    </div>
+  </section>
+
+  <section id="partners">
+    <h2 class="sec-title">Репетиторы, школы и ученики</h2>
+    <p class="sec-sub">Единая образовательная экосистема WordSprint</p>
+
+    <div id="verifiedTeachersGrid" class="grid-3" style="margin-bottom: 24px;"></div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div style="font-size:1.6rem;">🎓</div>
+        <h3>Регистрация партнёров</h3>
+        <p style="margin-bottom:14px;">Зарегистрируйтесь как репетитор или языковая школа и попадите в открытый каталог WordSprint после проверки.</p>
+        <button class="btn btn-sm" onclick="openPartnerChoiceModal()">Зарегистрироваться</button>
+      </div>
+      <div class="card">
+        <div style="font-size:1.6rem;">📚</div>
+        <h3>Уроки от преподавателей</h3>
+        <p style="margin-bottom:14px;">Получили код домашнего задания от своего репетитора или школы? Введите его и пройдите тренировку.</p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="openLessonModal()">Пройти урок</button>
+          <a href="groups.html" class="btn btn-secondary btn-sm">Группы</a>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:1.6rem;">⚡</div>
+        <h3>Эксклюзив на Boosty</h3>
+        <p style="margin-bottom:14px;">Дизайнерские PDF-шпаргалки по неправильным глаголам и временам, разборы сленга и ранний доступ к новым версиям.</p>
+        <a href="https://boosty.to/wordsprint/donate" target="_blank" class="btn btn-accent btn-sm">Поддержать на Boosty ⚡</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer style="border-top:1px solid var(--border); padding:28px 0; margin-top:40px; color:var(--muted); font-size:0.9rem;">
+  <div class="container" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+    <div>⚡ <b>WordSprint</b> — языки это просто © 2026</div>
+    <div style="display:flex; gap:18px; flex-wrap:wrap;">
+      <a href="https://aesthetic-tiramisu-4416cd.netlify.app" target="_blank">Политика конфиденциальности</a>
+      <a href="https://boosty.to/wordsprint/donate" target="_blank">Boosty проекта</a>
+      <a href="admin.html" style="opacity:0.4;">Админ</a>
+    </div>
+  </div>
+</footer>
+<div class="modal-bg" id="downloadModal" onclick="if(event.target===this) this.style.display='none'">
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="font-size:1.25rem;">📱 Скачать WordSprint (Android)</h3>
+      <button onclick="document.getElementById('downloadModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
+    </div>
+    <p style="color:var(--muted); font-size:0.92rem; margin-bottom:16px;">Бесплатно, без рекламы и регистрации. Выберите способ установки:</p>
+    <div style="display:grid; gap:10px;">
+      <a href="WordSprint-1.1.apk" download="WordSprint-1.1.apk" class="btn btn-accent">⬇️ Скачать APK напрямую (v1.1)</a>
+      <a href="https://rustore.ru" target="_blank" class="btn">📱 Открыть в RuStore</a>
+      <a href="https://nashstore.ru" target="_blank" class="btn btn-secondary">📦 Открыть в NashStore</a>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="lessonCodeModal" onclick="if(event.target===this) this.style.display='none'">
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h3 style="font-size:1.2rem;">📚 Пройти урок по коду</h3>
+      <button onclick="document.getElementById('lessonCodeModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
+    </div>
+    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:12px;">Введите код урока, который прислал преподаватель или школа:</p>
+    <input type="text" id="quickLessonCode" placeholder="Код урока" style="text-transform:uppercase; font-family:monospace; font-weight:700;">
+    <button class="btn" style="width:100%; margin-top:14px;" onclick="goToLesson()">▶ Открыть задание</button>
+  </div>
+</div>
+<div class="modal-bg" id="partnerModal" onclick="if(event.target===this) this.style.display='none'">
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 id="partnerModalTitle" style="font-size:1.2rem;">🎓 Регистрация партнёра</h3>
+      <button onclick="document.getElementById('partnerModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
+    </div>
+
+    <div id="partnerRoleStep">
+      <p style="color:var(--muted); font-size:0.92rem; margin-bottom:16px;">Выберите формат работы, чтобы открыть нужную форму:</p>
+      <div style="display:grid; gap:10px;">
+        <button class="btn" onclick="selectPartnerRole('tutor')">👨‍🏫 Я репетитор</button>
+        <button class="btn btn-secondary" onclick="selectPartnerRole('school')">🏫 Я школа</button>
+      </div>
+    </div>
+
+    <div id="tutorFormStep" class="hidden">
+      <label>Имя и фамилия</label>
+      <input type="text" id="tName" placeholder="Введите имя и фамилию">
+            <label>Email (сюда придёт уведомление об одобрении)</label>
+      <input type="email" id="tEmail" placeholder="Введите ваш Email">
+
+      <label>Город и формат (онлайн / офлайн)</label>
+      <input type="text" id="tCity" placeholder="Город или формат занятий">
+      <label>Уровень английского (CEFR)</label>
+      <select id="tLevel">
+        <option value="C1 (Advanced)">C1 (Advanced)</option>
+        <option value="C2 (Proficiency)">C2 (Proficiency)</option>
+        <option value="B2 (Upper-Intermediate)">B2 (Upper-Intermediate)</option>
+      </select>
+      <label>Подтверждение (ID сертификата WS или ссылка на диплом / IELTS / ЕГЭ)</label>
+      <input type="text" id="tProof" placeholder="Укажите ID или ссылку">
+      <label>Контакт для связи (Telegram или VK)</label>
+      <input type="text" id="tContact" placeholder="Ссылка или никнейм">
+      <label>О себе и методике</label>
+      <textarea id="tBio" style="min-height:70px;" placeholder="Кратко расскажите о вашем опыте"></textarea>
+      <button class="btn btn-accent" style="width:100%; margin-top:14px;" onclick="submitPartnerForm('tutor')">🚀 Отправить анкету</button>
+    </div>
+
+       <div id="schoolFormStep" class="hidden">
+      <label>Полное или сокращённое название школы / организации</label>
+      <input type="text" id="sName" placeholder="Введите официальное название">
+            <label>Email организации (сюда придёт уведомление об одобрении)</label>
+      <input type="email" id="sEmail" placeholder="Введите Email школы">
+
+      <label>ИНН и ОГРН организации</label>
+      <input type="text" id="sInn" placeholder="Укажите ИНН и ОГРН для проверки по базе ФНС">
+      <label>Номер образовательной лицензии или ссылка на скан / выписку</label>
+      <input type="text" id="sProof" placeholder="Номер лицензии или ссылка на документ">
+      <label>Город / регион или онлайн-формат</label>
+      <input type="text" id="sCity" placeholder="Города присутствия или онлайн">
+      <label>Направления и уровни обучения</label>
+      <input type="text" id="sLevel" placeholder="Уровни CEFR и программы">
+      <label>Контакт руководителя или методиста</label>
+      <input type="text" id="sContact" placeholder="Telegram, VK или телефон">
+      <label>Описание школы</label>
+      <textarea id="sBio" style="min-height:70px;" placeholder="Кратко расскажите о вашей школе"></textarea>
+      <button class="btn btn-accent" style="width:100%; margin-top:14px;" onclick="submitPartnerForm('school')">🏫 Отправить документы школы</button>
+    </div>
+
+    <div id="partnerSuccessStep" class="hidden" style="text-align:center; padding:10px 0;">
+      <div style="font-size:2.4rem;">✅</div>
+      <h4 style="margin:8px 0;">Заявка отправлена на проверку!</h4>
+      <p style="color:var(--muted); font-size:0.9rem;">Ваш персональный код для входа в кабинет преподавателя:</p>
+      <div id="newPartnerCode" style="font-family:monospace; font-size:1.3rem; font-weight:800; color:var(--accent); margin:10px 0;">WS-000</div>
+      <a href="teachers.html" class="btn btn-sm">Перейти в кабинет преподавателя →</a>
+    </div>
+  </div>
+</div>
+<script>
+  const STORY_WORDS = [
+    ['Yesterday', 'вчера'], ['I', 'я'], ['decided', 'решил'], ['to', 'чтобы'], ['start', 'начать'],
+    ['my', 'моё'], ['journey', 'путешествие'], ['in', 'в'], ['English.', 'английском языке.'],
+    ['Even', 'даже'], ['when', 'когда'], ['an', 'одно'], ['obstacle', 'препятствие'],
+    ['appears,', 'появляется,'], ['consistent', 'последовательная'], ['practice', 'практика'],
+    ['helps', 'помогает'], ['you', 'тебе'], ['achieve', 'достичь'], ['great', 'отличных'], ['results!', 'результатов!']
+  ];
+
+  const DEMO_WORDS = [
+    { en: 'accomplish', tr: '[əˈkʌmplɪʃ] • Уровень B2', ru: 'достигать, выполнять' },
+    { en: 'inevitable', tr: '[ɪnˈevɪtəbl] • Уровень C1', ru: 'неизбежный, неминуемый' },
+    { en: 'reliable', tr: '[rɪˈlaɪəbl] • Уровень B1', ru: 'надёжный, проверенный' },
+    { en: 'accurate', tr: '[ˈækjərət] • Уровень B2', ru: 'точный, безошибочный' }
+  ];
+  let demoIdx = 0;
+
+  function renderStory() {
+    document.getElementById('storyContainer').innerHTML = STORY_WORDS.map(([en, ru]) =>
+      `<span class="story-word" onclick="showStoryTip('${en.replace(/[.,!]/g, '')} — ${ru}')">${en}</span>`
+    ).join(' ');
+  }
+
+  function switchDemoTab(tab) {
+    document.getElementById('tabWords').classList.toggle('active', tab === 'words');
+    document.getElementById('tabStory').classList.toggle('active', tab === 'story');
+    document.getElementById('demoWordsPane').classList.toggle('hidden', tab !== 'words');
+    document.getElementById('demoStoryPane').classList.toggle('hidden', tab !== 'story');
+  }
+
+  function speakDemo() {
+    const u = new SpeechSynthesisUtterance(DEMO_WORDS[demoIdx].en);
+    u.lang = 'en-US'; u.rate = 0.9;
+    speechSynthesis.speak(u);
+  }
+
+  function toggleDemoTranslate() { document.getElementById('demoRu').classList.toggle('hidden'); }
+
+  function nextDemoWord() {
+    demoIdx = (demoIdx + 1) % DEMO_WORDS.length;
+    const w = DEMO_WORDS[demoIdx];
+    document.getElementById('demoCounter').textContent = `Слово ${demoIdx + 1} / ${DEMO_WORDS.length}`;
+    document.getElementById('demoEn').textContent = w.en;
+    document.getElementById('demoTr').textContent = w.tr;
+    document.getElementById('demoRu').textContent = w.ru;
+    document.getElementById('demoRu').classList.add('hidden');
+    speakDemo();
+  }
+
+  function showStoryTip(text) { document.getElementById('storyTipBox').textContent = '📖 Перевод: ' + text; }
+  function openDownloadModal() { document.getElementById('downloadModal').style.display = 'flex'; }
+  function openLessonModal() { document.getElementById('lessonCodeModal').style.display = 'flex'; }
+
+  function goToLesson() {
+    const code = document.getElementById('quickLessonCode').value.trim().toUpperCase();
+    if (!code) return alert('Введите код урока!');
+    location.href = `lesson.html?code=${encodeURIComponent(code)}`;
+  }
+  function openPartnerChoiceModal() {
+    document.getElementById('partnerModalTitle').textContent = '🎓 Регистрация партнёра';
+    document.getElementById('partnerRoleStep').classList.remove('hidden');
+    document.getElementById('tutorFormStep').classList.add('hidden');
+    document.getElementById('schoolFormStep').classList.add('hidden');
+    document.getElementById('partnerSuccessStep').classList.add('hidden');
+    document.getElementById('partnerModal').style.display = 'flex';
+  }
+
+  function selectPartnerRole(role) {
+    document.getElementById('partnerRoleStep').classList.add('hidden');
+    if (role === 'tutor') {
+      document.getElementById('partnerModalTitle').textContent = '👨‍🏫 Анкета репетитора';
+      document.getElementById('tutorFormStep').classList.remove('hidden');
+    } else {
+      document.getElementById('partnerModalTitle').textContent = '🏫 Анкета школы';
+      document.getElementById('schoolFormStep').classList.remove('hidden');
+    }
+  }
+
+   async function submitPartnerForm(role) {
+    const isTutor = role === 'tutor';
+    const name = document.getElementById(isTutor ? 'tName' : 'sName').value.trim();
+    const email = document.getElementById(isTutor ? 'tEmail' : 'sEmail').value.trim();
+    const city_format = document.getElementById(isTutor ? 'tCity' : 'sCity').value.trim();
+    const level = document.getElementById(isTutor ? 'tLevel' : 'sLevel').value;
+    const telegram = document.getElementById(isTutor ? 'tContact' : 'sContact').value.trim();
+    const bio = document.getElementById(isTutor ? 'tBio' : 'sBio').value.trim();
+
+    const innVal = !isTutor ? (document.getElementById('sInn')?.value.trim() || '') : '';
+    const rawProof = document.getElementById(isTutor ? 'tProof' : 'sProof').value.trim();
+    const proof_url = isTutor ? rawProof : `ИНН/ОГРН: ${innVal} | Лицензия/док: ${rawProof}`;
+
+    if (!name || !email || !telegram || !rawProof) {
+      return alert('Пожалуйста, заполните название/имя, Email, документы и контакт!');
     }
 
-    const demoWords = [
-      { word: "accomplish", trans: "[əˈkʌmplɪʃ] • Уровень B2", correct: "достигать, выполнять", options: ["достигать, выполнять", "одалживать деньги", "притворяться", "шептать"] },
-      { word: "inevitable", trans: "[ɪnˈevɪtəbl] • Уровень B2", correct: "неизбежный", options: ["хрупкий", "неизбежный", "устаревший", "невидимый"] },
-      { word: "postpone", trans: "[pəʊstˈpəʊn] • Уровень B1", correct: "откладывать на потом", options: ["подтверждать", "откладывать на потом", "исследовать", "запрещать"] },
-      { word: "coherent", trans: "[kəʊˈhɪərənt] • Уровень C1", correct: "связный, логичный", options: ["случайный", "враждебный", "связный, логичный", "временный"] }
-    ];
-    let demoIdx = 0;
+    const fullName = isTutor ? name : `🏫 Школа: ${name}`;
+    const code = generateShortCode(isTutor ? 'WS' : 'SCH');
 
-    function renderDemo() {
-      const item = demoWords[demoIdx];
-      document.getElementById("demo-counter").textContent = `Слово ${demoIdx + 1} / ${demoWords.length}`;
-      document.getElementById("demo-word").textContent = item.word;
-      document.getElementById("demo-trans").textContent = item.trans;
-      const box = document.getElementById("demo-options");
-      box.innerHTML = "";
-      item.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "demo-opt";
-        btn.textContent = opt;
-        btn.onclick = () => {
-          if (opt === item.correct) {
-            btn.classList.add("correct");
-            setTimeout(() => { demoIdx = (demoIdx + 1) % demoWords.length; renderDemo(); }, 650);
-          } else {
-            btn.classList.add("wrong");
-          }
-        };
-        box.appendChild(btn);
+    try {
+      await sbFetch('teachers', {
+        method: 'POST',
+        body: { code, name: fullName, email, city_format, level, proof_url, telegram, bio, verified: false }
       });
+      localStorage.setItem('ws_teacher_code', code);
+      document.getElementById('tutorFormStep').classList.add('hidden');
+      document.getElementById('schoolFormStep').classList.add('hidden');
+      document.getElementById('partnerSuccessStep').classList.remove('hidden');
+      document.getElementById('newPartnerCode').textContent = code;
+    } catch (e) {
+      alert('Ошибка отправки: ' + e.message);
     }
+  }
 
-    function speakDemo() {
-      if ("speechSynthesis" in window) {
-        const u = new SpeechSynthesisUtterance(demoWords[demoIdx].word);
-        u.lang = "en-US";
-        speechSynthesis.speak(u);
+
+  async function verifyCertificate() {
+    const id = document.getElementById('certInput').value.trim().toUpperCase();
+    const box = document.getElementById('certResultBox');
+    if (!id) return alert('Введите ID сертификата!');
+    box.style.display = 'block';
+    box.innerHTML = '⏳ Проверяем документ в базе WordSprint...';
+    try {
+      const rows = await sbFetch('certificates', { query: `id=eq.${encodeURIComponent(id)}` });
+      if (!rows || !rows.length) {
+        box.style.borderColor = '#ef4444';
+        box.style.background = 'rgba(239,68,68,0.12)';
+        box.innerHTML = `❌ Сертификат с номером <b>${id}</b> не найден в реестре.`;
+        return;
       }
-    }
+      const c = rows[0];
+      const s = c.skills || {};
+      box.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+      box.style.background = 'rgba(16, 185, 129, 0.1)';
+      box.innerHTML = `
+        <div style="font-weight:800; color:var(--accent); font-size:1.05rem;">✅ Сертификат действителен и подтверждён</div>
+        <div class="cert-grid">
+          <div><b>Кандидат:</b> ${c.full_name}</div>
+          <div><b>ID документа:</b> ${c.id}</div>
+          <div><b>Итоговый уровень:</b> ${c.cefr_level} (${c.score} / 160)</div>
+          <div><b>Дата сдачи:</b> ${c.issued_at}</div>
+          <div><b>Vocabulary / Grammar:</b> ${s.vocabulary || c.score} / ${s.grammar || c.score}</div>
+          <div><b>Listening / Production:</b> ${s.listening || c.score} / ${s.production || c.score}</div>
+        </div>
+      `;
+    } catch (e) { box.innerHTML = '⚠️ Ошибка соединения с базой: ' + e.message; }
+  }
 
-    function checkCert() {
-      const val = document.getElementById("cert-input").value.trim().toUpperCase();
-      const res = document.getElementById("cert-result");
-      if (val === "WS-2026-8492") {
-        res.style.display = "block";
-      } else {
-        res.style.display = "none";
-        alert("Сертификат с таким номером не найден. Для теста введите WS-2026-8492.");
-      }
-    }
+  async function loadVerifiedTeachers() {
+    try {
+      const list = await sbFetch('teachers', { query: 'verified=eq.true&order=created_at.desc' });
+      const grid = document.getElementById('verifiedTeachersGrid');
+      if (!list || !list.length) return;
+      grid.innerHTML = list.map(t => `
+        <div class="card" style="border-color:rgba(16,185,129,0.4);">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="background:rgba(16,185,129,0.15); color:var(--accent); padding:3px 8px; border-radius:6px; font-size:0.78rem; font-weight:700;">✅ Проверен</span>
+            <span style="font-family:monospace; color:var(--muted); font-size:0.85rem;">${t.code}</span>
+          </div>
+          <h3>${t.name}</h3>
+          <div style="font-size:0.85rem; color:var(--primary); margin-bottom:8px;">${t.level || ''} • ${t.city_format || 'Онлайн'}</div>
+          <p style="margin-bottom:14px;">${t.bio || 'Партнёр образовательной платформы WordSprint.'}</p>
+          <div style="font-size:0.88rem; color:var(--accent); font-weight:600;">Связаться: ${t.telegram}</div>
+        </div>
+      `).join('');
+    } catch (e) { console.error(e); }
+  }
 
-    function openPartnerModal() {
-      backToRoleChoice();
-      document.getElementById("partner-modal").style.display = "flex";
+  window.addEventListener('DOMContentLoaded', () => {
+    renderStory();
+    loadVerifiedTeachers();
+    const certParam = new URLSearchParams(window.location.search).get('cert');
+    if (certParam) {
+      document.getElementById('certInput').value = certParam.toUpperCase();
+      verifyCertificate();
     }
-
-    function closePartnerModal() {
-      document.getElementById("partner-modal").style.display = "none";
-    }
-
-    function backToRoleChoice() {
-      document.getElementById("modal-title").textContent = "Регистрация партнёра";
-      document.getElementById("partner-step-role").style.display = "block";
-      document.getElementById("partner-form-tutor").style.display = "none";
-      document.getElementById("partner-form-school").style.display = "none";
-    }
-
-    function selectPartnerRole(role) {
-      document.getElementById("partner-step-role").style.display = "none";
-      if (role === "tutor") {
-        document.getElementById("modal-title").textContent = "Анкета репетитора";
-        document.getElementById("partner-form-tutor").style.display = "block";
-      } else {
-        document.getElementById("modal-title").textContent = "Анкета языковой школы";
-        document.getElementById("partner-form-school").style.display = "block";
-      }
-    }
-
-    function submitPartnerForm(role) {
-      const nameId = role === "tutor" ? "tutor-name" : "school-name";
-      const proofId = role === "tutor" ? "tutor-proof" : "school-proof";
-      if (!document.getElementById(nameId).value.trim()) {
-        return alert("Пожалуйста, заполните обязательное поле названия / имени.");
-      }
-      if (!document.getElementById(proofId).value.trim()) {
-        return alert("Пожалуйста, укажите данные для подтверждения квалификации или школы.");
-      }
-      alert("Спасибо! Ваша анкета отправлена на проверку. После подтверждения карточка появится в каталоге.");
-      closePartnerModal();
-    }
-
-    function toggleTheme() {
-      document.body.classList.toggle("dark");
-    }
-
-    renderDemo();
-  </script>
+  });
+</script>
 </body>
 </html>

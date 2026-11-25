@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кабинет преподавателя — WordSprint</title>
+  <script src="config.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f19; --card: #131a2a; --input-bg: #0d1322; --border: #232d45;
+      --text: #f1f5f9; --muted: #94a3b8; --primary: #6366f1; --primary-hover: #4f46e5;
+      --accent: #10b981; --warning: #f59e0b; --danger: #ef4444;
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc; --card: #ffffff; --input-bg: #f1f5f9; --border: #cbd5e1;
+      --text: #0f172a; --muted: #475569; --primary: #4f46e5; --primary-hover: #4338ca;
+      --accent: #059669; --warning: #d97706; --danger: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; transition: background 0.2s, color 0.2s; }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1060px; margin: 0 auto; padding: 0 20px; }
+    header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
+    .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; flex-wrap: wrap; gap: 10px; }
+    .logo { font-weight: 800; font-size: 1.25rem; }
+    .nav-links { display: flex; gap: 15px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); font-weight: 600; }
+    .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+    .hero { padding: 36px 0 20px; text-align: center; }
+    h1 { font-size: 2rem; font-weight: 800; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+    .card h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    .desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
+    label { display: block; font-size: 0.88rem; color: var(--muted); margin: 12px 0 6px; }
+    input, textarea, select {
+      width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--primary); }
+    textarea { min-height: 140px; resize: vertical; font-family: monospace; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 18px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.95rem;
+      cursor: pointer; background: var(--primary); color: #fff; width: 100%; margin-top: 16px;
+    }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-sm { padding: 7px 12px; font-size: 0.84rem; width: auto; margin-top: 0; }
+    .result-box { margin-top: 16px; padding: 16px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.35); display: none; }
+    .code-pill { display: inline-block; font-family: monospace; font-size: 1.2rem; font-weight: 800; background: var(--input-bg); padding: 5px 12px; border-radius: 8px; color: var(--accent); border: 1px solid var(--border); margin: 8px 0; }
+    .teacher-bar { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 24px; }
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+    @media (max-width: 640px) { .stats-row { grid-template-columns: 1fr; } }
+    .stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .stat-val { font-size: 1.5rem; font-weight: 800; }
+    .stat-lbl { font-size: 0.84rem; color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 11px 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-size: 0.8rem; text-transform: uppercase; }
+    .tag-ok { background: rgba(16, 185, 129, 0.15); color: var(--accent); padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+    .tag-wait { background: rgba(245, 158, 11, 0.15); color: var(--warning); padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+    .mistake-word { display: inline-block; background: rgba(239, 68, 68, 0.15); color: var(--danger); padding: 2px 7px; border-radius: 5px; font-size: 0.8rem; margin: 2px; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo">⚡ WordSprint</a>
+    <nav class="nav-links">
+      <a href="index.html">Главная</a>
+      <a href="teachers.html" class="active">Кабинет преподавателя</a>
+      <a href="lesson.html">Пройти урок</a>
+      <a href="groups.html">Группы</a>
+      <a href="duel.html">Веб-дуэль</a>
+      <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">☀️</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>Кабинет преподавателя</h1>
+  </section>
+
+  <!-- Блок входа для неавторизованных -->
+  <div id="guestLoginBar" class="card" style="max-width: 620px; margin: 0 auto 24px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="font-size:1.05rem;">Уже подавали заявку?</h3>
+        <p style="color:var(--muted); font-size:0.88rem;">Введите код, выданный при регистрации.</p>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="loginTeacherCode" placeholder="Код партнёра" style="width: 165px; text-transform: uppercase;">
+        <button class="btn btn-sm" onclick="loginTeacher()">Войти</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Верхняя плашка профиля (показывается после входа/регистрации) -->
+  <div id="profileHeaderCard" class="teacher-bar hidden">
+    <div>
+      <div style="font-size:0.85rem; color:var(--muted);">Профиль партнёра</div>
+      <h2 id="dashTeacherName" style="font-size:1.3rem;">—</h2>
+      <div style="margin-top:4px;">
+        Ваш код: <span id="dashTeacherCode" class="code-pill" style="font-size:1rem; padding:3px 10px;">—</span>
+        <span id="dashVerifyStatus" class="tag-wait" style="margin-left:8px;">⏳ На проверке</span>
+      </div>
+      <p id="pendingNoticeText" style="color:var(--muted); font-size:0.88rem; margin-top:10px; max-width:650px;">
+        Ваша анкета и документы находятся на проверке. Как только модератор одобрит заявку, вам придёт уведомление на почту и здесь откроется конструктор уроков и журнал учеников.
+      </p>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-secondary btn-sm" onclick="copyText(currentTeacher.code, 'Код скопирован!')">📋 Копировать код</button>
+      <button class="btn btn-secondary btn-sm" onclick="logoutTeacher()">Выйти</button>
+    </div>
+  </div>
+
+    <!-- Рабочий кабинет (открывается ТОЛЬКО когда verified === true) -->
+  <div id="verifiedWorkspace" class="hidden">
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val" id="statLessonsCount">0</div><div class="stat-lbl">Создано уроков</div></div>
+      <div class="stat-box"><div class="stat-val" id="statResultsCount">0</div><div class="stat-lbl">Выполнено работ</div></div>
+      <div class="stat-box"><div class="stat-val" id="statAmbassadorProgress">0 / 10</div><div class="stat-lbl">До статуса «Амбассадор»</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom: 24px;">
+      <h2>🛠 Конструктор урока по коду</h2>
+      <p class="desc">Создайте задание со списком слов и получите короткий код для учеников.</p>
+      <label>Название урока или темы</label>
+      <input type="text" id="lessonTitle" placeholder="Введите тему урока">
+      <label>Список слов (<b>слово - перевод</b>, каждое с новой строки, минимум 4 слова)</label>
+      <textarea id="lessonWords" placeholder="word - перевод&#10;word - перевод&#10;word - перевод&#10;word - перевод"></textarea>
+      <button class="btn" id="createLessonBtn" onclick="createLesson()">✨ Сформировать код урока</button>
+
+      <div id="lessonResult" class="result-box">
+        <div style="font-weight:700; color:var(--accent);">✅ Урок сохранён!</div>
+        <div class="code-pill" id="generatedLessonCode">LESSON-000</div>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button class="btn btn-accent btn-sm" onclick="copyLessonCode()">📋 Копировать код</button>
+          <button class="btn btn-secondary btn-sm" onclick="copyLessonLink()">🔗 Копировать ссылку</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="card" style="margin-bottom: 48px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2>📊 Журнал выполнения уроков</h2>
+        <button class="btn btn-secondary btn-sm" onclick="loadTeacherData()">🔄 Обновить</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Урок</th><th>Ученик</th><th>Результат</th><th>Ошибки</th><th>Дата</th></tr></thead>
+          <tbody id="resultsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Форма регистрации (показывается только гостям) -->
+  <div id="guestRegisterCard" class="card" style="max-width: 620px; margin: 0 auto 48px;">
+    <h2>🎓 Регистрация репетитора или школы</h2>
+    <p class="desc">Заполните анкету и укажите подтверждающие документы. После проверки на почту придёт письмо об открытии кабинета.</p>
+    <label>Формат</label>
+    <select id="regRole">
+      <option value="tutor">Частный репетитор</option>
+      <option value="school">Языковая школа / курсы</option>
+    </select>
+    <label>Имя и фамилия (или официальное название школы)</label>
+    <input type="text" id="regName" placeholder="Введите имя или название">
+    <label>Email (сюда придёт уведомление об одобрении заявки)</label>
+    <input type="email" id="regEmail" placeholder="Введите ваш Email">
+    <label>Город и формат занятий</label>
+    <input type="text" id="regCity" placeholder="Город или онлайн">
+    <label>Уровень / направления обучения</label>
+    <input type="text" id="regLevel" placeholder="Уровни CEFR или программы">
+    <label>Подтверждение (для репетитора: ID сертификата WS или диплом / для школы: ИНН, ОГРН и номер лицензии)</label>
+    <input type="text" id="regProof" placeholder="Укажите документы для проверки">
+    <label>Контакт для учеников (Telegram / VK / телефон)</label>
+    <input type="text" id="regTelegram" placeholder="Контакт для связи">
+    <label>Описание</label>
+    <textarea id="regBio" style="min-height:70px; font-family:inherit;" placeholder="Кратко расскажите о себе или школе"></textarea>
+    <button class="btn" id="regTeacherBtn" onclick="registerTeacher()">🚀 Отправить заявку</button>
+  </div>
+</main>
+
+<script>
+  let currentTeacher = null, lastLessonCode = '';
+
+  function copyText(text, msg) { navigator.clipboard.writeText(text); alert(msg || 'Скопировано!'); }
+  function copyLessonCode() { copyText(lastLessonCode, `Код ${lastLessonCode} скопирован!`); }
+  function copyLessonLink() {
+    const base = window.location.protocol.startsWith('http')
+      ? `${window.location.origin}${window.location.pathname.replace('teachers.html', 'lesson.html')}`
+      : `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/lesson.html`;
+    copyText(`${base}?code=${lastLessonCode}`, 'Ссылка на урок скопирована!');
+  }
+
+  async function createLesson() {
+    const title = document.getElementById('lessonTitle').value.trim();
+    const lines = document.getElementById('lessonWords').value.trim().split('\n').map(l => l.trim()).filter(Boolean);
+    const words = [];
+    for (const line of lines) {
+      const p = line.split(/[-—–:]/);
+      if (p.length >= 2 && p[0].trim() && p.slice(1).join('-').trim()) {
+        words.push({ en: p[0].trim(), ru: p.slice(1).join('-').trim() });
+      }
+    }
+    if (!title) return alert('Введите название урока!');
+    if (words.length < 4) return alert('Добавьте минимум 4 слова!');
+
+    const btn = document.getElementById('createLessonBtn');
+    btn.disabled = true; btn.textContent = '⏳ Сохраняем...';
+    try {
+      const code = generateShortCode('LESSON');
+      await sbFetch('lessons', { method: 'POST', body: { code, teacher_code: currentTeacher.code, title, words } });
+      lastLessonCode = code;
+      document.getElementById('generatedLessonCode').textContent = code;
+      document.getElementById('lessonResult').style.display = 'block';
+      loadTeacherData();
+    } catch (e) { alert('Ошибка: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = '✨ Сформировать код урока'; }
+  }
+
+  async function registerTeacher() {
+    const role = document.getElementById('regRole').value;
+    const rawName = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const city_format = document.getElementById('regCity').value.trim();
+    const level = document.getElementById('regLevel').value.trim();
+    const proof_url = document.getElementById('regProof').value.trim();
+    const telegram = document.getElementById('regTelegram').value.trim();
+    const bio = document.getElementById('regBio').value.trim();
+    if (!rawName || !email || !telegram || !proof_url) return alert('Заполните название/имя, Email, документы и контакт!');
+
+    const name = role === 'school' ? `🏫 Школа: ${rawName}` : rawName;
+    const btn = document.getElementById('regTeacherBtn');
+    btn.disabled = true; btn.textContent = '⏳ Отправка...';
+    try {
+      const code = generateShortCode(role === 'school' ? 'SCH' : 'WS');
+      const data = await sbFetch('teachers', { method: 'POST', body: { code, name, email, city_format, level, proof_url, telegram, bio, verified: false } });
+      if (data && data[0]) {
+        localStorage.setItem('ws_teacher_code', code);
+        setActiveTeacher(data[0]);
+      }
+    } catch (e) { alert('Ошибка: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = '🚀 Отправить заявку'; }
+  }
+
+  async function loginTeacher() {
+    const code = document.getElementById('loginTeacherCode').value.trim().toUpperCase();
+    if (!code) return alert('Введите код!');
+    try {
+      const rows = await sbFetch('teachers', { query: `code=eq.${encodeURIComponent(code)}` });
+      if (!rows || rows.length === 0) return alert('Код не найден.');
+      localStorage.setItem('ws_teacher_code', code);
+      setActiveTeacher(rows[0]);
+    } catch (e) { alert('Ошибка: ' + e.message); }
+  }
+
+  function logoutTeacher() {
+    localStorage.removeItem('ws_teacher_code'); currentTeacher = null;
+    document.getElementById('profileHeaderCard').classList.add('hidden');
+    document.getElementById('verifiedWorkspace').classList.add('hidden');
+    document.getElementById('guestLoginBar').classList.remove('hidden');
+    document.getElementById('guestRegisterCard').classList.remove('hidden');
+  }
+
+  function setActiveTeacher(t) {
+    currentTeacher = t;
+    document.getElementById('guestLoginBar').classList.add('hidden');
+    document.getElementById('guestRegisterCard').classList.add('hidden');
+    document.getElementById('profileHeaderCard').classList.remove('hidden');
+
+    document.getElementById('dashTeacherName').textContent = t.name;
+    document.getElementById('dashTeacherCode').textContent = t.code;
+
+    const badge = document.getElementById('dashVerifyStatus');
+    const notice = document.getElementById('pendingNoticeText');
+    const workspace = document.getElementById('verifiedWorkspace');
+
+    if (t.verified) {
+      badge.className = 'tag-ok';
+      badge.textContent = '✅ Подтверждён';
+      notice.classList.add('hidden');
+      workspace.classList.remove('hidden');
+      loadTeacherData();
+    } else {
+      badge.className = 'tag-wait';
+      badge.textContent = '⏳ На проверке';
+      notice.classList.remove('hidden');
+      workspace.classList.add('hidden');
+    }
+  }
+
+  async function loadTeacherData() {
+    if (!currentTeacher || !currentTeacher.verified) return;
+    try {
+      const lessons = await sbFetch('lessons', { query: `teacher_code=eq.${encodeURIComponent(currentTeacher.code)}&order=created_at.desc` });
+      document.getElementById('statLessonsCount').textContent = lessons.length;
+      let allResults = [];
+      if (lessons.length > 0) {
+        const codes = lessons.map(l => l.code).join(',');
+        allResults = await sbFetch('lesson_results', { query: `lesson_code=in.(${codes})&order=created_at.desc` });
+      }
+      const unique = new Set(allResults.map(r => r.student_name.toLowerCase()));
+      document.getElementById('statResultsCount').textContent = allResults.length;
+      document.getElementById('statAmbassadorProgress').textContent = `${Math.max(unique.size, currentTeacher.students_count || 0)} / 10`;
+
+      const tbody = document.getElementById('resultsTableBody');
+      if (!allResults.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="color:var(--muted); text-align:center;">Пока нет выполненных работ</td></tr>';
+        return;
+      }
+      tbody.innerHTML = allResults.map(r => {
+        const pct = Math.round((r.score / r.total) * 100);
+        const mHtml = (r.mistakes && r.mistakes.length) ? r.mistakes.map(m => `<span class="mistake-word">${m}</span>`).join('') : '<span style="color:var(--accent);">Без ошибок</span>';
+        return `<tr><td><b>${r.lesson_code}</b></td><td>${r.student_name}</td><td><span class="tag-ok">${r.score}/${r.total} (${pct}%)</span></td><td>${mHtml}</td><td style="color:var(--muted);">${new Date(r.created_at).toLocaleDateString('ru-RU')}</td></tr>`;
+      }).join('');
+    } catch (e) { console.error(e); }
+  }
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    const saved = localStorage.getItem('ws_teacher_code');
+    if (saved) { document.getElementById('loginTeacherCode').value = saved; await loginTeacher(); }
+  });
+</script>
+</body>
+</html>
