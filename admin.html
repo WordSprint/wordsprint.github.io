@@ -146,6 +146,11 @@
         </table>
       </div>
     </div>
+        <div class="card">
+      <h2>💡 Идеи и пожелания от репетиторов и школ</h2>
+      <div id="partnerIdeasAdminList" style="color:var(--muted); font-size:0.9rem;">Загрузка...</div>
+    </div>
+
   </div>
 </main>
 
@@ -164,13 +169,14 @@
   }
   window.addEventListener('DOMContentLoaded', () => { if (sessionStorage.getItem('ws_admin') === '1') openPanel(); });
 
-  async function loadAllAdmin() {
+   async function loadAllAdmin() {
     try {
-      const [teachers, students, lessons, certs] = await Promise.all([
+      const [teachers, students, lessons, certs, ideas] = await Promise.all([
         sbFetch('teachers', { query: 'order=created_at.desc' }),
         sbFetch('teacher_students', { query: 'select=id' }),
         sbFetch('lessons', { query: 'select=id' }),
-        sbFetch('certificates', { query: 'order=issued_at.desc' })
+        sbFetch('certificates', { query: 'order=issued_at.desc' }),
+        sbFetch('partner_ideas', { query: 'order=created_at.desc' })
       ]);
 
       document.getElementById('stTeachers').textContent = teachers.length;
@@ -192,10 +198,11 @@
             <td>${t.city_format || '—'}<br><small style="color:var(--muted);">${t.level || ''}</small></td>
             <td style="max-width:210px; word-break:break-all;">${t.proof_url || '—'}</td>
             <td>${t.telegram || '—'}<br><small style="color:#a5b4fc;">${t.email || ''}</small></td>
-            <td>${stHtml}</td>
+            <td>${stHtml}<br><small style="color:#fbbf24;">${t.is_plus ? '✨ Плюс активен' : ''}</small></td>
             <td style="display:flex; gap:5px; flex-wrap:wrap;">
               <button class="btn btn-sm btn-ok" onclick="setTeacherStatus('${t.id}', 'approved')">Одобрить</button>
               <button class="btn btn-sm btn-warn" onclick="setTeacherStatus('${t.id}', 'rejected')">Отклонить</button>
+              <button class="btn btn-sm" onclick="togglePlusStatus('${t.id}', ${!!t.is_plus})">${t.is_plus ? 'Снять Плюс' : '✨ Дать Плюс'}</button>
               <button class="btn btn-sm btn-del" onclick="deleteTeacher('${t.id}')">Удалить</button>
             </td>
           </tr>
@@ -219,8 +226,24 @@
           </tr>
         `;
       }).join('') : '<tr><td colspan="5" style="color:var(--muted); text-align:center;">Сертификатов нет</td></tr>';
+
+      const ideasBox = document.getElementById('partnerIdeasAdminList');
+      if (ideasBox) {
+        ideasBox.innerHTML = ideas && ideas.length ? ideas.map(i => `
+          <div style="padding:10px 14px; background:#0d1322; border:1px solid var(--border); border-radius:10px; margin-bottom:8px;">
+            <div style="font-size:0.82rem; color:#a5b4fc; margin-bottom:4px;"><b>${i.teacher_name}</b> (${i.teacher_code}) • ${new Date(i.created_at).toLocaleDateString('ru-RU')}</div>
+            <div style="color:var(--text);">${i.idea_text}</div>
+          </div>
+        `).join('') : 'Пока нет новых предложений от партнёров.';
+      }
     } catch (e) { alert('Ошибка загрузки: ' + e.message); }
   }
+
+  async function togglePlusStatus(id, currentState) {
+    await sbFetch('teachers', { method: 'PATCH', query: `id=eq.${id}`, body: { is_plus: !currentState } });
+    loadAllAdmin();
+  }
+
 
   async function setTeacherStatus(id, newStatus) {
     const isApproved = newStatus === 'approved';

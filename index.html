@@ -92,6 +92,8 @@
       <a href="#features">Возможности</a>
       <a href="#cefr">Шкала CEFR</a>
       <a href="#verify">Сертификат</a>
+            <a href="student.html" style="color:var(--accent); font-weight:600;">Кабинет ученика</a>
+
       <a href="teachers.html" style="color:var(--primary); font-weight:600;">Кабинет преподавателя</a>
       <a href="#" onclick="openLessonModal(); return false;">Пройти урок</a>
       <a href="groups.html">Группы</a>
@@ -207,11 +209,12 @@
         <div style="font-size:1.6rem;">📚</div>
         <h3>Уроки и прикрепление</h3>
         <p style="margin-bottom:14px;">Пройдите домашнее задание по коду или прикрепитесь к своему репетитору / школе.</p>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <a href="student.html" class="btn btn-sm">Кабинет ученика</a>
           <button class="btn btn-secondary btn-sm" onclick="openLessonModal()">Пройти урок</button>
-          <button class="btn btn-sm" onclick="openAttachModal()">Прикрепиться по коду</button>
           <a href="groups.html" class="btn btn-secondary btn-sm">Группы</a>
         </div>
+
       </div>
       <div class="card">
         <div style="font-size:1.6rem;">⚡</div>
@@ -511,35 +514,41 @@
     } catch (e) { box.innerHTML = '⚠️ Ошибка соединения с базой: ' + e.message; }
   }
 
-  async function loadVerifiedTeachers() {
+   async function loadVerifiedTeachers() {
     try {
-      const list = await sbFetch('teachers', { query: 'verified=eq.true&order=created_at.desc' });
+      const [list, reviews] = await Promise.all([
+        sbFetch('teachers', { query: 'verified=eq.true&order=created_at.desc' }),
+        sbFetch('teacher_reviews', { query: 'order=created_at.desc' })
+      ]);
       const grid = document.getElementById('verifiedTeachersGrid');
       if (!list || !list.length) return;
-      grid.innerHTML = list.map(t => `
-        <div class="card" style="border-color:rgba(16,185,129,0.4);">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="background:rgba(16,185,129,0.15); color:var(--accent); padding:3px 8px; border-radius:6px; font-size:0.78rem; font-weight:700;">✅ Проверен</span>
-            <span style="font-family:monospace; color:var(--muted); font-size:0.85rem;">${t.code}</span>
+
+      grid.innerHTML = list.map(t => {
+        const tRevs = (reviews || []).filter(r => r.teacher_code === t.code);
+        const revHtml = tRevs.length
+          ? `<div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border); font-size:0.84rem;">
+               <div style="font-weight:700; color:var(--primary); margin-bottom:4px;">Отзывы учеников (${tRevs.length}):</div>
+               <div style="color:var(--muted);">«${tRevs.comment}» — <b>${tRevs.student_name}</b> (${tRevs.rating}/5)</div>
+             </div>`
+          : '';
+
+        return `
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="background:rgba(16,185,129,0.15); color:var(--accent); padding:3px 8px; border-radius:6px; font-size:0.78rem; font-weight:700;">Проверен</span>
+              <span style="font-family:monospace; color:var(--muted); font-size:0.85rem;">${t.code}</span>
+            </div>
+            <h3>${t.name}</h3>
+            <div style="font-size:0.85rem; color:var(--primary); margin-bottom:8px;">${t.level || ''} • ${t.city_format || 'Онлайн'}</div>
+            <p style="margin-bottom:12px;">${t.bio || 'Партнёр образовательной платформы WordSprint.'}</p>
+            <div style="font-size:0.88rem; color:var(--accent); font-weight:600;">Связаться: ${t.telegram}</div>
+            ${revHtml}
           </div>
-          <h3>${t.name}</h3>
-          <div style="font-size:0.85rem; color:var(--primary); margin-bottom:8px;">${t.level || ''} • ${t.city_format || 'Онлайн'}</div>
-          <p style="margin-bottom:14px;">${t.bio || 'Партнёр образовательной платформы WordSprint.'}</p>
-          <div style="font-size:0.88rem; color:var(--accent); font-weight:600;">Связаться: ${t.telegram}</div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     } catch (e) { console.error(e); }
   }
 
-  window.addEventListener('DOMContentLoaded', () => {
-    renderStory();
-    loadVerifiedTeachers();
-    const certParam = new URLSearchParams(window.location.search).get('cert');
-    if (certParam) {
-      document.getElementById('certInput').value = certParam.toUpperCase();
-      verifyCertificate();
-    }
-  });
 </script>
 </body>
 </html>
