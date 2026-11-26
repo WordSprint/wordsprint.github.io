@@ -19,7 +19,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
     a { color: inherit; text-decoration: none; }
-    .container { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+    .container { max-width: 1020px; margin: 0 auto; padding: 0 20px; }
     header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
     .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; flex-wrap: wrap; gap: 10px; }
     .logo { font-weight: 800; font-size: 1.25rem; }
@@ -30,6 +30,11 @@
     h1 { font-size: 2rem; font-weight: 800; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 20px 0; }
     @media (max-width: 780px) { .grid-2 { grid-template-columns: 1fr; } }
+    .stats-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+    @media (max-width: 640px) { .stats-3 { grid-template-columns: 1fr; } }
+    .stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .stat-val { font-size: 1.55rem; font-weight: 800; }
+    .stat-lbl { font-size: 0.84rem; color: var(--muted); }
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 20px; }
     .card h2 { font-size: 1.18rem; margin-bottom: 8px; }
     .desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 14px; }
@@ -71,7 +76,6 @@
     </nav>
   </div>
 </header>
-
 <main class="container" style="padding-bottom: 60px;">
   <section class="hero">
     <h1>Кабинет ученика</h1>
@@ -102,19 +106,27 @@
       <button class="btn btn-accent" style="width:100%; margin-top:16px;" id="regStudentBtn" onclick="registerStudent()">Прикрепиться и получить код</button>
     </div>
   </div>
+
   <div id="studentDashboard" class="hidden">
     <div class="profile-bar">
       <div>
         <div style="font-size:0.84rem; color:var(--muted);">Преподаватель / Школа: <b id="stTeacherName">—</b> (<span id="stTeacherCode">—</span>)</div>
         <h2 id="stFullName" style="font-size:1.35rem; margin:2px 0;">—</h2>
-        <div style="font-size:0.88rem; color:var(--muted);">
+        <div style="font-size:0.88rem; color:var(--muted); margin-top:4px;">
           Ваш личный код: <span class="code-pill" id="stPersonalCode">ST-0000</span> • Группа: <b id="stGroupName">Общая группа</b>
         </div>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a href="groups.html" class="btn btn-secondary btn-sm">👥 Учебные группы</a>
         <button class="btn btn-secondary btn-sm" onclick="loadStudentPortal()">🔄 Обновить</button>
         <button class="btn btn-secondary btn-sm" onclick="logoutStudent()">Выйти</button>
       </div>
+    </div>
+
+    <div class="stats-3">
+      <div class="stat-box"><div class="stat-val" id="stDoneCount">0 / 0</div><div class="stat-lbl">Выполнено домашних заданий</div></div>
+      <div class="stat-box"><div class="stat-val" id="stAvgScore">—</div><div class="stat-lbl">Средний результат</div></div>
+      <div class="stat-box"><div class="stat-val" id="stAwardsCount">0</div><div class="stat-lbl">Получено грамот</div></div>
     </div>
 
     <div id="teacherAnnouncementBox" class="notice-box hidden">
@@ -174,8 +186,8 @@
       if (!teachers || !teachers.length) {
         return alert('Преподаватель или школа с таким кодом не найдены.');
       }
+      const teacherObj = teachers;
 
-      // Проверка на дубликат по имени или Email у этого преподавателя
       const existing = await sbFetch('teacher_students', {
         query: `teacher_code=eq.${encodeURIComponent(teacher_code)}&or=(student_name.ilike.${encodeURIComponent(student_name)},student_email.ilike.${encodeURIComponent(student_email)})`
       });
@@ -187,7 +199,7 @@
           await sbFetch('teacher_students', { method: 'PATCH', query: `id=eq.${found.id}`, body: { student_code: code } });
           found.student_code = code;
         }
-        saveSessionAndOpen(found, teachers);
+        saveSessionAndOpen(found, teacherObj);
         alert(`Вы уже были прикреплены! Входим в ваш кабинет. Ваш личный код ученика: ${found.student_code}`);
         return;
       }
@@ -198,8 +210,8 @@
         body: { teacher_code, student_name, student_email, student_contact, student_code, group_name: 'Общая группа' }
       });
 
-      if (created && created) {
-        saveSessionAndOpen(created, teachers);
+      if (created && created.length > 0) {
+        saveSessionAndOpen(created, teacherObj);
         alert(`Вы успешно прикреплены! Запишите ваш личный код ученика для входа: ${student_code}`);
       }
     } catch (e) {
@@ -236,10 +248,10 @@
     document.getElementById('studentAuthGrid').classList.add('hidden');
     document.getElementById('studentDashboard').classList.remove('hidden');
 
-    document.getElementById('stTeacherName').textContent = teacher.name;
-    document.getElementById('stTeacherCode').textContent = teacher.code;
-    document.getElementById('stFullName').textContent = student.student_name;
-    document.getElementById('stPersonalCode').textContent = student.student_code;
+    document.getElementById('stTeacherName').textContent = teacher.name || '—';
+    document.getElementById('stTeacherCode').textContent = teacher.code || '—';
+    document.getElementById('stFullName').textContent = student.student_name || '—';
+    document.getElementById('stPersonalCode').textContent = student.student_code || '—';
     document.getElementById('stGroupName').textContent = student.group_name || 'Общая группа';
 
     const annBox = document.getElementById('teacherAnnouncementBox');
@@ -268,15 +280,25 @@
         sbFetch('student_awards', { query: `student_code=eq.${encodeURIComponent(activeStudent.student_code)}&order=created_at.desc` })
       ]);
 
-      completedLessonCodes = new Set(results.map(r => r.lesson_code));
+      completedLessonCodes = new Set((results || []).map(r => r.lesson_code));
 
-      // Фильтруем уроки, назначенные всем, группе ученика или лично ему
       const myGroup = activeStudent.group_name || 'Общая группа';
-      const myLessons = lessons.filter(l => {
+      const myLessons = (lessons || []).filter(l => {
         const targets = Array.isArray(l.target_students) ? l.target_students : [];
         if (targets.length > 0) return targets.includes(activeStudent.student_code);
         return !l.target_group || l.target_group === 'Все ученики' || l.target_group === myGroup;
       });
+
+      const doneCount = myLessons.filter(l => completedLessonCodes.has(l.code)).length;
+      document.getElementById('stDoneCount').textContent = `${doneCount} / ${myLessons.length}`;
+      document.getElementById('stAwardsCount').textContent = (awards || []).length;
+
+      if (results && results.length > 0) {
+        const avg = Math.round(results.reduce((acc, r) => acc + (r.score / r.total) * 100, 0) / results.length);
+        document.getElementById('stAvgScore').textContent = `${avg}%`;
+      } else {
+        document.getElementById('stAvgScore').textContent = '—';
+      }
 
       const lList = document.getElementById('studentLessonsList');
       if (!myLessons.length) {
@@ -302,9 +324,8 @@
         }).join('');
       }
 
-      // Грамоты ученика
       const aList = document.getElementById('studentAwardsList');
-      if (!awards.length) {
+      if (!awards || !awards.length) {
         aList.innerHTML = '<p style="color:var(--muted); font-size:0.9rem;">Пока нет выданных грамот.</p>';
       } else {
         aList.innerHTML = awards.map(a => `
@@ -317,9 +338,7 @@
           </div>
         `).join('');
       }
-    } catch (e) {
-      console.error(e);
-    }
+    } catch (e) { console.error(e); }
   }
 
   function downloadAward(studentName, title, teacherName, dateStr) {
@@ -328,27 +347,15 @@
     const grad = ctx.createLinearGradient(0, 0, 900, 600);
     grad.addColorStop(0, '#0f172a'); grad.addColorStop(1, '#1e1b4b');
     ctx.fillStyle = grad; ctx.fillRect(0, 0, 900, 600);
-
     ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 6; ctx.strokeRect(24, 24, 852, 552);
     ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 2; ctx.strokeRect(36, 36, 828, 528);
-
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 26px system-ui';
-    ctx.fillText('⚡ WORDSPRINT • ОФИЦИАЛЬНАЯ ГРАМОТА', 450, 105);
-
-    ctx.fillStyle = '#94a3b8'; ctx.font = '22px system-ui';
-    ctx.fillText('Настоящим документом награждается', 450, 175);
-
-    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 48px system-ui';
-    ctx.fillText(studentName, 450, 245);
-
-    ctx.fillStyle = '#34d399'; ctx.font = 'bold 30px system-ui';
-    ctx.fillText(title, 450, 325);
-
-    ctx.fillStyle = '#cbd5e1'; ctx.font = '22px system-ui';
-    ctx.fillText(`Выдал: ${teacherName}`, 450, 425);
-    ctx.fillStyle = '#94a3b8'; ctx.font = '19px system-ui';
-    ctx.fillText(`Дата выдачи: ${dateStr}   •   wordsprint.github.io`, 450, 475);
+    ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 26px system-ui'; ctx.fillText('⚡ WORDSPRINT • ОФИЦИАЛЬНАЯ ГРАМОТА', 450, 105);
+    ctx.fillStyle = '#94a3b8'; ctx.font = '22px system-ui'; ctx.fillText('Настоящим документом награждается', 450, 175);
+    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 48px system-ui'; ctx.fillText(studentName, 450, 245);
+    ctx.fillStyle = '#34d399'; ctx.font = 'bold 30px system-ui'; ctx.fillText(title, 450, 325);
+    ctx.fillStyle = '#cbd5e1'; ctx.font = '22px system-ui'; ctx.fillText(`Выдал: ${teacherName}`, 450, 425);
+    ctx.fillStyle = '#94a3b8'; ctx.font = '19px system-ui'; ctx.fillText(`Дата выдачи: ${dateStr}   •   wordsprint.github.io`, 450, 475);
 
     const link = document.createElement('a');
     link.download = `gramota-${studentName}.png`;
@@ -372,9 +379,7 @@
       });
       document.getElementById('reviewComment').value = '';
       alert('Спасибо! Ваш честный отзыв опубликован.');
-    } catch (e) {
-      alert('Ошибка отправки отзыва: ' + e.message);
-    }
+    } catch (e) { alert('Ошибка отправки отзыва: ' + e.message); }
   }
 
   window.addEventListener('DOMContentLoaded', async () => {

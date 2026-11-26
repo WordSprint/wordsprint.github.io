@@ -243,8 +243,17 @@
         <button class="btn btn-accent" id="publishLessonBtn" onclick="saveLesson('active')">🚀 Опубликовать урок</button>
       </div>
 
-      <div id="lessonPublishedBox" class="hidden" style="margin-top:16px; padding:16px; border-radius:12px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.35);">
-        <div style="font-weight:700; color:var(--accent); margin-bottom:6px;">✅ Урок опубликован! Код: <span class="code-pill" id="publishedLessonCode">—</span></div>
+            <div id="lessonPublishedBox" class="hidden" style="margin-top:16px; padding:16px; border-radius:12px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.35);">
+        <div style="font-weight:700; color:var(--accent); margin-bottom:8px;">✅ Урок опубликован! Код: <span class="code-pill" id="publishedLessonCode">—</span></div>
+        <label style="margin-top:4px;">Текст сообщения для учеников (можете отредактировать перед отправкой):</label>
+        <textarea id="publishedCustomMessage" style="min-height:95px; margin-bottom:10px; font-family:inherit;"></textarea>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-accent btn-sm" onclick="copyText(lastPublishedCode, 'Код скопирован!')">📋 Код</button>
+          <button class="btn btn-secondary btn-sm" onclick="copyPublishedMessage()">💬 Скопировать текст для чата</button>
+          <button class="btn btn-secondary btn-sm" onclick="emailLessonToStudents()">✉️ Отправить на Email ученикам</button>
+        </div>
+      </div>
+
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn btn-accent btn-sm" onclick="copyText(lastPublishedCode, 'Код скопирован!')">📋 Код</button>
           <button class="btn btn-secondary btn-sm" onclick="copyPublishedMessage()">💬 Сообщение для чата</button>
@@ -316,14 +325,18 @@
       </div>
     </div>
     <!-- Вкладка 5: Управление школой -->
-    <div id="paneSchool" class="card hidden">
+       <div id="paneSchool" class="card hidden">
       <h2>🏫 Преподаватели школы</h2>
-      <p class="desc">Добавляйте учителей вашей школы для ведения единого реестра и общей базы уроков.</p>
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
-        <input type="text" id="staffNameInput" placeholder="Имя и фамилия преподавателя" style="flex:1; min-width:180px;">
-        <input type="text" id="staffSpecInput" placeholder="Направление (например: ЕГЭ / Дети)" style="flex:1; min-width:180px;">
-        <button class="btn btn-sm" onclick="addSchoolStaff()">+ Добавить преподавателя</button>
+      <p class="desc">Добавляйте учителей вашей школы, назначайте им классы/группы и ведите единую базу уроков.</p>
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:8px; margin-bottom:14px;">
+        <input type="text" id="staffNameInput" placeholder="Имя и фамилия преподавателя">
+        <input type="text" id="staffSpecInput" placeholder="Специализация (ЕГЭ, Дети, B1)">
+        <select id="staffGroupSelect"><option value="Общая группа">Общая группа</option></select>
+        <button class="btn btn-sm" onclick="addSchoolStaff()">+ Добавить</button>
       </div>
+      <div id="schoolStaffList"></div>
+    </div>
+
       <div id="schoolStaffList"></div>
     </div>
 

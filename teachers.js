@@ -2,7 +2,6 @@ let currentTeacher = null;
 let selectedMode = 'translate';
 let lastPublishedCode = '';
 let lastPublishedTitle = '';
-let lastPublishedDeadline = '';
 let lastPublishedGroup = 'Все ученики';
 let cachedLessons = [];
 let cachedStudents = [];
@@ -38,9 +37,9 @@ async function registerTeacher() {
       method: 'POST',
       body: { code, name, email, city_format, level, proof_url, telegram, bio, verified: false, status: 'pending', is_plus: false }
     });
-    if (data && data[0]) {
+    if (data && data.length > 0) {
       localStorage.setItem('ws_teacher_code', code);
-      setActiveTeacher(data[0]);
+      setActiveTeacher(data);
     }
   } catch (e) {
     alert('Ошибка регистрации: ' + e.message);
@@ -56,7 +55,7 @@ async function loginTeacher() {
     const rows = await sbFetch('teachers', { query: `code=eq.${encodeURIComponent(code)}` });
     if (!rows || !rows.length) return alert('Партнёр с таким кодом не найден.');
     localStorage.setItem('ws_teacher_code', code);
-    setActiveTeacher(rows[0]);
+    setActiveTeacher(rows);
   } catch (e) {
     alert('Ошибка входа: ' + e.message);
   }
@@ -90,14 +89,18 @@ function setActiveTeacher(t) {
 
   if (t.status === 'approved' || t.verified) {
     badge.className = 'tag-ok';
-    badge.textContent = '✅ Подтверждён';
+    badge.textContent = t.is_plus ? '✅ Подтверждён • ✨ Партнёр Плюс' : '✅ Подтверждён';
     notice.classList.add('hidden');
     workspace.classList.remove('hidden');
     document.getElementById('bonusModalBtn').classList.remove('hidden');
     if (isSchool) document.getElementById('tabBtnSchool').classList.remove('hidden');
+
     if (t.is_plus) {
       document.getElementById('customCodeWrap').classList.remove('hidden');
       document.getElementById('exportCsvBtn').classList.remove('hidden');
+    } else {
+      document.getElementById('customCodeWrap').classList.add('hidden');
+      document.getElementById('exportCsvBtn').classList.add('hidden');
     }
 
     document.getElementById('profileAnnouncement').value = t.announcement || '';
@@ -108,7 +111,7 @@ function setActiveTeacher(t) {
 
     renderGroupSelectors();
     renderSchoolStaff();
-    initWordRows();
+    restoreDraftOrInit();
     loadTeacherData();
   } else if (t.status === 'rejected') {
     badge.className = 'tag-rej';
@@ -140,8 +143,8 @@ function switchWorkspaceTab(tab) {
     document.getElementById(btnId).classList.remove('active');
     document.getElementById(paneId).classList.add('hidden');
   });
-  document.getElementById(map[tab][0]).classList.add('active');
-  document.getElementById(map[tab][1]).classList.remove('hidden');
+  document.getElementById(map[tab]).classList.add('active');
+  document.getElementById(map[tab]).classList.remove('hidden');
 }
 
 function selectLessonMode(mode) {
@@ -149,6 +152,34 @@ function selectLessonMode(mode) {
   document.querySelectorAll('.mode-card').forEach(c => {
     c.classList.toggle('active', c.dataset.mode === mode);
   });
+  autoSaveDraft();
+}
+
+function autoSaveDraft() {
+  if (!currentTeacher || editingLessonId) return;
+  const draft = collectEditorData();
+  localStorage.setItem(`ws_draft_${currentTeacher.code}`, JSON.stringify(draft));
+}
+
+function restoreDraftOrInit() {
+  const raw = localStorage.getItem(`ws_draft_${currentTeacher.code}`);
+  if (raw) {
+    try {
+      const d = JSON.parse(raw);
+      if (d.title || (d.words && d.words.length > 0)) {
+        document.getElementById('lessonTitle').value = d.title || '';
+        document.getElementById('lessonDeadline').value = d.deadline || '';
+        document.getElementById('lessonMediaUrl').value = d.media_url || '';
+        document.getElementById('lessonInstruction').value = (d.settings && d.settings.instruction) || '';
+        selectLessonMode(d.mode || 'translate');
+        document.getElementById('wordRowsContainer').innerHTML = '';
+        (d.words || []).forEach(w => addWordRow(w.en, w.ru, w.hint || '', w.img || ''));
+        while (document.querySelectorAll('#wordRowsContainer .word-row').length < 4) addWordRow();
+        return;
+      }
+    } catch (e) { console.error(e); }
+  }
+  initWordRows();
 }
 
 function initWordRows() {
@@ -176,28 +207,75 @@ function addWordRow(en = '', ru = '', hint = '', img = '') {
     <input type="text" class="w-hint" placeholder="Пример предложения (авто-пропуск)" value="${hint}">
     <div class="row-actions">
       <button type="button" class="btn btn-secondary btn-sm" onclick="speakPreviewWord(this)" title="Послушать">🔊</button>
-      <button type="button" class="btn btn-secondary btn-sm" onclick="attachWordImage(this)" title="Картинка к слову">${img ? '✅' : '🖼️'}</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="triggerWordImageUpload(this)" title="Загрузить фото к слову">${img ? '✅' : '🖼️'}</button>
+      <input type="file" accept="image/*" class="hidden w-img-file" onchange="uploadWordImageFile(this)">
       <button type="button" class="btn btn-secondary btn-sm" onclick="saveWordToBank(this)" title="В мой словарь">★</button>
-      <button type="button" class="btn btn-del btn-sm" onclick="this.closest('.word-row').remove()" title="Удалить">✕</button>
+      <button type="button" class="btn btn-del btn-sm" onclick="this.closest('.word-row').remove(); autoSaveDraft();" title="Удалить">✕</button>
     </div>
   `;
+
+  row.querySelectorAll('input[type="text"]').forEach(inp => {
+    inp.addEventListener('input', autoSaveDraft);
+  });
+
   const ruInput = row.querySelector('.w-ru');
   ruInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' || e.keyCode === 13) {
       e.preventDefault();
       const newRow = addWordRow();
-      newRow.querySelector('.w-en').focus();
+      const nextEn = newRow.querySelector('.w-en');
+      if (nextEn) nextEn.focus();
+      autoSaveDraft();
     }
   });
+
   box.appendChild(row);
   return row;
 }
-async function attachWordImage(btn) {
+function triggerWordImageUpload(btn) {
   const row = btn.closest('.word-row');
-  const url = prompt('Вставьте ссылку на картинку для этого слова (или оставьте пустым, чтобы убрать):', row.dataset.img || '');
-  if (url === null) return;
-  row.dataset.img = url.trim();
-  btn.textContent = url.trim() ? '✅' : '🖼️';
+  if (row.dataset.img && confirm('У этого слова уже есть картинка. Удалить её? (Нажмите «Отмена», чтобы заменить на новую)')) {
+    row.dataset.img = '';
+    btn.textContent = '🖼️';
+    autoSaveDraft();
+    return;
+  }
+  row.querySelector('.w-img-file').click();
+}
+
+async function uploadWordImageFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 15 * 1024 * 1024) return alert('Картинка не должна превышать 15 МБ.');
+
+  const row = input.closest('.word-row');
+  const btn = row.querySelector('button[title="Загрузить фото к слову"]');
+  btn.textContent = '⏳';
+
+  try {
+    const ext = file.name.split('.').pop();
+    const fileName = `word_${currentTeacher.code}_${Date.now()}.${ext}`;
+    const storageRoot = WS_CONFIG.SUPABASE_URL.replace('/rest/v1/', '/storage/v1');
+    const uploadUrl = `${storageRoot}/object/lesson-media/${fileName}`;
+
+    const res = await fetch(uploadUrl, {
+      method: 'POST',
+      headers: {
+        'apikey': WS_CONFIG.SUPABASE_KEY,
+        'Authorization': `Bearer ${WS_CONFIG.SUPABASE_KEY}`,
+        'Content-Type': file.type || 'image/jpeg'
+      },
+      body: file
+    });
+    if (!res.ok) throw new Error(await res.text());
+
+    row.dataset.img = `${storageRoot}/object/public/lesson-media/${fileName}`;
+    btn.textContent = '✅';
+    autoSaveDraft();
+  } catch (e) {
+    btn.textContent = '🖼️';
+    alert('Ошибка загрузки картинки: ' + e.message);
+  }
 }
 
 async function saveWordToBank(btn) {
@@ -236,7 +314,10 @@ function openSavedWordsModal() {
 
 function insertSavedWord(idx) {
   const w = currentTeacher.saved_words[idx];
-  if (w) addWordRow(w.en, w.ru, w.hint || '');
+  if (w) {
+    addWordRow(w.en, w.ru, w.hint || '');
+    autoSaveDraft();
+  }
 }
 
 function toggleBulkImport() {
@@ -267,8 +348,8 @@ function applyBulkImport() {
   parsed.forEach(w => addWordRow(w.en, w.ru, ''));
   document.getElementById('bulkWordsText').value = '';
   document.getElementById('bulkImportBox').classList.add('hidden');
+  autoSaveDraft();
 }
-
 async function uploadLessonMedia(input) {
   const file = input.files[0];
   if (!file) return;
@@ -297,6 +378,7 @@ async function uploadLessonMedia(input) {
     const publicUrl = `${storageRoot}/object/public/lesson-media/${fileName}`;
     document.getElementById('lessonMediaUrl').value = publicUrl;
     statusEl.textContent = `✅ Файл загружен: ${file.name}`;
+    autoSaveDraft();
   } catch (e) {
     statusEl.textContent = '';
     alert('Ошибка загрузки файла: ' + e.message);
@@ -323,6 +405,7 @@ function addMediaQuestionRow(qText = '', opts = ['', '', ''], correctIdx = 0) {
   `;
   box.appendChild(div);
 }
+
 function collectEditorData() {
   const title = document.getElementById('lessonTitle').value.trim();
   const target_group = document.getElementById('lessonTargetGroup').value;
@@ -378,20 +461,24 @@ async function saveLesson(status) {
       await sbFetch('lessons', { method: 'POST', body: { ...data, code, teacher_code: currentTeacher.code, lesson_status: status } });
     }
 
+    localStorage.removeItem(`ws_draft_${currentTeacher.code}`);
     lastPublishedCode = code;
     lastPublishedTitle = data.title;
-    lastPublishedDeadline = data.deadline;
     lastPublishedGroup = data.target_group;
 
     if (status === 'active') {
+      const base = WS_CONFIG.SITE_URL.replace(/\/$/, '');
+      const dl = data.deadline ? `\n⏰ Срок сдачи: ${data.deadline}` : '';
+      const defaultMsg = `📚 Новое домашнее задание в WordSprint от ${currentTeacher.name}!\n📝 Тема: «${data.title}»\n🔑 Код урока: ${code}${dl}\n🔗 Пройти урок: ${base}/lesson.html?code=${code}`;
       document.getElementById('publishedLessonCode').textContent = code;
+      document.getElementById('publishedCustomMessage').value = defaultMsg;
       document.getElementById('lessonPublishedBox').classList.remove('hidden');
     } else {
       alert('Урок сохранён в черновики!');
     }
 
     resetEditorForm();
-    loadTeacherData();
+    await loadTeacherData();
   } catch (e) {
     alert('Ошибка сохранения урока: ' + e.message);
   }
@@ -417,22 +504,18 @@ async function previewLessonAsStudent() {
 }
 
 function copyPublishedMessage() {
-  const base = WS_CONFIG.SITE_URL.replace(/\/$/, '');
-  const dl = lastPublishedDeadline ? `\n⏰ Срок сдачи: ${lastPublishedDeadline}` : '';
-  const msg = `📚 Новое домашнее задание в WordSprint!\n📝 Тема: «${lastPublishedTitle}»\n🔑 Код урока: ${lastPublishedCode}${dl}\n🔗 Открыть: ${base}/lesson.html?code=${lastPublishedCode}`;
-  copyText(msg, 'Готовое сообщение для чата скопировано!');
+  const msg = document.getElementById('publishedCustomMessage').value.trim();
+  copyText(msg, 'Текст сообщения скопирован!');
 }
 
 function emailLessonToStudents() {
   const target = cachedStudents.filter(s => s.student_email && (lastPublishedGroup === 'Все ученики' || s.group_name === lastPublishedGroup));
   const emails = target.map(s => s.student_email).join(',');
-  const base = WS_CONFIG.SITE_URL.replace(/\/$/, '');
-  const dl = lastPublishedDeadline ? `\nСрок выполнения: ${lastPublishedDeadline}` : '';
-  const subj = encodeURIComponent(`WordSprint: Новое задание «${lastPublishedTitle}» (${lastPublishedCode})`);
-  const body = encodeURIComponent(`Здравствуйте!\n\nВам назначено новое задание от ${currentTeacher.name}.\nТема: ${lastPublishedTitle}\nКод урока: ${lastPublishedCode}${dl}\nПройти урок можно в кабинете ученика или по ссылке: ${base}/lesson.html?code=${lastPublishedCode}`);
+  const msg = document.getElementById('publishedCustomMessage').value.trim();
+  const subj = encodeURIComponent(`WordSprint: Задание «${lastPublishedTitle}» (${lastPublishedCode})`);
+  const body = encodeURIComponent(msg);
   window.open(`mailto:${emails}?subject=${subj}&body=${body}`, '_blank');
 }
-
 function renderLessonsList() {
   const filter = document.getElementById('filterLessonsStatus').value;
   const list = cachedLessons.filter(l => filter === 'all' || (l.lesson_status || 'active') === filter);
@@ -498,9 +581,13 @@ async function deleteLesson(id) {
   await sbFetch('lessons', { method: 'DELETE', query: `id=eq.${id}` });
   loadTeacherData();
 }
+
 function renderGroupSelectors() {
   const groups = Array.isArray(currentTeacher.groups_list) && currentTeacher.groups_list.length ? currentTeacher.groups_list : ['Общая группа'];
-  document.getElementById('lessonTargetGroup').innerHTML = '<option value="Все ученики">Все ученики</option>' + groups.map(g => `<option value="${g}">${g}</option>`).join('');
+  const optionsHtml = groups.map(g => `<option value="${g}">${g}</option>`).join('');
+  document.getElementById('lessonTargetGroup').innerHTML = '<option value="Все ученики">Все ученики</option>' + optionsHtml;
+  const staffSel = document.getElementById('staffGroupSelect');
+  if (staffSel) staffSel.innerHTML = optionsHtml;
   document.getElementById('groupFoldersBadges').innerHTML = groups.map(g => `<span style="background:var(--input-bg); border:1px solid var(--border); padding:4px 10px; border-radius:8px; font-size:0.84rem;">📁 ${g}</span>`).join('');
 }
 
@@ -526,7 +613,6 @@ async function createChallengeGroup() {
   const base = WS_CONFIG.SITE_URL.replace(/\/$/, '');
   copyText(`${base}/groups.html?code=${code}`, `Челлендж-группа создана! Код: ${code}. Ссылка скопирована в буфер!`);
 }
-
 function renderStudentsTable() {
   const tbody = document.getElementById('studentsTableBody');
   const groups = Array.isArray(currentTeacher.groups_list) && currentTeacher.groups_list.length ? currentTeacher.groups_list : ['Общая группа'];
@@ -579,8 +665,11 @@ function renderSchoolStaff() {
   const box = document.getElementById('schoolStaffList');
   if (!box) return;
   box.innerHTML = staff.length ? staff.map((st, idx) => `
-    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px; margin-bottom:8px;">
-      <div><b>${st.name}</b> <span style="color:var(--muted); font-size:0.86rem;">• ${st.spec || 'Преподаватель'}</span></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; padding:12px 14px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px; margin-bottom:8px;">
+      <div>
+        <b>${st.name}</b> <span class="code-pill" style="font-size:0.78rem; margin-left:6px;">${st.code || 'TCH'}</span>
+        <div style="color:var(--muted); font-size:0.84rem; margin-top:2px;">Направление: ${st.spec || 'Преподаватель'} • Закреплённая группа: <b>${st.group || 'Общая группа'}</b></div>
+      </div>
       <button class="btn btn-del btn-sm" onclick="removeSchoolStaff(${idx})">Удалить</button>
     </div>
   `).join('') : '<p style="color:var(--muted); font-size:0.9rem;">Список преподавателей школы пока пуст.</p>';
@@ -589,9 +678,11 @@ function renderSchoolStaff() {
 async function addSchoolStaff() {
   const name = document.getElementById('staffNameInput').value.trim();
   const spec = document.getElementById('staffSpecInput').value.trim();
+  const group = document.getElementById('staffGroupSelect').value;
   if (!name) return alert('Введите имя преподавателя!');
   const staff = Array.isArray(currentTeacher.staff) ? [...currentTeacher.staff] : [];
-  staff.push({ name, spec });
+  const code = `TCH-${Math.floor(100 + Math.random() * 899)}`;
+  staff.push({ name, spec, group, code });
   await sbFetch('teachers', { method: 'PATCH', query: `id=eq.${currentTeacher.id}`, body: { staff } });
   currentTeacher.staff = staff;
   document.getElementById('staffNameInput').value = '';
@@ -614,21 +705,21 @@ async function loadTeacherData() {
       sbFetch('teacher_students', { query: `teacher_code=eq.${encodeURIComponent(currentTeacher.code)}&order=created_at.desc` })
     ]);
 
-    cachedLessons = lessons;
-    cachedStudents = students;
-    document.getElementById('statLessonsCount').textContent = lessons.length;
+    cachedLessons = lessons || [];
+    cachedStudents = students || [];
+    document.getElementById('statLessonsCount').textContent = cachedLessons.length;
     renderLessonsList();
     renderStudentsTable();
 
     let allResults = [];
-    if (lessons.length > 0) {
-      const codes = lessons.map(l => l.code).join(',');
+    if (cachedLessons.length > 0) {
+      const codes = cachedLessons.map(l => l.code).join(',');
       allResults = await sbFetch('lesson_results', { query: `lesson_code=in.(${codes})&order=created_at.desc` });
     }
-    cachedResults = allResults;
-    document.getElementById('statResultsCount').textContent = allResults.length;
+    cachedResults = allResults || [];
+    document.getElementById('statResultsCount').textContent = cachedResults.length;
 
-    const count = students.length;
+    const count = cachedStudents.length;
     const ambBox = document.getElementById('ambassadorStatBox');
     if (count >= 10) {
       ambBox.classList.add('ambassador');
@@ -641,13 +732,13 @@ async function loadTeacherData() {
     }
 
     const freq = {};
-    allResults.forEach(r => (r.mistakes || []).forEach(w => { freq[w] = (freq[w] || 0) + 1; }));
-    topMistakesList = Object.entries(freq).sort((a, b) => b - a).slice(0, 12).map(x => x);
+    cachedResults.forEach(r => (r.mistakes || []).forEach(w => { freq[w] = (freq[w] || 0) + 1; }));
+    topMistakesList = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 12).map(x => x[0]);
     const chipsBox = document.getElementById('topMistakesChips');
     chipsBox.innerHTML = topMistakesList.length ? topMistakesList.map(w => `<span class="mistake-word">${w} (${freq[w]})</span>`).join('') : '<span style="color:var(--muted); font-size:0.88rem;">Ошибок пока не зафиксировано.</span>';
 
     const tbody = document.getElementById('resultsTableBody');
-    tbody.innerHTML = allResults.length ? allResults.map(r => {
+    tbody.innerHTML = cachedResults.length ? cachedResults.map(r => {
       const pct = Math.round((r.score / r.total) * 100);
       const mHtml = (r.mistakes && r.mistakes.length) ? r.mistakes.map(m => `<span class="mistake-word">${m}</span>`).join('') : '<span style="color:var(--accent);">Без ошибок</span>';
       return `<tr><td><b>${r.lesson_code}</b></td><td>${r.student_name}</td><td><span class="tag-ok">${r.score}/${r.total} (${pct}%)</span></td><td>${mHtml}</td><td style="color:var(--muted);">${new Date(r.created_at).toLocaleDateString('ru-RU')}</td><td><button class="btn btn-secondary btn-sm" onclick="sendFeedbackEmail('${r.student_name.replace(/'/g, "\\'")}', '${r.lesson_code}', ${r.score}, ${r.total})">✉️ Разбор</button></td></tr>`;
@@ -708,6 +799,11 @@ async function sendPartnerIdea() {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
+  ['lessonTitle', 'lessonDeadline', 'lessonInstruction', 'lessonMediaUrl'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', autoSaveDraft);
+  });
+
   const saved = localStorage.getItem('ws_teacher_code');
   if (saved) {
     document.getElementById('loginTeacherCode').value = saved;
