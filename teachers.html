@@ -21,9 +21,9 @@
     a { color: inherit; text-decoration: none; }
     .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
     header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
-    .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; flex-wrap: wrap; gap: 10px; }
+    .nav { display: flex; justify-content: space-between; align-items: center; min-height: 64px; flex-wrap: wrap; gap: 10px; padding: 8px 0; }
     .logo { font-weight: 800; font-size: 1.25rem; }
-    .nav-links { display: flex; gap: 14px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
+    .nav-links { display: flex; gap: 15px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
     .nav-links a:hover, .nav-links a.active { color: var(--primary); font-weight: 600; }
     .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
     .hero { padding: 30px 0 16px; text-align: center; }
@@ -32,16 +32,9 @@
     .card h2 { font-size: 1.18rem; margin-bottom: 6px; }
     .desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 14px; }
     label { display: block; font-size: 0.85rem; color: var(--muted); margin: 11px 0 5px; }
-    input, textarea, select {
-      width: 100%; padding: 10px 13px; border-radius: 10px; border: 1px solid var(--border);
-      background: var(--input-bg); color: var(--text); font-size: 0.94rem; outline: none;
-    }
+    input, textarea, select { width: 100%; padding: 10px 13px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.94rem; outline: none; }
     input:focus, textarea:focus, select:focus { border-color: var(--primary); }
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      padding: 10px 16px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.9rem;
-      cursor: pointer; background: var(--primary); color: #fff;
-    }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; background: var(--primary); color: #fff; }
     .btn:hover { background: var(--primary-hover); }
     .btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
     .btn-accent { background: var(--accent); color: #fff; }
@@ -50,7 +43,7 @@
     .teacher-bar { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; }
     .code-pill { font-family: monospace; font-weight: 800; background: var(--input-bg); padding: 3px 10px; border-radius: 7px; color: var(--accent); border: 1px solid var(--border); }
     .tabs-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
-    .tab-btn { padding: 9px 15px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .tab-btn { padding: 9px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; font-weight: 600; font-size: 0.88rem; }
     .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
     @media (max-width: 680px) { .stats-row { grid-template-columns: 1fr; } }
@@ -58,7 +51,7 @@
     .stat-box.ambassador { border-color: rgba(245, 158, 11, 0.5); background: linear-gradient(135deg, var(--card), rgba(245, 158, 11, 0.08)); }
     .stat-val { font-size: 1.5rem; font-weight: 800; }
     .stat-lbl { font-size: 0.84rem; color: var(--muted); }
-    .mode-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 0 14px; }
+    .mode-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 0 8px; }
     @media (max-width: 720px) { .mode-grid { grid-template-columns: 1fr 1fr; } }
     .mode-card { padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); cursor: pointer; text-align: center; font-size: 0.85rem; font-weight: 600; color: var(--muted); }
     .mode-card.active { border-color: var(--primary); background: rgba(99, 102, 241, 0.16); color: var(--primary); }
@@ -83,9 +76,8 @@
     <a href="index.html" class="logo">⚡ WordSprint</a>
     <nav class="nav-links">
       <a href="index.html">Главная</a>
-      <a href="student.html">Кабинет ученика</a>
+      <a href="profile.html">Мой профиль</a>
       <a href="teachers.html" class="active">Кабинет преподавателя</a>
-      <a href="lesson.html">Пройти урок</a>
       <a href="groups.html">Группы</a>
       <a href="duel.html">Веб-дуэль</a>
       <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">☀️</button>
@@ -96,14 +88,14 @@
 <main class="container" style="padding-bottom: 60px;">
   <section class="hero"><h1 id="pageMainTitle">Кабинет преподавателя</h1></section>
 
-  <div id="guestLoginBar" class="card" style="max-width: 620px; margin: 0 auto 24px;">
+  <div id="guestLoginBar" class="card" style="max-width: 640px; margin: 0 auto 24px;">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
       <div>
-        <h3 style="font-size:1.05rem;">Вход для репетитора или школы</h3>
-        <p style="color:var(--muted); font-size:0.88rem;">Введите код, выданный при регистрации.</p>
+        <h3 style="font-size:1.05rem;">Вход для репетитора, школы или учителя школы</h3>
+        <p style="color:var(--muted); font-size:0.88rem;">Введите код партнёра (например, WS-0000 или SCH-0000-IVAN).</p>
       </div>
       <div style="display:flex; gap:8px;">
-        <input type="text" id="loginTeacherCode" placeholder="Код партнёра" style="width: 165px; text-transform: uppercase; font-family:monospace;">
+        <input type="text" id="loginTeacherCode" placeholder="Код входа" style="width: 185px; text-transform: uppercase; font-family:monospace;">
         <button class="btn btn-sm" onclick="loginTeacher()">Войти</button>
       </div>
     </div>
@@ -111,7 +103,7 @@
 
   <div id="profileHeaderCard" class="teacher-bar hidden">
     <div>
-      <div style="font-size:0.84rem; color:var(--muted);">Профиль партнёра</div>
+      <div style="font-size:0.84rem; color:var(--muted);" id="profileRoleSubtitle">Профиль партнёра</div>
       <h2 id="dashTeacherName" style="font-size:1.3rem;">—</h2>
       <div style="margin-top:4px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
         <span>Ваш код: <span id="dashTeacherCode" class="code-pill">—</span></span>
@@ -120,7 +112,7 @@
       <p id="pendingNoticeText" style="color:var(--muted); font-size:0.88rem; margin-top:10px; max-width:650px;"></p>
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <button id="bonusModalBtn" class="btn btn-secondary btn-sm hidden" onclick="document.getElementById('bonusModal').style.display='flex'">✨ Бонусные функции</button>
+      <button id="bonusModalBtn" class="btn btn-secondary btn-sm hidden" onclick="document.getElementById('bonusModal').style.display='flex'">✨ Партнёр Плюс</button>
       <button class="btn btn-secondary btn-sm" onclick="copyText(currentTeacher.code, 'Код скопирован!')">📋 Копировать код</button>
       <button class="btn btn-secondary btn-sm" onclick="logoutTeacher()">Выйти</button>
     </div>
@@ -138,18 +130,18 @@
     <div class="tabs-bar">
       <button class="tab-btn active" id="tabBtnEditor" onclick="switchWorkspaceTab('editor')">🛠 Конструктор урока</button>
       <button class="tab-btn" id="tabBtnLessons" onclick="switchWorkspaceTab('lessons')">📚 Мои уроки</button>
-      <button class="tab-btn" id="tabBtnStudents" onclick="switchWorkspaceTab('students')">👥 Ученики и группы</button>
+      <button class="tab-btn" id="tabBtnStudents" onclick="switchWorkspaceTab('students')">👥 Ученики и архив</button>
       <button class="tab-btn" id="tabBtnJournal" onclick="switchWorkspaceTab('journal')">📊 Журнал и ошибки</button>
+      <button class="tab-btn" id="tabBtnSchedule" onclick="switchWorkspaceTab('schedule')">📅 Расписание и письма</button>
       <button class="tab-btn hidden" id="tabBtnSchool" onclick="switchWorkspaceTab('school')">🏫 Управление школой</button>
       <button class="tab-btn" id="tabBtnProfile" onclick="switchWorkspaceTab('profile')">⚙️ Профиль и объявления</button>
     </div>
 
-    <!-- Вкладка 1: Продвинутый конструктор урока -->
     <div id="paneEditor" class="card">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
         <div>
           <h2 id="editorHeading">Конструктор урока</h2>
-          <p class="desc" style="margin-bottom:0;">Нажимайте Enter в поле перевода, чтобы мгновенно добавлять следующую строку.</p>
+          <p class="desc" style="margin-bottom:0;">Клавиша Enter переводит курсор на следующее поле и добавляет новые строки.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn btn-secondary btn-sm" onclick="openSavedWordsModal()">★ Мой словарь</button>
@@ -158,8 +150,8 @@
       </div>
 
       <div id="bulkImportBox" class="hidden" style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:14px;">
-        <label style="margin-top:0;">Вставьте список слов из Word, Excel или заметок (разделители: <code>-</code>, <code>—</code>, <code>:</code>, <code>=</code> или Tab):</label>
-        <textarea id="bulkWordsText" style="min-height:110px; font-family:monospace;" oninput="previewBulkCount()" placeholder="word - перевод"></textarea>
+        <label style="margin-top:0;">Вставьте список слов (формат: слово - перевод):</label>
+        <textarea id="bulkWordsText" style="min-height:100px; font-family:monospace;" oninput="previewBulkCount()"></textarea>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
           <span id="bulkCountLabel" style="font-size:0.84rem; color:var(--accent);">Распознано слов: 0</span>
           <button class="btn btn-sm" onclick="applyBulkImport()">Перенести в карточки</button>
@@ -167,22 +159,13 @@
       </div>
 
       <div style="display:grid; grid-template-columns: 1.3fr 0.7fr 0.7fr; gap:12px; margin-bottom:12px;">
-        <div>
-          <label style="margin-top:0;">Название урока</label>
-          <input type="text" id="lessonTitle" placeholder="Введите тему урока">
-        </div>
-        <div>
-          <label style="margin-top:0;">Назначить группе</label>
-          <select id="lessonTargetGroup"><option value="Все ученики">Все ученики</option></select>
-        </div>
-        <div>
-          <label style="margin-top:0;">Срок сдачи (необязательно)</label>
-          <input type="text" id="lessonDeadline" placeholder="Например: До пятницы">
-        </div>
+        <div><label style="margin-top:0;">Название урока</label><input type="text" id="lessonTitle" placeholder="Тема урока"></div>
+        <div><label style="margin-top:0;">Назначить группе</label><select id="lessonTargetGroup"><option value="Все ученики">Все ученики</option></select></div>
+        <div><label style="margin-top:0;">Срок сдачи</label><input type="text" id="lessonDeadline" placeholder="Например: До пятницы"></div>
       </div>
 
       <div id="customCodeWrap" class="hidden" style="margin-bottom:12px;">
-        <label style="margin-top:0;">Свой красивый код урока (бонус «Партнёр Плюс»)</label>
+        <label style="margin-top:0;">Свой красивый код урока (активен «Партнёр Плюс»)</label>
         <input type="text" id="customLessonCode" placeholder="Например: CLASS-5A" style="text-transform:uppercase; font-family:monospace;">
       </div>
 
@@ -193,39 +176,30 @@
         <div class="mode-card" data-mode="spelling" onclick="selectLessonMode('spelling')">✍️ Написание слова</div>
         <div class="mode-card" data-mode="mixed" onclick="selectLessonMode('mixed')">🔄 Комбо-режим</div>
       </div>
+      <div id="modeDescriptionHint" style="font-size:0.84rem; color:var(--primary); margin-bottom:12px;">Ученик увидит английское слово и выберет 1 из 4 вариантов перевода.</div>
 
       <div style="display:flex; gap:18px; flex-wrap:wrap; margin-bottom:14px; font-size:0.88rem;">
-        <label style="display:flex; align-items:center; gap:6px; margin:0; cursor:pointer; color:var(--text);">
-          <input type="checkbox" id="optRepeatErrors" checked style="width:auto;"> Доводить ошибки до 100%
-        </label>
-        <label style="display:flex; align-items:center; gap:6px; margin:0; cursor:pointer; color:var(--text);">
-          <input type="checkbox" id="optShuffle" checked style="width:auto;"> Перемешивать слова
-        </label>
+        <label style="display:flex; align-items:center; gap:6px; margin:0; cursor:pointer; color:var(--text);"><input type="checkbox" id="optRepeatErrors" checked style="width:auto;"> Доводить ошибки до 100%</label>
+        <label style="display:flex; align-items:center; gap:6px; margin:0; cursor:pointer; color:var(--text);"><input type="checkbox" id="optShuffle" checked style="width:auto;"> Перемешивать слова</label>
       </div>
 
-      <!-- Сворачиваемый блок медиафайлов и вопросов -->
       <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:16px;">
         <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="document.getElementById('mediaPanelBody').classList.toggle('hidden')">
-          <span style="font-weight:700; font-size:0.94rem;">🎬 Прикрепить видео, аудио, фото, PDF или вопросы к материалу</span>
+          <span style="font-weight:700; font-size:0.94rem;">🎬 Теория, видео, аудио, фото, PDF и вопросы к материалу</span>
           <span style="color:var(--primary); font-size:0.85rem;">Открыть / Свернуть ▾</span>
         </div>
         <div id="mediaPanelBody" class="hidden" style="margin-top:12px; border-top:1px solid var(--border); padding-top:12px;">
-          <label style="margin-top:0;">Инструкция ученику перед уроком</label>
-          <input type="text" id="lessonInstruction" placeholder="Например: Посмотрите видео и ответьте на вопросы перед словами">
+          <label style="margin-top:0;">Теория / Правило перед уроком (необязательно)</label>
+          <textarea id="lessonTheoryText" style="min-height:70px;" placeholder="Краткое объяснение грамматики или правило..."></textarea>
+          <label>Инструкция ученику</label>
+          <input type="text" id="lessonInstruction" placeholder="Например: Посмотрите видео и ответьте на вопросы">
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:8px;">
-            <div>
-              <label style="margin-top:0;">Загрузить файл с устройства (до 50 МБ)</label>
-              <input type="file" id="lessonMediaFile" onchange="uploadLessonMedia(this)">
-              <div id="uploadStatusText" style="font-size:0.8rem; color:var(--accent); margin-top:4px;"></div>
-            </div>
-            <div>
-              <label style="margin-top:0;">Или вставьте ссылку (YouTube / VK / RuTube)</label>
-              <input type="text" id="lessonMediaUrl" placeholder="https://...">
-            </div>
+            <div><label style="margin-top:0;">Загрузить файл (до 50 МБ)</label><input type="file" id="lessonMediaFile" onchange="uploadLessonMedia(this)"><div id="uploadStatusText" style="font-size:0.8rem; color:var(--accent); margin-top:4px;"></div></div>
+            <div><label style="margin-top:0;">Или ссылка (YouTube / VK / RuTube)</label><input type="text" id="lessonMediaUrl" placeholder="https://..."></div>
           </div>
           <div style="margin-top:12px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:0.86rem; color:var(--muted); font-weight:600;">Вопросы на понимание видео / аудио:</span>
+              <span style="font-size:0.86rem; color:var(--muted); font-weight:600;">Вопросы на понимание материала:</span>
               <button class="btn btn-secondary btn-sm" onclick="addMediaQuestionRow()">+ Добавить вопрос</button>
             </div>
             <div id="mediaQuestionsEditor" style="margin-top:8px;"></div>
@@ -233,7 +207,10 @@
         </div>
       </div>
 
-      <label>Слова урока (Слово • Перевод • Пример предложения с авто-пропуском):</label>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <label style="margin:0;">Слова урока (Слово • Перевод • Пример с авто-пропуском):</label>
+        <span id="lessonEstimateLabel" style="font-size:0.82rem; color:var(--muted);">~2 мин на выполнение</span>
+      </div>
       <div id="wordRowsContainer"></div>
 
       <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
@@ -243,25 +220,18 @@
         <button class="btn btn-accent" id="publishLessonBtn" onclick="saveLesson('active')">🚀 Опубликовать урок</button>
       </div>
 
-            <div id="lessonPublishedBox" class="hidden" style="margin-top:16px; padding:16px; border-radius:12px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.35);">
+      <div id="lessonPublishedBox" class="hidden" style="margin-top:16px; padding:16px; border-radius:12px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.35);">
         <div style="font-weight:700; color:var(--accent); margin-bottom:8px;">✅ Урок опубликован! Код: <span class="code-pill" id="publishedLessonCode">—</span></div>
-        <label style="margin-top:4px;">Текст сообщения для учеников (можете отредактировать перед отправкой):</label>
-        <textarea id="publishedCustomMessage" style="min-height:95px; margin-bottom:10px; font-family:inherit;"></textarea>
+        <label style="margin-top:4px;">Текст сообщения для учеников (можете отредактировать):</label>
+        <textarea id="publishedCustomMessage" style="min-height:90px; margin-bottom:10px;"></textarea>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn btn-accent btn-sm" onclick="copyText(lastPublishedCode, 'Код скопирован!')">📋 Код</button>
-          <button class="btn btn-secondary btn-sm" onclick="copyPublishedMessage()">💬 Скопировать текст для чата</button>
-          <button class="btn btn-secondary btn-sm" onclick="emailLessonToStudents()">✉️ Отправить на Email ученикам</button>
-        </div>
-      </div>
-
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="btn btn-accent btn-sm" onclick="copyText(lastPublishedCode, 'Код скопирован!')">📋 Код</button>
-          <button class="btn btn-secondary btn-sm" onclick="copyPublishedMessage()">💬 Сообщение для чата</button>
+          <button class="btn btn-secondary btn-sm" onclick="copyPublishedMessage()">💬 Скопировать сообщение</button>
           <button class="btn btn-secondary btn-sm" onclick="emailLessonToStudents()">✉️ Отправить на Email ученикам</button>
         </div>
       </div>
     </div>
-    <!-- Вкладка 2: Мои уроки -->
+
     <div id="paneLessons" class="card hidden">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
         <h2>📚 Библиотека уроков</h2>
@@ -273,32 +243,31 @@
       </div>
       <div id="myLessonsList"></div>
     </div>
-
-    <!-- Вкладка 3: Ученики и группы -->
     <div id="paneStudents" class="card hidden">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
         <div>
-          <h2>👥 Ученики и распределение по группам</h2>
-          <p class="desc" style="margin-bottom:0;">Создавайте папки/классы, оставляйте личные заметки и выдавайте именные грамоты.</p>
+          <h2>👥 Ученики, классы и архив выпускников</h2>
+          <p class="desc" style="margin-bottom:0;">Распределяйте учеников по группам, выдавайте грамоты или переносите выпускников в архив.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <input type="text" id="newGroupFolderInput" placeholder="Новая группа / класс" style="width:180px;">
+          <input type="text" id="newGroupFolderInput" placeholder="Новая группа / класс" style="width:175px;">
           <button class="btn btn-sm" onclick="addGroupFolder()">+ Группа</button>
           <button class="btn btn-accent btn-sm" onclick="createChallengeGroup()">🏆 Челлендж XP</button>
         </div>
       </div>
-
       <div id="groupFoldersBadges" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;"></div>
-
       <div style="overflow-x:auto;">
         <table>
-          <thead><tr><th>Ученик / Код</th><th>Email / Контакт</th><th>Группа / Класс</th><th>Личная заметка</th><th>Действия</th></tr></thead>
+          <thead><tr><th>Ученик / Код</th><th>Email</th><th>Группа</th><th>Заметка учителя</th><th>Действия</th></tr></thead>
           <tbody id="studentsTableBody"></tbody>
         </table>
       </div>
+      <details style="margin-top:18px;">
+        <summary style="cursor:pointer; color:var(--muted); font-weight:600;">🎓 Архив выпускников (<span id="archivedCount">0</span>)</summary>
+        <div id="archivedStudentsList" style="margin-top:10px;"></div>
+      </details>
     </div>
 
-    <!-- Вкладка 4: Журнал и работа над ошибками -->
     <div id="paneJournal" class="card hidden">
       <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); border-radius:12px; padding:16px; margin-bottom:20px;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
@@ -306,10 +275,9 @@
             <h3 style="font-size:1.05rem; color:var(--danger);">⚠️ Слова для повторения (частые ошибки учеников)</h3>
             <div id="topMistakesChips" style="margin-top:8px;">Нет ошибок для анализа.</div>
           </div>
-          <button class="btn btn-sm" id="createErrorLessonBtn" onclick="createErrorReviewLesson()">✨ Создать работу над ошибками</button>
+          <button class="btn btn-sm" onclick="createErrorReviewLesson()">✨ Создать работу над ошибками</button>
         </div>
       </div>
-
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
         <h2>📊 Журнал выполнения уроков</h2>
         <div style="display:flex; gap:8px;">
@@ -319,80 +287,76 @@
       </div>
       <div style="overflow-x:auto;">
         <table>
-          <thead><tr><th>Урок</th><th>Ученик</th><th>Результат</th><th>Ошибки</th><th>Дата</th><th>Связь</th></tr></thead>
+          <thead><tr><th>Урок</th><th>Ученик</th><th>Результат</th><th>Ошибки</th><th>Статус</th><th>Действия</th></tr></thead>
           <tbody id="resultsTableBody"></tbody>
         </table>
       </div>
     </div>
-    <!-- Вкладка 5: Управление школой -->
-       <div id="paneSchool" class="card hidden">
-      <h2>🏫 Преподаватели школы</h2>
-      <p class="desc">Добавляйте учителей вашей школы, назначайте им классы/группы и ведите единую базу уроков.</p>
+
+    <div id="paneSchedule" class="card hidden">
+      <h2>📹 Постоянная ссылка на онлайн-созвоны</h2>
+      <p class="desc">Эта кнопка появится в личном профиле всех ваших учеников.</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;">
+        <input type="text" id="teacherCallLinkInput" placeholder="https://jit.si..." style="flex:1;">
+        <button class="btn btn-secondary btn-sm" onclick="generateJitsiCall()">⚡ Создать комнату Jitsi</button>
+        <button class="btn btn-sm" onclick="saveCallLink()">💾 Сохранить</button>
+      </div>
+
+      <h2>📅 Расписание занятий</h2>
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:8px; margin-bottom:12px;">
+        <input type="text" id="schedDayInput" placeholder="День и время (Чт, 18:00)">
+        <select id="schedGroupSelect"><option value="Все ученики">Все ученики</option></select>
+        <input type="text" id="schedTopicInput" placeholder="Тема занятия">
+        <button class="btn btn-sm" onclick="addScheduleSlot()">+ Добавить</button>
+      </div>
+      <div id="teacherScheduleList" style="margin-bottom:22px;"></div>
+
+      <h2>✉️ Написать сообщение ученикам на Email и в кабинет</h2>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <div><label style="margin-top:0;">Кому отправить</label><select id="mailTargetSelect"><option value="Все ученики">Всем ученикам</option></select></div>
+        <div><label style="margin-top:0;">Тема письма</label><input type="text" id="mailSubjectInput" placeholder="Например: Перенос занятия или материалы"></div>
+      </div>
+      <label>Текст сообщения</label>
+      <textarea id="mailBodyInput" style="min-height:85px;" placeholder="Напишите любое сообщение для учеников..."></textarea>
+      <button class="btn btn-accent btn-sm" style="margin-top:10px;" onclick="sendCustomMessageToStudents()">📨 Отправить в кабинеты и открыть Email</button>
+    </div>
+    <div id="paneSchool" class="card hidden">
+      <h2>🏫 Преподаватели школы (Директор и учителя)</h2>
+      <p class="desc">Каждый преподаватель получает свой личный код входа (например, <code>SCH-0000-IVAN</code>) и видит только закреплённые за ним группы.</p>
       <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:8px; margin-bottom:14px;">
-        <input type="text" id="staffNameInput" placeholder="Имя и фамилия преподавателя">
-        <input type="text" id="staffSpecInput" placeholder="Специализация (ЕГЭ, Дети, B1)">
+        <input type="text" id="staffNameInput" placeholder="Имя преподавателя">
+        <input type="text" id="staffSpecInput" placeholder="Специализация (ЕГЭ / B1)">
         <select id="staffGroupSelect"><option value="Общая группа">Общая группа</option></select>
         <button class="btn btn-sm" onclick="addSchoolStaff()">+ Добавить</button>
       </div>
       <div id="schoolStaffList"></div>
     </div>
 
-      <div id="schoolStaffList"></div>
-    </div>
-
-    <!-- Вкладка 6: Профиль в каталоге, объявления и идеи -->
     <div id="paneProfile" class="card hidden">
       <h2>📢 Доска объявлений для учеников</h2>
-      <p class="desc">Это сообщение увидят все ваши прикреплённые ученики в своём личном кабинете.</p>
-      <textarea id="profileAnnouncement" style="min-height:75px;" placeholder="Напишите объявление для учеников..."></textarea>
-      <button class="btn btn-sm" style="margin-top:8px;" onclick="saveProfileUpdates()">💾 Сохранить объявление</button>
-
-      <hr style="border:none; border-top:1px solid var(--border); margin:22px 0;">
-
+      <textarea id="profileAnnouncement" style="min-height:75px;" placeholder="Актуальное объявление для ваших учеников..."></textarea>
+      <hr style="border:none; border-top:1px solid var(--border); margin:18px 0;">
       <h2>📝 Карточка в общем каталоге WordSprint</h2>
-      <p class="desc">Все проверенные репетиторы и школы отображаются в каталоге на равных условиях.</p>
-      <label>Город и формат занятий</label>
-      <input type="text" id="profileCity">
-      <label>Уровни и направления</label>
-      <input type="text" id="profileLevel">
-      <label>Контакт для новых учеников (Telegram / VK / телефон)</label>
-      <input type="text" id="profileTelegram">
-      <label>Описание методики / школы</label>
-      <textarea id="profileBio" style="min-height:85px;"></textarea>
-      <button class="btn btn-accent btn-sm" style="margin-top:12px;" onclick="saveProfileUpdates()">✅ Обновить данные в каталоге</button>
-
-      <hr style="border:none; border-top:1px solid var(--border); margin:22px 0;">
-
-      <h2>💡 Предложить идею основателю WordSprint</h2>
-      <p class="desc">Напишите, каких функций не хватает для ваших занятий — мы читаем каждое предложение.</p>
-      <textarea id="partnerIdeaInput" style="min-height:70px;" placeholder="Ваша идея для улучшения платформы..."></textarea>
-      <button class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="sendPartnerIdea()">Отправить идею</button>
+      <label>Город и формат занятий</label><input type="text" id="profileCity">
+      <label>Уровни и направления</label><input type="text" id="profileLevel">
+      <label>Контакт для новых учеников</label><input type="text" id="profileTelegram">
+      <label>Описание</label><textarea id="profileBio" style="min-height:80px;"></textarea>
+      <button class="btn btn-accent btn-sm" style="margin-top:12px;" onclick="saveProfileUpdates()">✅ Сохранить профиль и объявление</button>
     </div>
   </div>
 
-  <!-- Регистрация для гостей -->
-  <div id="guestRegisterCard" class="card" style="max-width: 620px; margin: 0 auto 48px;">
+  <div id="guestRegisterCard" class="card" style="max-width: 640px; margin: 0 auto 48px;">
     <h2>🎓 Регистрация репетитора или школы</h2>
     <p class="desc">Все партнёры размещаются в каталоге на равных условиях после проверки документов.</p>
     <label>Формат</label>
-    <select id="regRole">
-      <option value="tutor">Частный репетитор</option>
-      <option value="school">Языковая школа / курсы</option>
-    </select>
-    <label>Имя и фамилия (или официальное название школы)</label>
-    <input type="text" id="regName" placeholder="Введите имя или название">
-    <label>Email (сюда придёт уведомление об одобрении заявки)</label>
-    <input type="email" id="regEmail" placeholder="Введите ваш Email">
-    <label>Город и формат занятий</label>
-    <input type="text" id="regCity" placeholder="Город или онлайн">
-    <label>Уровень / направления обучения</label>
-    <input type="text" id="regLevel" placeholder="Уровни CEFR или программы">
-    <label>Подтверждение (для репетитора: ID сертификата WS или диплом / для школы: ИНН, ОГРН и номер лицензии)</label>
-    <input type="text" id="regProof" placeholder="Укажите документы для проверки">
-    <label>Контакт для учеников (Telegram / VK / телефон)</label>
-    <input type="text" id="regTelegram" placeholder="Контакт для связи">
-    <label>Описание</label>
-    <textarea id="regBio" style="min-height:70px;" placeholder="Кратко расскажите о себе или школе"></textarea>
+    <select id="regRole"><option value="tutor">Частный репетитор</option><option value="school">Языковая школа / курсы</option></select>
+    <label>Имя и фамилия (или название школы)</label><input type="text" id="regName" placeholder="Введите имя или название">
+    <label>Email</label><input type="email" id="regEmail" placeholder="Введите Email">
+    <label>Город и формат</label><input type="text" id="regCity" placeholder="Город или онлайн">
+    <label>Уровни обучения</label><input type="text" id="regLevel" placeholder="Уровни CEFR">
+    <label>Подтверждающие документы (диплом/сертификат или ИНН/лицензия школы)</label><input type="text" id="regProof" placeholder="Укажите документы">
+    <label>Контакт для учеников</label><input type="text" id="regTelegram" placeholder="Telegram / VK / телефон">
+    <label>Описание</label><textarea id="regBio" style="min-height:70px;" placeholder="О методике или школе"></textarea>
     <button class="btn" id="regTeacherBtn" style="width:100%; margin-top:16px;" onclick="registerTeacher()">🚀 Отправить заявку</button>
   </div>
 </main>
@@ -404,8 +368,7 @@
       <button onclick="document.getElementById('awardModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
     </div>
     <p style="color:var(--muted); font-size:0.9rem;">Ученик: <b id="awardTargetStudentName">—</b></p>
-    <label>Текст достижения / номинация</label>
-    <input type="text" id="awardTitleInput" placeholder="Например: За успешное освоение уровня B1">
+    <label>Текст достижения</label><input type="text" id="awardTitleInput" placeholder="За отличные успехи в изучении английского">
     <button class="btn btn-accent" style="width:100%; margin-top:14px;" onclick="confirmIssueAward()">🏆 Выписать грамоту</button>
   </div>
 </div>
@@ -413,7 +376,7 @@
 <div class="modal-bg" id="savedWordsModal" onclick="if(event.target===this) this.style.display='none'">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <h3>★ Мой словарь (копилка слов)</h3>
+      <h3>★ Мой словарь</h3>
       <button onclick="document.getElementById('savedWordsModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
     </div>
     <div id="savedWordsList" style="max-height:300px; overflow-y:auto;"></div>
@@ -423,18 +386,16 @@
 <div class="modal-bg" id="bonusModal" onclick="if(event.target===this) this.style.display='none'">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <h3>✨ Бонусные инструменты «Партнёр Плюс»</h3>
+      <h3>✨ «Партнёр Плюс» (автоподписка)</h3>
       <button onclick="document.getElementById('bonusModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
     </div>
-    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:12px;">
-      Все базовые функции, безлимит учеников и равное место в каталоге всегда бесплатны. Поддержка проекта на Boosty открывает дополнительные удобства внутри кабинета:
-    </p>
-    <ul style="color:var(--text); font-size:0.9rem; padding-left:18px; margin-bottom:16px; line-height:1.8;">
-      <li><b>Свои красивые коды уроков</b> (например, <code>CLASS-5A</code>)</li>
-      <li><b>Выгрузка журнала в Excel (CSV)</b> в один клик</li>
-      <li><b>Приоритетное добавление новых тем</b> по вашему запросу</li>
-    </ul>
-    <a href="https://boosty.to/wordsprint/donate" target="_blank" class="btn btn-accent" style="width:100%;">Поддержать проект на Boosty ⚡</a>
+    <div id="plusStatusBanner" style="padding:10px 12px; border-radius:10px; background:var(--input-bg); margin-bottom:12px; font-size:0.88rem;">Статус: Базовый (бесплатный)</div>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:12px;">Подписка на Boosty открывает свои коды уроков (<code>CLASS-5A</code>) и выгрузку ведомостей в Excel (CSV). Срок действия продлевается автоматически на 30 дней по ключу из закрытого поста Boosty:</p>
+    <div style="display:flex; gap:8px; margin-bottom:14px;">
+      <input type="text" id="plusKeyInput" placeholder="Ключ активации (P-000)" style="text-transform:uppercase; font-family:monospace;">
+      <button class="btn btn-sm" onclick="activatePlusKey()">Активировать</button>
+    </div>
+    <a href="https://boosty.to" target="_blank" class="btn btn-accent" style="width:100%;">Оформить автоподписку на Boosty ⚡</a>
   </div>
 </div>
 

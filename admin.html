@@ -7,146 +7,88 @@
   <script src="config.js"></script>
   <style>
     :root {
-      --bg: #0b0f19; --card: #131a2a; --border: #232d45; --text: #f1f5f9;
-      --muted: #94a3b8; --primary: #6366f1; --accent: #10b981; --danger: #ef4444; --warning: #f59e0b;
+      --bg: #0b0f19; --card: #131a2a; --input-bg: #0d1322; --border: #232d45;
+      --text: #f1f5f9; --muted: #94a3b8; --primary: #6366f1; --accent: #10b981; --danger: #ef4444; --warning: #f59e0b;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+    body { background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
     a { color: inherit; text-decoration: none; }
-    .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
-    header { border-bottom: 1px solid var(--border); background: rgba(11, 15, 25, 0.9); position: sticky; top: 0; z-index: 50; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+    header { border-bottom: 1px solid var(--border); background: var(--card); }
     .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; }
     .logo { font-weight: 800; font-size: 1.2rem; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-top: 24px; }
-    h1 { font-size: 1.7rem; font-weight: 800; margin-bottom: 6px; }
-    h2 { font-size: 1.2rem; margin-bottom: 12px; }
-    label { display: block; font-size: 0.85rem; color: var(--muted); margin: 12px 0 5px; }
-    input, select {
-      width: 100%; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--border);
-      background: #0d1322; color: var(--text); font-size: 0.95rem; outline: none;
-    }
-    .btn {
-      padding: 11px 18px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.92rem;
-      cursor: pointer; background: var(--primary); color: #fff; margin-top: 14px;
-    }
-    .btn-sm { padding: 6px 10px; font-size: 0.8rem; margin-top: 0; }
-    .btn-ok { background: var(--accent); color: #052e16; }
-    .btn-warn { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
-    .btn-del { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 24px; }
-    @media (max-width: 760px) { .stats { grid-template-columns: 1fr 1fr; } }
-    .stat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
-    .stat-num { font-size: 1.8rem; font-weight: 800; color: #fff; }
-    .stat-name { font-size: 0.84rem; color: var(--muted); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-top: 22px; }
+    h1 { font-size: 1.75rem; font-weight: 800; }
+    h2 { font-size: 1.18rem; margin-bottom: 12px; }
+    input, select { padding: 10px 13px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.94rem; outline: none; width: 100%; }
+    label { display: block; font-size: 0.84rem; color: var(--muted); margin: 10px 0 4px; }
+    .btn { padding: 9px 14px; border-radius: 9px; border: none; font-weight: 600; cursor: pointer; background: var(--primary); color: #fff; font-size: 0.86rem; }
+    .btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+    .btn-ok { background: var(--accent); color: #fff; }
+    .btn-warn { background: var(--warning); color: #0b0f19; }
+    .btn-del { background: rgba(239, 68, 68, 0.16); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.4); }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }
+    @media (max-width: 720px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .stat-num { font-size: 1.75rem; font-weight: 800; color: var(--accent); }
+    .stat-lbl { color: var(--muted); font-size: 0.85rem; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.88rem; }
-    th, td { text-align: left; padding: 11px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th, td { text-align: left; padding: 11px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
     th { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; }
-    .badge-ok { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.78rem; }
-    .badge-wait { background: rgba(245, 158, 11, 0.15); color: #fbbf24; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.78rem; }
-    .badge-rej { background: rgba(239, 68, 68, 0.15); color: #fca5a5; padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.78rem; }
+    .badge-ok { background: rgba(16, 185, 129, 0.15); color: var(--accent); padding: 3px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; }
+    .badge-wait { background: rgba(245, 158, 11, 0.15); color: var(--warning); padding: 3px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; }
+    .badge-rej { background: rgba(239, 68, 68, 0.15); color: var(--danger); padding: 3px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; }
     .hidden { display: none !important; }
   </style>
 </head>
-
 <body>
 <header>
   <div class="container nav">
-    <a href="index.html" class="logo">⚡ WordSprint <span style="color:#a5b4fc; font-size:0.85rem;">ADMIN</span></a>
-    <a href="index.html" style="color:var(--muted); font-size:0.9rem;">← На сайт</a>
+    <a href="index.html" class="logo">⚡ WordSprint Admin</a>
+    <a href="index.html" style="color:var(--muted); font-size:0.9rem;">← На главную</a>
   </div>
 </header>
 
-<main class="container">
-  <div id="authBox" class="card" style="max-width:400px; margin: 60px auto;">
-    <h2>🔐 Вход в панель управления</h2>
-    <p style="color:var(--muted); font-size:0.9rem;">Введите пароль для доступа.</p>
-    <label>Пароль</label>
-    <input type="password" id="adminPass" placeholder="••••••••••••" onkeydown="if(event.key==='Enter') checkAdmin()">
-    <button class="btn" style="width:100%;" onclick="checkAdmin()">Войти</button>
+<main class="container" style="padding-bottom: 60px;">
+  <div id="adminLoginCard" class="card" style="max-width: 400px; margin: 60px auto;">
+    <h2>🔐 Вход для администратора</h2>
+    <label>Пароль администратора</label>
+    <input type="password" id="adminPassInput" placeholder="••••••••••••" onkeydown="if(event.key==='Enter') loginAdmin()">
+    <button class="btn" style="width:100%; margin-top:14px;" onclick="loginAdmin()">Войти</button>
   </div>
-
-  <div id="adminPanel" class="hidden" style="padding-bottom: 60px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:28px;">
-      <div>
-        <h1>Центр управления WordSprint</h1>
-        <p style="color:var(--muted); font-size:0.92rem;">Модерация заявок, прикреплённые ученики и реестр сертификатов.</p>
-      </div>
-      <div style="display:flex; gap:8px;">
-        <button class="btn btn-sm" onclick="loadAllAdmin()">🔄 Обновить</button>
-        <button class="btn btn-sm btn-del" onclick="logoutAdmin()">Выйти</button>
-      </div>
+  <div id="adminPanel" class="hidden">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:26px; flex-wrap:wrap; gap:10px;">
+      <h1>Панель управления WordSprint</h1>
+      <button class="btn btn-ok" onclick="loadAllAdmin()">🔄 Обновить данные</button>
     </div>
 
-    <div class="stats">
-      <div class="stat"><div class="stat-num" id="stTeachers">0</div><div class="stat-name">Партнёров в базе</div></div>
-      <div class="stat"><div class="stat-num" id="stStudents">0</div><div class="stat-name">Прикреплено учеников</div></div>
-      <div class="stat"><div class="stat-num" id="stLessons">0</div><div class="stat-name">Создано уроков</div></div>
-      <div class="stat"><div class="stat-num" id="stCerts">0</div><div class="stat-name">Выдано сертификатов</div></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="stTeachers">0</div><div class="stat-lbl">Партнёров и школ</div></div>
+      <div class="stat-card"><div class="stat-num" id="stStudents">0</div><div class="stat-lbl">Активных учеников</div></div>
+      <div class="stat-card"><div class="stat-num" id="stLessons">0</div><div class="stat-lbl">Создано уроков</div></div>
+      <div class="stat-card"><div class="stat-num" id="stCerts">0</div><div class="stat-lbl">Выдано сертификатов</div></div>
     </div>
 
-        <div class="card">
-      <h2>🎓 Заявки и каталог репетиторов / школ</h2>
+    <div class="card">
+      <h2>🎓 Заявки репетиторов и школ</h2>
       <div style="overflow-x:auto;">
         <table>
-          <thead>
-            <tr>
-              <th>Дата</th>
-              <th>Код / Имя</th>
-              <th>Город / Уровень</th>
-              <th>Подтверждение</th>
-              <th>Контакт / Email</th>
-              <th>Статус</th>
-              <th>Действия</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Дата и время</th><th>Имя / Школа / Код</th><th>Город / Уровень</th><th>Документы</th><th>Контакты</th><th>Статус</th><th>Действия</th></tr></thead>
           <tbody id="teachersTable"></tbody>
         </table>
       </div>
     </div>
 
     <div class="card">
-      <h2>🏆 Выпустить официальный сертификат CEFR</h2>
-      <div class="grid-2">
-        <div>
-          <label>Имя и фамилия кандидата</label>
-          <input type="text" id="certName" placeholder="Введите имя и фамилию">
-        </div>
-        <div>
-          <label>Общий балл (10 – 160)</label>
-          <input type="number" id="certScore" value="105" min="10" max="160">
-        </div>
-        <div>
-          <label>Уровень CEFR</label>
-          <select id="certLevel">
-            <option value="A1 (Beginner)">A1 (Beginner) — 10–30</option>
-            <option value="A2 (Elementary)">A2 (Elementary) — 35–55</option>
-            <option value="B1 (Intermediate)">B1 (Intermediate) — 60–85</option>
-            <option value="B2 (Upper-Intermediate)" selected>B2 (Upper-Intermediate) — 90–115</option>
-            <option value="C1 (Advanced)">C1 (Advanced) — 120–140</option>
-            <option value="C2 (Proficiency)">C2 (Proficiency) — 145–160</option>
-          </select>
-        </div>
-        <div>
-          <label>Детализация (Vocab / Gram / List / Prod)</label>
-          <input type="text" id="certSkills" value="110, 105, 100, 105">
-        </div>
+      <h2>✨ Ключи подписки «Партнёр Плюс» (на 30 дней для Boosty)</h2>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+        <button class="btn btn-ok" onclick="generatePlusKey()">+ Сгенерировать новый ключ (P-000)</button>
+        <span id="newPlusKeyDisplay" style="font-family:monospace; font-size:1.1rem; font-weight:800; color:var(--accent);"></span>
       </div>
-      <button class="btn btn-ok" onclick="issueCertificate()">✨ Выписать и зарегистрировать сертификат</button>
-      <div id="certIssuedBox" style="margin-top:14px; display:none; padding:12px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.35); border-radius:10px; font-size:0.9rem;"></div>
+      <div id="plusKeysList" style="font-size:0.86rem; color:var(--muted);"></div>
     </div>
 
     <div class="card">
-      <h2>📜 Реестр выданных сертификатов</h2>
-      <div style="overflow-x:auto;">
-        <table>
-          <thead><tr><th>ID документа</th><th>Кандидат</th><th>Уровень и балл</th><th>Дата</th><th>Управление</th></tr></thead>
-          <tbody id="certsTable"></tbody>
-        </table>
-      </div>
-    </div>
-        <div class="card">
       <h2>👥 Учебные группы</h2>
       <div style="overflow-x:auto;">
         <table>
@@ -156,53 +98,80 @@
       </div>
     </div>
 
-        <div class="card">
-      <h2>💡 Идеи и пожелания от репетиторов и школ</h2>
-      <div id="partnerIdeasAdminList" style="color:var(--muted); font-size:0.9rem;">Загрузка...</div>
+    <div class="card">
+      <h2>🏆 Участники лидерборда и профили</h2>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>ID</th><th>Никнейм</th><th>XP</th><th>Побед в дуэлях</th><th>Действия</th></tr></thead>
+          <tbody id="profilesAdminTable"></tbody>
+        </table>
+      </div>
     </div>
 
+    <div class="card">
+      <h2>📜 Выпуск сертификата CEFR</h2>
+      <div style="display:grid; grid-template-columns: 1.5fr 0.7fr 0.8fr 1fr auto; gap:10px; align-items:end;">
+        <div><label>Имя и фамилия</label><input type="text" id="certName" placeholder="Введите имя и фамилию"></div>
+        <div><label>Балл (10–160)</label><input type="number" id="certScore" value="125" min="10" max="160"></div>
+        <div><label>Уровень CEFR</label><select id="certLevel"><option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1" selected>C1</option><option value="C2">C2</option></select></div>
+        <div><label>Навыки (V,G,L,P)</label><input type="text" id="certSkills" value="130,120,125,125"></div>
+        <button class="btn btn-ok" onclick="issueCertificate()">Выдать</button>
+      </div>
+      <div id="certIssuedBox" style="margin-top:12px; display:none; padding:12px; background:rgba(16,185,129,0.12); border-radius:10px; color:var(--accent);"></div>
+    </div>
+
+    <div class="card">
+      <h2>📋 Реестр выданных сертификатов</h2>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>ID документа</th><th>Кандидат</th><th>Уровень и балл</th><th>Дата</th><th>Управление</th></tr></thead>
+          <tbody id="certsTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>💡 Идеи и пожелания от пользователей и партнёров</h2>
+      <div id="partnerIdeasAdminList" style="color:var(--muted); font-size:0.9rem;">Загрузка...</div>
+    </div>
   </div>
 </main>
-
 <script>
-  function checkAdmin() {
-    if (document.getElementById('adminPass').value === WS_CONFIG.ADMIN_PASSWORD) {
-      sessionStorage.setItem('ws_admin', '1');
-      openPanel();
-    } else alert('Неверный пароль!');
-  }
-  function logoutAdmin() { sessionStorage.removeItem('ws_admin'); location.reload(); }
-  function openPanel() {
-    document.getElementById('authBox').classList.add('hidden');
+  function loginAdmin() {
+    const pass = document.getElementById('adminPassInput').value.trim();
+    if (pass !== WS_CONFIG.ADMIN_PASSWORD) return alert('Неверный пароль!');
+    document.getElementById('adminLoginCard').classList.add('hidden');
     document.getElementById('adminPanel').classList.remove('hidden');
     loadAllAdmin();
   }
-  window.addEventListener('DOMContentLoaded', () => { if (sessionStorage.getItem('ws_admin') === '1') openPanel(); });
 
-     async function loadAllAdmin() {
+  async function loadAllAdmin() {
     try {
-      const [teachers, students, lessons, certs, groups, ideas] = await Promise.all([
+      const [teachers, students, lessons, certs, groups, profiles, keys, ideas] = await Promise.all([
         sbFetch('teachers', { query: 'order=created_at.desc' }),
         sbFetch('teacher_students', { query: 'select=id,teacher_code' }),
         sbFetch('lessons', { query: 'select=id' }),
         sbFetch('certificates', { query: 'order=issued_at.desc' }),
         sbFetch('groups', { query: 'order=created_at.desc' }),
+        sbFetch('profiles', { query: 'order=xp.desc&limit=50' }),
+        sbFetch('plus_keys', { query: 'order=created_at.desc&limit=20' }),
         sbFetch('partner_ideas', { query: 'order=created_at.desc' })
       ]);
 
-      const validCodes = new Set(teachers.map(t => t.code));
-      const activeStudentsCount = students.filter(s => validCodes.has(s.teacher_code)).length;
+      const validCodes = new Set((teachers || []).map(t => t.code));
+      const activeStudentsCount = (students || []).filter(s => validCodes.has(s.teacher_code)).length;
 
-      document.getElementById('stTeachers').textContent = teachers.length;
+      document.getElementById('stTeachers').textContent = (teachers || []).length;
       document.getElementById('stStudents').textContent = activeStudentsCount;
-      document.getElementById('stLessons').textContent = lessons.length;
-      document.getElementById('stCerts').textContent = certs.length;
+      document.getElementById('stLessons').textContent = (lessons || []).length;
+      document.getElementById('stCerts').textContent = (certs || []).length;
 
       const tBody = document.getElementById('teachersTable');
-      tBody.innerHTML = teachers.length ? teachers.map(t => {
+      tBody.innerHTML = (teachers || []).length ? teachers.map(t => {
         const dt = t.created_at ? new Date(t.created_at).toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
         const isApproved = t.status === 'approved' || t.verified === true;
         const isRejected = t.status === 'rejected';
+        const plusActive = t.plus_until ? new Date(t.plus_until) > new Date() : t.is_plus === true;
 
         let stHtml = '<span class="badge-wait">⏳ На проверке</span>';
         if (isApproved) stHtml = '<span class="badge-ok">✅ Одобрен</span>';
@@ -218,32 +187,45 @@
             <td>${t.city_format || '—'}<br><small style="color:var(--muted);">${t.level || ''}</small></td>
             <td style="max-width:210px; word-break:break-all;">${t.proof_url || '—'}</td>
             <td>${t.telegram || '—'}<br><small style="color:#a5b4fc;">${t.email || ''}</small></td>
-            <td>${stHtml}<br><small style="color:#fbbf24;">${t.is_plus ? '✨ Плюс активен' : ''}</small></td>
+            <td>${stHtml}<br><small style="color:#fbbf24;">${plusActive ? '✨ Плюс активен' : ''}</small></td>
             <td style="display:flex; gap:5px; flex-wrap:wrap;">
               ${approveBtn}
               ${rejectBtn}
-              <button class="btn btn-sm" onclick="togglePlusStatus('${t.id}', ${!!t.is_plus})">${t.is_plus ? 'Снять Плюс' : '✨ Дать Плюс'}</button>
+              <button class="btn btn-sm" onclick="togglePlusAdmin('${t.id}', ${plusActive})">${plusActive ? 'Снять Плюс' : '✨ +30 дн. Плюс'}</button>
               <button class="btn btn-sm btn-del" onclick="deleteTeacher('${t.id}', '${t.code}')">Удалить</button>
             </td>
           </tr>
         `;
       }).join('') : '<tr><td colspan="7" style="color:var(--muted); text-align:center;">Заявок пока нет</td></tr>';
 
+      const kBox = document.getElementById('plusKeysList');
+      kBox.innerHTML = (keys || []).length ? keys.map(k =>
+        `<span style="display:inline-block; background:var(--input-bg); border:1px solid var(--border); padding:4px 10px; border-radius:7px; margin:3px; font-family:monospace;"><b>${k.key_code}</b> — ${k.used_by ? 'использован (' + k.used_by + ')' : '<span style="color:var(--accent);">свободен</span>'}</span>`
+      ).join('') : 'Ключей пока нет.';
       const gBody = document.getElementById('groupsAdminTable');
-      if (gBody) {
-        gBody.innerHTML = groups && groups.length ? groups.map(g => `
-          <tr>
-            <td><b style="font-family:monospace; color:#34d399;">${g.code}</b></td>
-            <td><b>${g.title}</b></td>
-            <td>${Array.isArray(g.members) ? g.members.length : 0} чел.</td>
-            <td>${g.weekly_goal} XP</td>
-            <td><button class="btn btn-sm btn-del" onclick="deleteGroupAdmin('${g.id}', '${g.title.replace(/'/g, "\\'")}')">Удалить</button></td>
-          </tr>
-        `).join('') : '<tr><td colspan="5" style="color:var(--muted); text-align:center;">Групп пока нет</td></tr>';
-      }
+      gBody.innerHTML = (groups || []).length ? groups.map(g => `
+        <tr>
+          <td><b style="font-family:monospace; color:#34d399;">${g.code}</b></td>
+          <td><b>${g.title}</b></td>
+          <td>${Array.isArray(g.members) ? g.members.length : 0} чел.</td>
+          <td>${g.weekly_goal} XP</td>
+          <td><button class="btn btn-sm btn-del" onclick="deleteGroupAdmin('${g.id}', '${g.title.replace(/'/g, "\\'")}')">Удалить</button></td>
+        </tr>
+      `).join('') : '<tr><td colspan="5" style="color:var(--muted); text-align:center;">Групп пока нет</td></tr>';
+
+      const pBody = document.getElementById('profilesAdminTable');
+      pBody.innerHTML = (profiles || []).length ? profiles.map(p => `
+        <tr>
+          <td><span style="font-family:monospace;">${p.user_id}</span></td>
+          <td><b>${p.nickname}</b></td>
+          <td>${p.xp || 0} XP</td>
+          <td>${p.duel_wins || 0}</td>
+          <td><button class="btn btn-sm btn-del" onclick="deleteProfileAdmin('${p.user_id}', '${p.nickname.replace(/'/g, "\\'")}')">Удалить</button></td>
+        </tr>
+      `).join('') : '<tr><td colspan="5" style="color:var(--muted); text-align:center;">Профилей пока нет</td></tr>';
 
       const cBody = document.getElementById('certsTable');
-      cBody.innerHTML = certs.length ? certs.map(c => {
+      cBody.innerHTML = (certs || []).length ? certs.map(c => {
         const base = WS_CONFIG.SITE_URL.replace(/\/$/, '');
         const verifyUrl = `${base}/index.html?cert=${c.id}#verify`;
         return `
@@ -261,45 +243,48 @@
       }).join('') : '<tr><td colspan="5" style="color:var(--muted); text-align:center;">Сертификатов нет</td></tr>';
 
       const ideasBox = document.getElementById('partnerIdeasAdminList');
-      if (ideasBox) {
-        ideasBox.innerHTML = ideas && ideas.length ? ideas.map(i => `
-          <div style="padding:10px 14px; background:#0d1322; border:1px solid var(--border); border-radius:10px; margin-bottom:8px;">
-            <div style="font-size:0.82rem; color:#a5b4fc; margin-bottom:4px;"><b>${i.teacher_name}</b> (${i.teacher_code}) • ${new Date(i.created_at).toLocaleDateString('ru-RU')}</div>
-            <div style="color:var(--text);">${i.idea_text}</div>
-          </div>
-        `).join('') : 'Пока нет новых предложений от партнёров.';
-      }
+      ideasBox.innerHTML = (ideas || []).length ? ideas.map(i => `
+        <div style="padding:10px 14px; background:var(--input-bg); border:1px solid var(--border); border-radius:10px; margin-bottom:8px;">
+          <div style="font-size:0.82rem; color:#a5b4fc; margin-bottom:4px;"><b>${i.teacher_name}</b> (${i.teacher_code}) • ${new Date(i.created_at).toLocaleDateString('ru-RU')}</div>
+          <div style="color:var(--text);">${i.idea_text}</div>
+        </div>
+      `).join('') : 'Пока нет новых предложений.';
     } catch (e) { alert('Ошибка загрузки: ' + e.message); }
   }
+  async function generatePlusKey() {
+    const key_code = `P-${Math.floor(100 + Math.random() * 900)}`;
+    await sbFetch('plus_keys', { method: 'POST', body: { key_code, days: 30 } });
+    navigator.clipboard.writeText(key_code);
+    document.getElementById('newPlusKeyDisplay').textContent = `Создан и скопирован: ${key_code}`;
+    loadAllAdmin();
+  }
 
-  async function setTeacherStatus(id, newStatus) {
-    const isApproved = newStatus === 'approved';
-    const updated = await sbFetch('teachers', {
-      method: 'PATCH', query: `id=eq.${id}`,
-      body: { verified: isApproved, status: newStatus }
-    });
-    const t = Array.isArray(updated) ? updated.at(0) : updated;
-    if (t && t.email) {
-      if (isApproved) {
-        const subj = encodeURIComponent('WordSprint — Ваша заявка одобрена!');
-        const body = encodeURIComponent(`Здравствуйте, ${t.name}!\n\nВаша заявка одобрена. Ваш код входа в кабинет: ${t.code}\nСсылка на кабинет: ${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/teachers.html`);
-        window.open(`mailto:${t.email}?subject=${subj}&body=${body}`, '_blank');
-      } else {
-        const subj = encodeURIComponent('WordSprint — Результат проверки заявки');
-        const body = encodeURIComponent(`Здравствуйте, ${t.name}!\n\nК сожалению, ваша заявка (${t.code}) не была одобрена по следующей причине:\n[Укажите причину отказа здесь]\n\nВы можете исправить данные и подать заявку повторно на сайте WordSprint.`);
-        window.open(`mailto:${t.email}?subject=${subj}&body=${body}`, '_blank');
-      }
+  async function togglePlusAdmin(id, currentlyActive) {
+    if (currentlyActive) {
+      await sbFetch('teachers', { method: 'PATCH', query: `id=eq.${id}`, body: { is_plus: false, plus_until: null } });
+    } else {
+      const d = new Date(); d.setDate(d.getDate() + 30);
+      await sbFetch('teachers', { method: 'PATCH', query: `id=eq.${id}`, body: { is_plus: true, plus_until: d.toISOString() } });
     }
     loadAllAdmin();
   }
 
-  async function togglePlusStatus(id, currentState) {
-    await sbFetch('teachers', { method: 'PATCH', query: `id=eq.${id}`, body: { is_plus: !currentState } });
+  async function setTeacherStatus(id, newStatus) {
+    const isApproved = newStatus === 'approved';
+    const updated = await sbFetch('teachers', { method: 'PATCH', query: `id=eq.${id}`, body: { verified: isApproved, status: newStatus } });
+    const t = sbFirst(updated);
+    if (t && t.email) {
+      const subj = encodeURIComponent(isApproved ? 'WordSprint — Ваша заявка одобрена!' : 'WordSprint — Результат проверки заявки');
+      const body = encodeURIComponent(isApproved
+        ? `Здравствуйте, ${t.name}!\n\nВаша заявка одобрена. Ваш код входа в кабинет: ${t.code}\nСсылка: ${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/teachers.html`
+        : `Здравствуйте, ${t.name}!\n\nК сожалению, ваша заявка (${t.code}) не была одобрена по следующей причине:\n[Укажите причину отказа]\n\nВы можете исправить данные и подать заявку повторно.`);
+      window.open(`mailto:${t.email}?subject=${subj}&body=${body}`, '_blank');
+    }
     loadAllAdmin();
   }
 
   async function deleteTeacher(id, code) {
-    if (!confirm('Удалить эту запись вместе со всеми её прикреплёнными учениками и уроками?')) return;
+    if (!confirm('Удалить эту запись вместе со всеми её учениками и уроками?')) return;
     await Promise.all([
       sbFetch('teacher_students', { method: 'DELETE', query: `teacher_code=eq.${encodeURIComponent(code)}` }),
       sbFetch('lessons', { method: 'DELETE', query: `teacher_code=eq.${encodeURIComponent(code)}` }),
@@ -316,8 +301,14 @@
     loadAllAdmin();
   }
 
+  async function deleteProfileAdmin(userId, nick) {
+    if (!confirm(`Удалить профиль ${nick} (${userId}) из лидерборда?`)) return;
+    await sbFetch('profiles', { method: 'DELETE', query: `user_id=eq.${encodeURIComponent(userId)}` });
+    loadAllAdmin();
+  }
+
   async function deleteCertificate(id) {
-    if (!confirm(`Точно удалить сертификат ${id}?`)) return;
+    if (!confirm(`Удалить сертификат ${id}?`)) return;
     await sbFetch('certificates', { method: 'DELETE', query: `id=eq.${encodeURIComponent(id)}` });
     loadAllAdmin();
   }
@@ -331,17 +322,13 @@
 
     const id = `WS-2026-${Math.floor(1000 + Math.random() * 9000)}`;
     const skills = { vocabulary: nums.at(0), grammar: nums.at(1), listening: nums.at(2), production: nums.at(3) };
-    try {
-      await sbFetch('certificates', { method: 'POST', body: { id, full_name, score, cefr_level, skills } });
-      const verifyUrl = `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/index.html?cert=${id}#verify`;
-      const box = document.getElementById('certIssuedBox');
-      box.style.display = 'block';
-      box.innerHTML = `✅ Сертификат <b>${id}</b> выписан! Ссылка для QR: <br><code>${verifyUrl}</code>`;
-      loadAllAdmin();
-    } catch (e) { alert('Ошибка: ' + e.message); }
+    await sbFetch('certificates', { method: 'POST', body: { id, full_name, score, cefr_level, skills } });
+    const verifyUrl = `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/index.html?cert=${id}#verify`;
+    const box = document.getElementById('certIssuedBox');
+    box.style.display = 'block';
+    box.innerHTML = `✅ Сертификат <b>${id}</b> выписан! Ссылка для QR: <br><code>${verifyUrl}</code>`;
+    loadAllAdmin();
   }
 </script>
 </body>
 </html>
-
-

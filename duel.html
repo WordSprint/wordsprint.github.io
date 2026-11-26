@@ -3,62 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Веб-дуэль WordSprint — Сразись с другом</title>
-    <script src="config.js"></script>
-
+  <title>Веб-дуэль — WordSprint</title>
   <script src="config.js"></script>
   <style>
     :root {
       --bg: #0b0f19; --card: #131a2a; --input-bg: #0d1322; --border: #232d45;
       --text: #f1f5f9; --muted: #94a3b8; --primary: #6366f1; --primary-hover: #4f46e5;
-      --accent: #10b981; --danger: #ef4444;
+      --accent: #10b981; --danger: #ef4444; --warning: #f59e0b;
     }
     [data-theme="light"] {
       --bg: #f8fafc; --card: #ffffff; --input-bg: #f1f5f9; --border: #cbd5e1;
       --text: #0f172a; --muted: #475569; --primary: #4f46e5; --primary-hover: #4338ca;
-      --accent: #059669; --danger: #dc2626;
+      --accent: #059669; --danger: #dc2626; --warning: #d97706;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; transition: background 0.2s, color 0.2s; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
     a { color: inherit; text-decoration: none; }
-    .container { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+    .container { max-width: 760px; margin: 0 auto; padding: 0 20px; }
     header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
-    .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; flex-wrap: wrap; gap: 10px; }
-    .logo { font-weight: 800; font-size: 1.2rem; }
-    .nav-links { display: flex; gap: 14px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
+    .nav { display: flex; justify-content: space-between; align-items: center; min-height: 64px; flex-wrap: wrap; gap: 10px; padding: 8px 0; }
+    .logo { font-weight: 800; font-size: 1.25rem; }
+    .nav-links { display: flex; gap: 15px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
     .nav-links a:hover, .nav-links a.active { color: var(--primary); font-weight: 600; }
-    .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 28px; margin-top: 28px; }
-    .badge { display: inline-block; padding: 5px 13px; border-radius: 999px; background: rgba(99, 102, 241, 0.15); color: var(--primary); font-size: 0.84rem; font-weight: 600; margin-bottom: 12px; }
-    h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
-    .desc { color: var(--muted); font-size: 0.95rem; margin-bottom: 18px; }
-    label { display: block; font-size: 0.88rem; color: var(--muted); margin: 14px 0 6px; }
-    input, select {
-      width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
-      background: var(--input-bg); color: var(--text); font-size: 1rem; outline: none;
-    }
-    input:focus, select:focus { border-color: var(--primary); }
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; padding: 13px 18px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.98rem;
-      cursor: pointer; background: var(--primary); color: #fff; margin-top: 16px;
-    }
-    .btn:hover { background: var(--primary-hover); }
+    .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 26px; margin-top: 26px; }
+    h1 { font-size: 1.85rem; font-weight: 800; margin-bottom: 8px; }
+    .desc { color: var(--muted); font-size: 0.94rem; margin-bottom: 18px; }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin: 12px 0 6px; }
+    input, select { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 1rem; outline: none; }
+    .btn { width: 100%; padding: 13px 18px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.96rem; cursor: pointer; background: var(--primary); color: #fff; margin-top: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-accent { background: var(--accent); color: #fff; }
     .btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
-    .challenge-banner { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.45); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
-    .top-bar { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.92rem; margin-bottom: 16px; font-weight: 600; }
+    .mode-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+    @media (max-width: 600px) { .mode-row { grid-template-columns: 1fr; } }
+    .m-pill { padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--muted); cursor: pointer; font-weight: 600; font-size: 0.86rem; text-align: center; }
+    .m-pill.active { border-color: var(--primary); background: rgba(99, 102, 241, 0.16); color: var(--primary); }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 0.92rem; margin-bottom: 16px; font-weight: 700; }
     .word-box { text-align: center; padding: 26px 14px; background: var(--input-bg); border-radius: 14px; border: 1px solid var(--border); margin-bottom: 18px; }
-    .word-main { font-size: 2rem; font-weight: 800; }
-    .speak-btn { margin-top: 10px; background: rgba(99, 102, 241, 0.15); color: var(--primary); border: 1px solid rgba(99, 102, 241, 0.35); padding: 7px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .en-word { font-size: 2rem; font-weight: 800; }
     .options { display: grid; gap: 10px; }
     .opt-btn { padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 1rem; text-align: left; cursor: pointer; font-weight: 500; }
     .opt-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--accent); color: var(--accent); font-weight: 700; }
     .opt-btn.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: var(--danger); }
-    .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
-    .vs-card { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
-    .vs-card.winner { border-color: var(--accent); background: rgba(16, 185, 129, 0.12); }
-    canvas { width: 100%; border-radius: 12px; border: 1px solid var(--border); margin-top: 14px; }
+
+    .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .match-col { display: grid; gap: 10px; }
+    .match-card { padding: 14px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-weight: 600; font-size: 0.96rem; cursor: pointer; text-align: center; min-height: 52px; display: flex; align-items: center; justify-content: center; transition: opacity 0.45s ease, transform 0.3s ease, background 0.2s, border-color 0.2s; }
+    .match-card.selected { border-color: var(--primary); background: rgba(99, 102, 241, 0.2); color: var(--primary); }
+    .match-card.ok { border-color: var(--accent); background: rgba(16, 185, 129, 0.25); color: var(--accent); }
+    .match-card.err { border-color: var(--danger); background: rgba(239, 68, 68, 0.25); color: var(--danger); }
+    .match-card.fading-out { opacity: 0; transform: scale(0.92); pointer-events: none; }
+    .match-card.spawning { opacity: 0; transform: scale(0.94); }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -68,248 +63,359 @@
     <a href="index.html" class="logo">⚡ WordSprint</a>
     <nav class="nav-links">
       <a href="index.html">Главная</a>
-      <a href="teachers.html">Репетиторам</a>
-      <a href="lesson.html">Пройти ДЗ</a>
+      <a href="profile.html">Мой профиль</a>
+      <a href="teachers.html">Кабинет преподавателя</a>
       <a href="groups.html">Группы</a>
       <a href="duel.html" class="active">Веб-дуэль</a>
-      <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Сменить тему">☀️</button>
+      <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">☀️</button>
     </nav>
   </div>
 </header>
 
 <main class="container" style="padding-bottom: 60px;">
-  <div id="screenStart" class="card">
-    <span class="badge">⚔️ Спринт на 8 слов • Включая раунд на слух</span>
-    <h1>Вызови друга на дуэль</h1>
-    <p class="desc">Пройди блиц из 8 английских слов на время, скопируй ссылку-вызов или скачай карточку результата для Telegram и VK!</p>
+  <div id="duelIntro" class="card">
+    <div id="challengeBanner" class="hidden" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.4); padding:12px 14px; border-radius:12px; margin-bottom:16px; font-weight:600; color:var(--primary);"></div>
+    <h1 id="introTitle">⚔️ Веб-дуэль по английскому</h1>
+    <p class="desc" id="introDesc">Выберите режим, уровень сложности и бросьте вызов сопернику или другу по ссылке.</p>
 
-    <div id="incomingChallenge" class="challenge-banner hidden">
-      <div style="font-weight:800; color:#f59e0b; font-size:1.05rem;">🔥 Входящий вызов на дуэль!</div>
-      <p id="incomingText" style="margin-top:4px; font-size:0.92rem;"></p>
+    <label>Режим дуэли</label>
+    <div class="mode-row">
+      <div class="m-pill active" data-mode="blitz" onclick="selectDuelMode('blitz')">⚡ Блиц (8 слов)</div>
+      <div class="m-pill" data-mode="match" onclick="selectDuelMode('match')">🔗 Пары 5×5 на время</div>
+      <div class="m-pill" data-mode="listening" onclick="selectDuelMode('listening')">🎧 На слух (8 слов)</div>
     </div>
 
-    <label>Твоё имя</label>
-    <input type="text" id="playerName" placeholder="Введите ваше имя">
-
-    <div id="levelSelectBox">
-      <label>Уровень сложности</label>
-      <select id="levelSelect">
-        <option value="A1-A2">A1–A2 (Базовый)</option>
-        <option value="B1-B2" selected>B1–B2 (Средний)</option>
-        <option value="C1-C2">C1–C2 (Продвинутый)</option>
+    <div id="matchTimeWrap" class="hidden">
+      <label>Время на упражнение «Пары 5×5»</label>
+      <select id="matchDurationSelect">
+        <option value="30">30 секунд (Спринт)</option>
+        <option value="45" selected>45 секунд (Стандарт)</option>
+        <option value="60">60 секунд (Марафон)</option>
       </select>
     </div>
 
-    <button class="btn" onclick="startDuel()">🚀 Начать дуэль</button>
-    <a href="index.html" class="btn btn-secondary">← На главную</a>
+    <label>Уровень сложности слов</label>
+    <select id="duelLevel">
+      <option value="A1-A2">Начальный (A1 – A2)</option>
+      <option value="B1-B2" selected>Средний (B1 – B2)</option>
+      <option value="C1-C2">Продвинутый (C1 – C2)</option>
+    </select>
+
+    <label>Ваше имя / никнейм</label>
+    <input type="text" id="playerName" placeholder="Введите имя">
+    <button class="btn" id="startDuelBtn" onclick="startDuel()">🚀 Начать раунд</button>
   </div>
 
-  <div id="screenGame" class="card hidden">
+  <!-- Экран 1: Классический блиц / На слух -->
+  <div id="duelQuiz" class="card hidden">
     <div class="top-bar">
-      <span>Вопрос <b id="qNum">1</b> / 8</span>
-      <span>⏱ <b id="timerVal">0.0</b> сек</span>
+      <span>Раунд <b id="qIdx">1</b> / 8</span>
+      <span>Счёт: <b id="qScore" style="color:var(--accent);">0</b> • <b id="qTimer">0.0</b> сек</span>
     </div>
     <div class="word-box">
-      <div id="roundHint" style="font-size:0.82rem; color:var(--primary); margin-bottom:6px; font-weight:600;">Переведи слово</div>
-      <div class="word-main" id="wordDisplay">accomplish</div>
-      <button class="speak-btn" onclick="speakWord()">🔊 Озвучить</button>
+      <div class="en-word" id="qWord">accomplish</div>
+      <button onclick="speakCurrent()" style="margin-top:10px; background:rgba(99,102,241,0.16); color:var(--primary); border:1px solid rgba(99,102,241,0.35); padding:6px 14px; border-radius:8px; cursor:pointer; font-weight:600;">🔊 Озвучить</button>
     </div>
-    <div class="options" id="optionsGrid"></div>
+    <div class="options" id="qOptions"></div>
   </div>
 
-  <div id="screenFinish" class="card hidden" style="text-align:center;">
-    <div style="font-size:2.8rem; margin-bottom:6px;" id="finishEmoji">🏆</div>
-    <h1 id="finishTitle">Дуэль завершена!</h1>
-    <p class="desc" id="finishSub">Отправь эту ссылку другу — он пройдёт ровно те же 8 слов и сравнит свой счёт с твоим:</p>
-    <div id="vsComparison" class="vs-grid hidden"></div>
-    <button class="btn btn-accent" onclick="copyChallengeLink()">📋 Скопировать ссылку-вызов для друга</button>
-    <button class="btn btn-secondary" onclick="downloadResultCard()">🖼️ Скачать картинку с результатом</button>
-    <button class="btn btn-secondary" onclick="location.href='duel.html'">🔄 Новая дуэль</button>
-    <canvas id="shareCanvas" width="800" height="420"></canvas>
+  <!-- Экран 2: Режим «Пары 5×5 на время» -->
+  <div id="duelMatch" class="card hidden">
+    <div class="top-bar">
+      <span>Собрано пар: <b id="matchScore" style="color:var(--accent);">0</b></span>
+      <span>Осталось: <b id="matchTimer" style="color:var(--warning); font-size:1.15rem;">45</b> сек</span>
+    </div>
+    <p style="font-size:0.85rem; color:var(--muted); margin-bottom:12px;">Выберите английское слово слева и его перевод справа:</p>
+    <div class="match-grid">
+      <div class="match-col" id="matchLeftCol"></div>
+      <div class="match-col" id="matchRightCol"></div>
+    </div>
+  </div>
+
+  <!-- Финал -->
+  <div id="duelResult" class="card hidden" style="text-align:center;">
+    <div style="font-size:3rem;">🏆</div>
+    <h1 id="resHeadline">Раунд завершён!</h1>
+    <p class="desc" id="resStats"></p>
+    <div id="inviteBlock">
+      <p style="font-size:0.88rem; color:var(--muted); margin-bottom:8px;">Отправьте ссылку другу, чтобы он сыграл на этом же наборе слов:</p>
+      <input type="text" id="shareLink" readonly style="font-size:0.84rem; text-align:center; margin-bottom:10px;">
+      <button class="btn btn-accent" onclick="copyDuelLink()">📋 Скопировать ссылку-вызов</button>
+    </div>
+    <button class="btn btn-secondary" onclick="location.href='duel.html'">🔄 Сыграть ещё раз</button>
   </div>
 </main>
 <script>
-  const WORD_BANK = {
+  const POOLS = {
     'A1-A2': [
-      { en: 'airport', ru: 'аэропорт' }, { en: 'breakfast', ru: 'завтрак' }, { en: 'weather', ru: 'погода' },
-      { en: 'journey', ru: 'путешествие' }, { en: 'library', ru: 'библиотека' }, { en: 'message', ru: 'сообщение' },
-      { en: 'mistake', ru: 'ошибка' }, { en: 'neighbor', ru: 'сосед' }, { en: 'dangerous', ru: 'опасный' },
-      { en: 'expensive', ru: 'дорогой' }, { en: 'remember', ru: 'помнить' }, { en: 'decision', ru: 'решение' }
+      { en: 'journey', ru: 'путешествие' }, { en: 'weather', ru: 'погода' }, { en: 'improve', ru: 'улучшать' },
+      { en: 'decision', ru: 'решение' }, { en: 'mistake', ru: 'ошибка' }, { en: 'prepare', ru: 'готовиться' },
+      { en: 'advice', ru: 'совет' }, { en: 'healthy', ru: 'здоровый' }, { en: 'bridge', ru: 'мост' },
+      { en: 'suddenly', ru: 'внезапно' }, { en: 'borrow', ru: 'брать взаймы' }, { en: 'neighbor', ru: 'сосед' },
+      { en: 'century', ru: 'век, столетие' }, { en: 'believe', ru: 'верить' }, { en: 'careful', ru: 'осторожный' }
     ],
     'B1-B2': [
-      { en: 'accomplish', ru: 'достигать' }, { en: 'accurate', ru: 'точный' }, { en: 'advantage', ru: 'преимущество' },
-      { en: 'confident', ru: 'уверенный' }, { en: 'determine', ru: 'определять' }, { en: 'encourage', ru: 'воодушевлять' },
-      { en: 'environment', ru: 'окружающая среда' }, { en: 'frequently', ru: 'часто' }, { en: 'generous', ru: 'щедрый' },
-      { en: 'obstacle', ru: 'препятствие' }, { en: 'persuade', ru: 'убеждать' }, { en: 'reliable', ru: 'надёжный' }
+      { en: 'accomplish', ru: 'выполнять, достигать' }, { en: 'reliable', ru: 'надёжный' },
+      { en: 'opportunity', ru: 'возможность' }, { en: 'environment', ru: 'окружающая среда' },
+      { en: 'encourage', ru: 'поощрять, ободрять' }, { en: 'essential', ru: 'существенный, важный' },
+      { en: 'attitude', ru: 'отношение, позиция' }, { en: 'consequence', ru: 'последствие' },
+      { en: 'determine', ru: 'определять, решать' }, { en: 'frequent', ru: 'частый' },
+      { en: 'obstacle', ru: 'препятствие' }, { en: 'persuade', ru: 'убеждать' },
+      { en: 'accurate', ru: 'точный' }, { en: 'reluctant', ru: 'неохотный' }, { en: 'sustainable', ru: 'устойчивый' }
     ],
     'C1-C2': [
-      { en: 'ambiguous', ru: 'двусмысленный' }, { en: 'coherent', ru: 'последовательный' }, { en: 'contemplate', ru: 'обдумывать' },
-      { en: 'deteriorate', ru: 'ухудшаться' }, { en: 'eloquent', ru: 'красноречивый' }, { en: 'inevitable', ru: 'неизбежный' },
-      { en: 'meticulous', ru: 'дотошный' }, { en: 'obsolete', ru: 'устаревший' }, { en: 'resilient', ru: 'стойкий' },
-      { en: 'scrutinize', ru: 'тщательно изучать' }, { en: 'ubiquitous', ru: 'вездесущий' }, { en: 'vulnerable', ru: 'уязвимый' }
+      { en: 'inevitable', ru: 'неизбежный' }, { en: 'ambiguous', ru: 'двусмысленный' },
+      { en: 'meticulous', ru: 'дотошный, скрупулёзный' }, { en: 'ubiquitous', ru: 'вездесущий' },
+      { en: 'resilient', ru: 'стойкий, жизнестойкий' }, { en: 'scrutinize', ru: 'тщательно изучать' },
+      { en: 'eloquent', ru: 'красноречивый' }, { en: 'ephemeral', ru: 'мимолётный' },
+      { en: 'pragmatic', ru: 'прагматичный' }, { en: 'benevolent', ru: 'доброжелательный' },
+      { en: 'alleviate', ru: 'облегчать, смягчать' }, { en: 'conundrum', ru: 'сложная головоломка' },
+      { en: 'discrepancy', ru: 'расхождение, несоответствие' }, { en: 'lucrative', ru: 'прибыльный' }
     ]
   };
 
-  let duelQuestions = [], qIndex = 0, score = 0, startTime = 0, timerInt = null, elapsed = 0;
-  let currentLevel = 'B1-B2', challenger = null, locked = false, currentWordObj = null;
+  let duelMode = 'blitz', duelLevel = 'B1-B2', duelWords = [], friendDuelId = null, friendData = null;
+  let challengeUserId = null, challengeUserName = '';
+  let idx = 0, score = 0, startTime = 0, timerInt = null, locked = false;
 
-   window.addEventListener('DOMContentLoaded', async () => {
+  // Переменные для режима «Пары 5×5»
+  let matchSlots = [], matchDeck = [], selectedLeft = null, selectedRight = null, matchSecondsLeft = 45;
+
+  function selectDuelMode(m) {
+    duelMode = m;
+    document.querySelectorAll('.m-pill').forEach(el => el.classList.toggle('active', el.dataset.mode === m));
+    document.getElementById('matchTimeWrap').classList.toggle('hidden', m !== 'match');
+  }
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    const me = getCurrentUserProfile();
+    if (me && me.nickname) document.getElementById('playerName').value = me.nickname;
+
     const p = new URLSearchParams(window.location.search);
-    const dCode = p.get('d');
-    if (dCode) {
-      try {
-        const rows = await sbFetch('duels', { query: `code=eq.${encodeURIComponent(dCode)}` });
-        if (rows && rows.length) {
-          const row = rows[0];
-          challenger = { n: row.challenger_name, s: row.score, t: row.elapsed, lvl: row.level, q: row.questions };
-          currentLevel = challenger.lvl || 'B1-B2';
-          document.getElementById('levelSelectBox').classList.add('hidden');
-          document.getElementById('incomingChallenge').classList.remove('hidden');
-          document.getElementById('incomingText').innerHTML =
-            `Соперник <b>${challenger.n}</b> прошёл уровень <b>${currentLevel}</b> со счётом <b>${challenger.s}/8</b> за <b>${challenger.t} сек</b>. Сможешь побить его рекорд?`;
-        }
-      } catch (e) { console.error(e); }
+    friendDuelId = p.get('d');
+    challengeUserId = p.get('challenge');
+    challengeUserName = p.get('targetName') || '';
+
+    if (challengeUserId && challengeUserName) {
+      const ban = document.getElementById('challengeBanner');
+      ban.textContent = `⚔️ Прямой вызов игроку ${challengeUserName}! После раунда соперник получит уведомление.`;
+      ban.classList.remove('hidden');
+    }
+
+    if (friendDuelId) {
+      const rows = await sbFetch('duels', { query: `id=eq.${encodeURIComponent(friendDuelId)}` });
+      friendData = sbFirst(rows);
+      if (friendData) {
+        document.getElementById('introTitle').textContent = `⚔️ Вызов от ${friendData.player1_name}!`;
+        document.getElementById('introDesc').textContent = `Результат соперника: ${friendData.player1_score} очков за ${friendData.player1_time} сек. Попробуйте побить!`;
+        duelLevel = friendData.level;
+        duelMode = friendData.mode || 'blitz';
+        selectDuelMode(duelMode);
+        document.getElementById('duelLevel').disabled = true;
+      }
     }
   });
 
-  
-
   function startDuel() {
     const name = document.getElementById('playerName').value.trim();
-    if (!name) return alert('Введи своё имя перед стартом!');
-    localStorage.setItem('ws_duel_name', name);
+    if (!name) return alert('Введите ваше имя!');
+    duelLevel = friendData ? friendData.level : document.getElementById('duelLevel').value;
+    const pool = [...POOLS[duelLevel]].sort(() => Math.random() - 0.5);
 
-    if (challenger && challenger.q) {
-      duelQuestions = challenger.q;
-    } else {
-      currentLevel = document.getElementById('levelSelect').value;
-      duelQuestions = [...WORD_BANK[currentLevel]].sort(() => Math.random() - 0.5).slice(0, 8);
+    document.getElementById('duelIntro').classList.add('hidden');
+    score = 0;
+
+    if (duelMode === 'match') {
+      matchDeck = [...pool, ...pool].sort(() => Math.random() - 0.5);
+      matchSecondsLeft = friendData ? Math.round(friendData.player1_time) : parseInt(document.getElementById('matchDurationSelect').value, 10);
+      startMatchGame();
+      return;
     }
 
-    qIndex = 0; score = 0;
-    document.getElementById('screenStart').classList.add('hidden');
-    document.getElementById('screenGame').classList.remove('hidden');
-
+    duelWords = friendData ? friendData.words : pool.slice(0, 8);
+    idx = 0;
+    document.getElementById('duelQuiz').classList.remove('hidden');
     startTime = performance.now();
     timerInt = setInterval(() => {
-      elapsed = ((performance.now() - startTime) / 1000).toFixed(1);
-      document.getElementById('timerVal').textContent = elapsed;
+      document.getElementById('qTimer').textContent = ((performance.now() - startTime) / 1000).toFixed(1);
     }, 100);
-
-    showQuestion();
+    renderBlitzQuestion();
   }
 
-  function speakWord() {
-    if (!currentWordObj) return;
-    const u = new SpeechSynthesisUtterance(currentWordObj.en);
+  function startMatchGame() {
+    document.getElementById('duelMatch').classList.remove('hidden');
+    document.getElementById('matchScore').textContent = '0';
+    document.getElementById('matchTimer').textContent = matchSecondsLeft;
+    selectedLeft = null; selectedRight = null;
+    matchSlots = matchDeck.splice(0, 5).map((item, i) => ({ slot: i, en: item.en, ru: item.ru, busy: false }));
+    renderMatchBoard(false);
+
+    timerInt = setInterval(() => {
+      matchSecondsLeft--;
+      document.getElementById('matchTimer').textContent = Math.max(0, matchSecondsLeft);
+      if (matchSecondsLeft <= 0) {
+        clearInterval(timerInt);
+        finishDuel(parseInt(document.getElementById('matchDurationSelect').value, 10));
+      }
+    }, 1000);
+  }
+
+  function renderMatchBoard(animateNewSlot = false, targetSlot = -1) {
+    const leftCol = document.getElementById('matchLeftCol');
+    const rightCol = document.getElementById('matchRightCol');
+    const rightOrder = [...matchSlots].sort(() => Math.random() - 0.5);
+
+    leftCol.innerHTML = matchSlots.map(s => `
+      <div class="match-card ${animateNewSlot && s.slot === targetSlot ? 'spawning' : ''}" data-slot="${s.slot}" data-side="left" onclick="pickMatchCard(this, 'left', ${s.slot})">${s.en}</div>
+    `).join('');
+
+    rightCol.innerHTML = rightOrder.map(s => `
+      <div class="match-card ${animateNewSlot && s.slot === targetSlot ? 'spawning' : ''}" data-slot="${s.slot}" data-side="right" onclick="pickMatchCard(this, 'right', ${s.slot})">${s.ru}</div>
+    `).join('');
+
+    if (animateNewSlot && targetSlot >= 0) {
+      requestAnimationFrame(() => {
+        document.querySelectorAll(`.match-card[data-slot="${targetSlot}"]`).forEach(el => el.classList.remove('spawning'));
+      });
+    }
+  }
+
+  function pickMatchCard(el, side, slot) {
+    if (el.classList.contains('fading-out') || el.classList.contains('ok')) return;
+    document.querySelectorAll(`.match-card[data-side="${side}"]`).forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+
+    if (side === 'left') selectedLeft = { el, slot };
+    else selectedRight = { el, slot };
+
+    if (selectedLeft && selectedRight) {
+      const L = selectedLeft, R = selectedRight;
+      selectedLeft = null; selectedRight = null;
+
+      if (L.slot === R.slot) {
+        score++;
+        document.getElementById('matchScore').textContent = score;
+        L.el.classList.remove('selected'); R.el.classList.remove('selected');
+        L.el.classList.add('ok'); R.el.classList.add('ok');
+
+        setTimeout(() => {
+          L.el.classList.add('fading-out');
+          R.el.classList.add('fading-out');
+        }, 250);
+
+        setTimeout(() => {
+          const nextPair = matchDeck.shift() || POOLS[duelLevel].at(Math.floor(Math.random() * POOLS[duelLevel].length));
+          matchSlots[L.slot] = { slot: L.slot, en: nextPair.en, ru: nextPair.ru };
+          L.el.textContent = nextPair.en;
+          R.el.textContent = nextPair.ru;
+          L.el.className = 'match-card spawning';
+          R.el.className = 'match-card spawning';
+          requestAnimationFrame(() => {
+            L.el.classList.remove('spawning');
+            R.el.classList.remove('spawning');
+          });
+        }, 1600);
+      } else {
+        L.el.classList.remove('selected'); R.el.classList.remove('selected');
+        L.el.classList.add('err'); R.el.classList.add('err');
+        setTimeout(() => {
+          L.el.classList.remove('err');
+          R.el.classList.remove('err');
+        }, 550);
+      }
+    }
+  }
+  function speakCurrent() {
+    const cur = duelWords.at(idx);
+    if (!cur) return;
+    const u = new SpeechSynthesisUtterance(cur.en);
     u.lang = 'en-US'; u.rate = 0.92;
     speechSynthesis.speak(u);
   }
 
-  function showQuestion() {
+  function renderBlitzQuestion() {
     locked = false;
-    currentWordObj = duelQuestions[qIndex];
-    const isListeningRound = qIndex >= 6;
-    document.getElementById('qNum').textContent = qIndex + 1;
-    document.getElementById('roundHint').textContent = isListeningRound ? '🎧 Раунд на слух: прослушай и выбери перевод' : 'Переведи слово';
-    document.getElementById('wordDisplay').textContent = isListeningRound ? '🎧 • • • • •' : currentWordObj.en;
+    const cur = duelWords.at(idx);
+    document.getElementById('qIdx').textContent = idx + 1;
+    document.getElementById('qScore').textContent = score;
+    document.getElementById('qWord').textContent = duelMode === 'listening' ? '🎧 • • • • •' : cur.en;
+    speakCurrent();
 
-    const pool = WORD_BANK[currentLevel].filter(w => w.ru !== currentWordObj.ru).map(w => w.ru);
-    const wrong = pool.sort(() => Math.random() - 0.5).slice(0, 3);
-    const opts = [currentWordObj.ru, ...wrong].sort(() => Math.random() - 0.5);
-
-    const grid = document.getElementById('optionsGrid');
-    grid.innerHTML = '';
-    opts.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'opt-btn';
-      btn.textContent = opt;
-      btn.onclick = () => selectAnswer(btn, opt);
-      grid.appendChild(btn);
-    });
-    speakWord();
-  }
-
-  function selectAnswer(btn, chosen) {
-    if (locked) return;
-    locked = true;
-    document.getElementById('wordDisplay').textContent = currentWordObj.en;
-    if (chosen === currentWordObj.ru) { btn.classList.add('correct'); score++; }
-    else {
-      btn.classList.add('wrong');
-      document.querySelectorAll('.opt-btn').forEach(b => { if (b.textContent === currentWordObj.ru) b.classList.add('correct'); });
-    }
-    setTimeout(() => { qIndex++; qIndex < 8 ? showQuestion() : endDuel(); }, 750);
-  }
-
-  function endDuel() {
-    clearInterval(timerInt);
-    document.getElementById('screenGame').classList.add('hidden');
-    document.getElementById('screenFinish').classList.remove('hidden');
-
-    const myName = localStorage.getItem('ws_duel_name') || 'Игрок';
-    document.getElementById('finishTitle').textContent = `${myName}: ${score} / 8 за ${elapsed} сек!`;
-
-    if (challenger) {
-      const box = document.getElementById('vsComparison');
-      box.classList.remove('hidden');
-      const iWon = score > challenger.s || (score === challenger.s && parseFloat(elapsed) < parseFloat(challenger.t));
-      document.getElementById('finishEmoji').textContent = iWon ? '🏆' : '⚔️';
-      document.getElementById('finishSub').textContent = iWon ? 'Поздравляем! Ты победил в этой дуэли!' : 'Соперник оказался быстрее или точнее. Возьми реванш!';
-      box.innerHTML = `
-        <div class="vs-card ${iWon ? 'winner' : ''}"><div style="font-size:0.82rem; color:var(--muted);">Твой результат</div><div style="font-size:1.3rem; font-weight:800; margin:4px 0;">${myName}</div><div style="color:var(--accent); font-weight:700;">${score}/8 • ${elapsed} сек</div></div>
-        <div class="vs-card ${!iWon ? 'winner' : ''}"><div style="font-size:0.82rem; color:var(--muted);">Соперник</div><div style="font-size:1.3rem; font-weight:800; margin:4px 0;">${challenger.n}</div><div style="color:#f59e0b; font-weight:700;">${challenger.s}/8 • ${challenger.t} сек</div></div>
-      `;
-    }
-    drawShareCard(myName, score, elapsed, currentLevel);
-  }
-
-    async function copyChallengeLink() {
-    const myName = localStorage.getItem('ws_duel_name') || 'Игрок';
-    const shortCode = String(Math.floor(1000 + Math.random() * 9000));
-    try {
-      await sbFetch('duels', {
-        method: 'POST',
-        body: {
-          code: shortCode,
-          challenger_name: myName,
-          score: score,
-          elapsed: String(elapsed),
-          level: currentLevel,
-          questions: duelQuestions
+    const wrong = POOLS[duelLevel].filter(w => w.ru !== cur.ru).sort(() => Math.random() - 0.5).slice(0, 3).map(w => w.ru);
+    const opts = [cur.ru, ...wrong].sort(() => Math.random() - 0.5);
+    const box = document.getElementById('qOptions');
+    box.innerHTML = '';
+    opts.forEach(o => {
+      const b = document.createElement('button');
+      b.className = 'opt-btn';
+      b.textContent = o;
+      b.onclick = () => {
+        if (locked) return;
+        locked = true;
+        document.getElementById('qWord').textContent = cur.en;
+        if (o === cur.ru) { b.classList.add('correct'); score++; }
+        else {
+          b.classList.add('wrong');
+          document.querySelectorAll('.opt-btn').forEach(x => { if (x.textContent === cur.ru) x.classList.add('correct'); });
         }
-      });
-      const baseUrl = window.location.protocol.startsWith('http')
-        ? `${window.location.origin}${window.location.pathname}`
-        : `${WS_CONFIG.SITE_URL}/duel.html`;
-      const url = `${baseUrl}?d=${shortCode}`;
-      await navigator.clipboard.writeText(`⚔️ Вызываю тебя на дуэль по английскому в WordSprint!\nМой счёт: ${score}/8 за ${elapsed} сек (${currentLevel}). Сможешь побить?\n${url}`);
-      alert(`Короткая ссылка-вызов (${url}) скопирована!`);
-    } catch (e) {
-      alert('Ошибка создания ссылки (откройте сайт по http/https): ' + e.message);
+        setTimeout(() => { idx++; idx < 8 ? renderBlitzQuestion() : finishDuel(); }, 650);
+      };
+      box.appendChild(b);
+    });
+  }
+
+  async function finishDuel(fixedSeconds = null) {
+    clearInterval(timerInt);
+    const elapsed = fixedSeconds !== null ? fixedSeconds : parseFloat(((performance.now() - startTime) / 1000).toFixed(1));
+    const pName = document.getElementById('playerName').value.trim();
+
+    document.getElementById('duelQuiz').classList.add('hidden');
+    document.getElementById('duelMatch').classList.add('hidden');
+    document.getElementById('duelResult').classList.remove('hidden');
+
+    const me = getCurrentUserProfile();
+    const isWin = !friendData || score > friendData.player1_score || (score === friendData.player1_score && elapsed < friendData.player1_time);
+
+    if (me && me.user_id && isWin) {
+      const nextWins = (me.duel_wins || 0) + 1;
+      const nextXp = (me.xp || 0) + 25;
+      await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(me.user_id)}`, body: { duel_wins: nextWins, xp: nextXp } });
+      me.duel_wins = nextWins; me.xp = nextXp;
+      localStorage.setItem('ws_user_profile', JSON.stringify(me));
+    }
+
+    if (friendData) {
+      document.getElementById('inviteBlock').classList.add('hidden');
+      const winText = isWin ? '🎉 Вы победили соперника!' : '🤝 Достойная игра!';
+      document.getElementById('resHeadline').textContent = winText;
+      document.getElementById('resStats').textContent = `${pName}: ${score} очков (${elapsed} сек) против ${friendData.player1_name}: ${friendData.player1_score} очков (${friendData.player1_time} сек)`;
+    } else {
+      const unit = duelMode === 'match' ? 'пар' : 'из 8';
+      document.getElementById('resStats').textContent = `${pName}, ваш результат: ${score} ${unit} за ${elapsed} сек!`;
+      try {
+        const res = await sbFetch('duels', {
+          method: 'POST',
+          body: { level: duelLevel, mode: duelMode, words: duelWords, player1_name: pName, player1_score: score, player1_time: elapsed }
+        });
+        const created = sbFirst(res);
+        const link = `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/duel.html?d=${created.id}`;
+        document.getElementById('shareLink').value = link;
+
+        if (challengeUserId) {
+          await sendAppNotification(
+            challengeUserId,
+            `⚔️ Вызов на дуэль от ${pName}!`,
+            `${pName} набрал(а) ${score} ${unit} за ${elapsed} сек. Попробуй побить рекорд!`,
+            `duel.html?d=${created.id}`
+          );
+        }
+      } catch (e) { console.error(e); }
     }
   }
 
-
-  function drawShareCard(name, sc, time, lvl) {
-    const c = document.getElementById('shareCanvas');
-    const ctx = c.getContext('2d');
-    const grad = ctx.createLinearGradient(0, 0, 800, 420);
-    grad.addColorStop(0, '#0f172a'); grad.addColorStop(1, '#1e1b4b');
-    ctx.fillStyle = grad; ctx.fillRect(0, 0, 800, 420);
-    ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 4; ctx.strokeRect(18, 18, 764, 384);
-    ctx.fillStyle = '#a5b4fc'; ctx.font = 'bold 24px system-ui'; ctx.fillText('⚡ WORDSPRINT • ВЕБ-ДУЭЛЬ', 50, 72);
-    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 46px system-ui'; ctx.fillText(name, 50, 150);
-    ctx.fillStyle = '#34d399'; ctx.font = 'bold 74px system-ui'; ctx.fillText(`${sc} / 8 слов`, 50, 245);
-    ctx.fillStyle = '#cbd5e1'; ctx.font = '28px system-ui'; ctx.fillText(`⏱ Время: ${time} сек   •   Уровень: ${lvl}`, 50, 310);
-    ctx.fillStyle = '#94a3b8'; ctx.font = '22px system-ui'; ctx.fillText('Попробуй побить мой рекорд: wordsprint.github.io/duel.html', 50, 368);
-  }
-
-  function downloadResultCard() {
-    const link = document.createElement('a');
-    link.download = 'wordsprint-duel.png';
-    link.href = document.getElementById('shareCanvas').toDataURL('image/png');
-    link.click();
+  function copyDuelLink() {
+    navigator.clipboard.writeText(document.getElementById('shareLink').value);
+    alert('Ссылка-вызов скопирована!');
   }
 </script>
 </body>

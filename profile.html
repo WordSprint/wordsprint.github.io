@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мой профиль — WordSprint</title>
+  <script src="config.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f19; --card: #131a2a; --input-bg: #0d1322; --border: #232d45;
+      --text: #f1f5f9; --muted: #94a3b8; --primary: #6366f1; --primary-hover: #4f46e5;
+      --accent: #10b981; --warning: #f59e0b; --danger: #ef4444;
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc; --card: #ffffff; --input-bg: #f1f5f9; --border: #cbd5e1;
+      --text: #0f172a; --muted: #475569; --primary: #4f46e5; --primary-hover: #4338ca;
+      --accent: #059669; --warning: #d97706; --danger: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+    header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
+    .nav { display: flex; justify-content: space-between; align-items: center; min-height: 64px; flex-wrap: wrap; gap: 10px; padding: 8px 0; }
+    .logo { font-weight: 800; font-size: 1.25rem; }
+    .nav-links { display: flex; gap: 15px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); font-weight: 600; }
+    .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+    .hero { padding: 30px 0 16px; text-align: center; }
+    h1 { font-size: 1.95rem; font-weight: 800; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+    @media (max-width: 780px) { .grid-2 { grid-template-columns: 1fr; } }
+    .stats-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+    @media (max-width: 740px) { .stats-4 { grid-template-columns: 1fr 1fr; } }
+    .stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .stat-val { font-size: 1.45rem; font-weight: 800; }
+    .stat-lbl { font-size: 0.82rem; color: var(--muted); }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 20px; }
+    .card h2 { font-size: 1.18rem; margin-bottom: 8px; }
+    .desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 14px; }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin: 11px 0 5px; }
+    input, textarea, select { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 18px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.92rem; cursor: pointer; background: var(--primary); color: #fff; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-sm { padding: 7px 12px; font-size: 0.84rem; }
+    .profile-bar { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; }
+    .code-pill { font-family: monospace; font-weight: 800; background: var(--input-bg); padding: 3px 10px; border-radius: 7px; color: var(--accent); border: 1px solid var(--border); }
+    .tabs-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+    .tab-btn { padding: 9px 15px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .item-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 13px 15px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; }
+    .tag-ok { background: rgba(16, 185, 129, 0.15); color: var(--accent); padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+    .tag-wait { background: rgba(245, 158, 11, 0.15); color: var(--warning); padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a href="index.html" class="logo">⚡ WordSprint</a>
+    <nav class="nav-links">
+      <a href="index.html">Главная</a>
+      <a href="profile.html" class="active">Мой профиль</a>
+      <a href="teachers.html">Кабинет преподавателя</a>
+      <a href="groups.html">Группы</a>
+      <a href="duel.html">Веб-дуэль</a>
+      <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">☀️</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container" style="padding-bottom: 60px;">
+  <section class="hero"><h1 id="profilePageTitle">Мой профиль WordSprint</h1></section>
+
+  <div id="publicProfileView" class="card hidden" style="max-width: 640px; margin: 0 auto 24px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <div>
+        <div style="font-size:0.84rem; color:var(--muted);">Профиль игрока • <span id="pubUserId">WSU-0000</span></div>
+        <h2 id="pubNickname" style="font-size:1.5rem; margin:4px 0;">—</h2>
+        <div id="pubRankBadge" style="color:var(--primary); font-weight:700;">Новичок</div>
+      </div>
+      <a id="pubChallengeBtn" href="duel.html" class="btn btn-accent">⚔️ Бросить вызов</a>
+    </div>
+    <div class="stats-4" style="margin-top:18px; margin-bottom:10px;">
+      <div class="stat-box"><div class="stat-val" id="pubXp">0</div><div class="stat-lbl">Опыт (XP)</div></div>
+      <div class="stat-box"><div class="stat-val" id="pubWins">0</div><div class="stat-lbl">Побед в дуэлях</div></div>
+      <div class="stat-box"><div class="stat-val" id="pubStreak">1 дн.</div><div class="stat-lbl">Ударный режим</div></div>
+      <div class="stat-box"><div class="stat-val" id="pubCert">—</div><div class="stat-lbl">Уровень CEFR</div></div>
+    </div>
+    <a href="profile.html" class="btn btn-secondary btn-sm" style="margin-top:8px;">← Вернуться в свой профиль</a>
+  </div>
+
+  <div id="authSection" class="grid-2">
+    <div class="card">
+      <h2>🔑 Войти в профиль</h2>
+      <p class="desc">Введите ваш WordSprint ID (или Никнейм) и 4-значный PIN-код.</p>
+      <label>WordSprint ID (например, WSU-4812) или Никнейм</label>
+      <input type="text" id="loginUserId" placeholder="WSU-0000 или Никнейм">
+      <label>PIN-код (4 цифры)</label>
+      <input type="password" id="loginPin" maxlength="6" placeholder="••••">
+      <button class="btn" style="width:100%; margin-top:16px;" onclick="loginProfile()">Войти в кабинет</button>
+    </div>
+
+    <div class="card">
+      <h2>✨ Создать единый профиль</h2>
+      <p class="desc">Один аккаунт для синхронизации с Android-приложением, дуэлей, групп и уроков от учителя.</p>
+      <label>Придумайте уникальный Никнейм</label>
+      <input type="text" id="regNickname" placeholder="Ваш никнейм">
+      <label>Придумайте PIN-код (4 цифры для защиты)</label>
+      <input type="text" id="regPin" maxlength="4" placeholder="Например: 2580">
+      <label>Email (необязательно — для уведомлений о вызовах и ДЗ)</label>
+      <input type="email" id="regEmail" placeholder="Ваш Email">
+      <button class="btn btn-accent" style="width:100%; margin-top:16px;" id="regProfileBtn" onclick="registerProfile()">Создать профиль</button>
+    </div>
+  </div>
+  <div id="userDashboard" class="hidden">
+    <div class="profile-bar">
+      <div>
+        <div style="font-size:0.84rem; color:var(--muted);">Единый аккаунт WordSprint • <b id="uRankName" style="color:var(--primary);">Новичок</b></div>
+        <h2 id="uNickname" style="font-size:1.4rem; margin:2px 0;">—</h2>
+        <div style="font-size:0.88rem; color:var(--muted); margin-top:4px;">
+          Ваш ID для приложения и дуэлей: <span class="code-pill" id="uUserId">WSU-0000</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-secondary btn-sm" onclick="copyText(currentUser.user_id, 'Ваш ID скопирован!')">📋 Копировать ID</button>
+        <button class="btn btn-secondary btn-sm" onclick="refreshProfile()">🔄 Обновить</button>
+        <button class="btn btn-secondary btn-sm" onclick="logoutProfile()">Выйти</button>
+      </div>
+    </div>
+
+    <div class="stats-4">
+      <div class="stat-box"><div class="stat-val" id="uXpVal">0</div><div class="stat-lbl">Общий опыт (XP)</div></div>
+      <div class="stat-box"><div class="stat-val" id="uWinsVal">0</div><div class="stat-lbl">Побед в дуэлях</div></div>
+      <div class="stat-box"><div class="stat-val" id="uStreakVal">1 дн.</div><div class="stat-lbl">Ударный режим</div></div>
+      <div class="stat-box"><div class="stat-val" id="uCertVal">—</div><div class="stat-lbl">Сертификат CEFR</div></div>
+    </div>
+
+    <div class="tabs-bar">
+      <button class="tab-btn active" id="pTabStudy" onclick="switchProfileTab('study')">🎒 Учёба и задания</button>
+      <button class="tab-btn" id="pTabNotifs" onclick="switchProfileTab('notifs')">🔔 Уведомления и вызовы <span id="notifBadgeCount"></span></button>
+      <button class="tab-btn" id="pTabAwards" onclick="switchProfileTab('awards')">🏆 Грамоты и сертификат</button>
+      <button class="tab-btn" id="pTabSync" onclick="switchProfileTab('sync')">📲 Связка с приложением</button>
+    </div>
+
+    <div id="pPaneStudy">
+      <div id="attachTeacherCard" class="card">
+        <h2>🎓 Прикрепиться к преподавателю или школе</h2>
+        <p class="desc">Введите код вашего репетитора или школы, чтобы получать домашние задания и расписание созвонов.</p>
+        <div class="grid-2" style="margin:0;">
+          <div>
+            <label style="margin-top:0;">Код преподавателя или школы</label>
+            <input type="text" id="attachTCode" placeholder="Например: WS-4812 или SCH-9291" style="text-transform:uppercase; font-family:monospace;">
+          </div>
+          <div>
+            <label style="margin-top:0;">Ваше имя и фамилия (для журнала учителя)</label>
+            <input type="text" id="attachFullName" placeholder="Имя и фамилия">
+          </div>
+        </div>
+        <button class="btn btn-accent" style="margin-top:14px;" onclick="attachToTeacher()">✅ Прикрепиться</button>
+      </div>
+
+      <div id="studentStudyWorkspace" class="hidden">
+        <div class="card" style="border-color:rgba(99,102,241,0.4);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+              <div style="font-size:0.84rem; color:var(--muted);">Ваш преподаватель / школа:</div>
+              <h3 id="stTeacherTitle" style="font-size:1.2rem;">—</h3>
+              <div style="font-size:0.86rem; color:var(--muted);">Код ученика: <span class="code-pill" id="stStudentCode">ST-0000</span> • Группа: <b id="stGroupLabel">Общая группа</b></div>
+            </div>
+            <a id="teacherCallBtn" href="#" target="_blank" class="btn btn-accent hidden">📹 Подключиться к созвону</a>
+          </div>
+          <div id="stAnnouncementBox" class="hidden" style="margin-top:14px; padding:12px 14px; background:var(--input-bg); border-radius:10px; border-left:3px solid var(--primary); font-size:0.92rem;"></div>
+        </div>
+
+        <div id="stScheduleCard" class="card hidden">
+          <h2>📅 Расписание занятий</h2>
+          <div id="stScheduleList"></div>
+        </div>
+
+        <div class="card">
+          <h2>📚 Домашние задания</h2>
+          <div id="stLessonsList"><p style="color:var(--muted);">Загрузка заданий...</p></div>
+        </div>
+
+        <div class="card">
+          <h2>⭐ Оставить честный отзыв преподавателю / школе</h2>
+          <p class="desc">Доступно после выполнения хотя бы одного домашнего задания.</p>
+          <select id="stReviewRating" style="margin-bottom:8px;">
+            <option value="5">5 — Отлично</option>
+            <option value="4">4 — Хорошо</option>
+            <option value="3">3 — Нормально</option>
+          </select>
+          <textarea id="stReviewText" style="min-height:75px;" placeholder="Напишите ваши впечатления об обучении..."></textarea>
+          <button class="btn btn-sm" style="margin-top:10px;" onclick="submitTeacherReview()">Опубликовать отзыв</button>
+        </div>
+      </div>
+    </div>
+    <div id="pPaneNotifs" class="card hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h2>🔔 Уведомления и вызовы на дуэль</h2>
+        <button class="btn btn-secondary btn-sm" onclick="markAllNotifsRead()">Отметить прочитанными</button>
+      </div>
+      <div id="notificationsList"><p style="color:var(--muted);">Новых уведомлений пока нет.</p></div>
+    </div>
+
+    <div id="pPaneAwards" class="grid-2 hidden">
+      <div class="card">
+        <h2>🏅 Именные грамоты от учителей</h2>
+        <div id="userAwardsList"><p style="color:var(--muted); font-size:0.9rem;">Пока нет полученных грамот.</p></div>
+      </div>
+      <div class="card">
+        <h2>📜 Мой сертификат CEFR</h2>
+        <p class="desc">Привяжите ID сертификата, полученного после экзамена в приложении, чтобы он отображался в вашем профиле.</p>
+        <input type="text" id="bindCertInput" placeholder="WS-2026-XXXX" style="text-transform:uppercase; font-family:monospace;">
+        <button class="btn btn-sm" style="margin-top:10px;" onclick="bindCertificate()">Привязать сертификат</button>
+        <div id="boundCertInfo" style="margin-top:14px;"></div>
+      </div>
+    </div>
+
+    <div id="pPaneSync" class="card hidden">
+      <h2>📲 Связка с Android-приложением</h2>
+      <p class="desc">Привяжите аккаунт один раз по ID (автообновление при наличии сети) или введите короткий код прогресса из приложения.</p>
+      <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:16px;">
+        <div style="font-size:0.86rem; color:var(--muted);">Ваш ID для привязки в приложении WordSprint:</div>
+        <div style="font-size:1.4rem; font-weight:800; font-family:monospace; color:var(--accent); margin:4px 0;" id="syncIdDisplay">WSU-0000</div>
+        <div style="font-size:0.82rem; color:var(--muted);">Если профиль создан сначала в приложении — просто войдите на сайте по этому же ID и PIN-коду.</div>
+      </div>
+
+      <label>Короткий код прогресса из приложения (формат X450-82, если занимались офлайн)</label>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+        <input type="text" id="shortXpCodeInput" placeholder="Например: X450-82" style="flex:1; text-transform:uppercase; font-family:monospace;">
+        <button class="btn btn-accent btn-sm" onclick="applyShortXpCode()">🔄 Зачислить XP</button>
+      </div>
+
+      <label>Email для уведомлений о вызовах и домашних заданиях</label>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input type="email" id="updateProfileEmail" placeholder="Ваш Email" style="flex:1;">
+        <button class="btn btn-secondary btn-sm" onclick="saveProfileEmail()">Сохранить Email</button>
+      </div>
+    </div>
+  </div>
+  <canvas id="awardCanvas" width="900" height="600" class="hidden"></canvas>
+</main>
+<script>
+  let currentUser = null, linkedTeacher = null, completedCodes = new Set();
+
+  function copyText(t, msg) { navigator.clipboard.writeText(t); alert(msg || 'Скопировано!'); }
+
+  function switchProfileTab(tab) {
+    const map = { study: ['pTabStudy', 'pPaneStudy'], notifs: ['pTabNotifs', 'pPaneNotifs'], awards: ['pTabAwards', 'pPaneAwards'], sync: ['pTabSync', 'pPaneSync'] };
+    Object.values(map).forEach(pair => {
+      document.getElementById(pair.at(0)).classList.remove('active');
+      document.getElementById(pair.at(1)).classList.add('hidden');
+    });
+    document.getElementById(map[tab].at(0)).classList.add('active');
+    document.getElementById(map[tab].at(1)).classList.remove('hidden');
+  }
+
+  async function registerProfile() {
+    const nickname = document.getElementById('regNickname').value.trim();
+    const pin = document.getElementById('regPin').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    if (!nickname || pin.length < 4) return alert('Придумайте никнейм и 4-значный PIN-код!');
+
+    const btn = document.getElementById('regProfileBtn');
+    btn.disabled = true; btn.textContent = '⏳ Создаём...';
+    try {
+      const user_id = `WSU-${Math.floor(1000 + Math.random() * 9000)}`;
+      const rows = await sbFetch('profiles', {
+        method: 'POST',
+        body: { user_id, nickname, pin, email, xp: 0, streak: 1, duel_wins: 0 }
+      });
+      const created = sbFirst(rows);
+      if (created) {
+        localStorage.setItem('ws_user_profile', JSON.stringify(created));
+        openUserDashboard(created);
+        alert(`Профиль создан! Ваш ID: ${user_id}`);
+      }
+    } catch (e) { alert('Этот никнейм уже занят или ошибка сети: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = 'Создать профиль'; }
+  }
+
+  async function loginProfile() {
+    const loginVal = document.getElementById('loginUserId').value.trim();
+    const pin = document.getElementById('loginPin').value.trim();
+    if (!loginVal || !pin) return alert('Введите ID (или никнейм) и PIN-код!');
+
+    try {
+      const q = loginVal.toUpperCase().startsWith('WSU-')
+        ? `user_id=eq.${encodeURIComponent(loginVal.toUpperCase())}&pin=eq.${encodeURIComponent(pin)}`
+        : `nickname=ilike.${encodeURIComponent(loginVal)}&pin=eq.${encodeURIComponent(pin)}`;
+      const rows = await sbFetch('profiles', { query: q });
+      const user = sbFirst(rows);
+      if (!user) return alert('Неверный ID/никнейм или PIN-код.');
+      localStorage.setItem('ws_user_profile', JSON.stringify(user));
+      openUserDashboard(user);
+    } catch (e) { alert('Ошибка входа: ' + e.message); }
+  }
+
+  function logoutProfile() {
+    localStorage.removeItem('ws_user_profile');
+    currentUser = null;
+    document.getElementById('userDashboard').classList.add('hidden');
+    document.getElementById('authSection').classList.remove('hidden');
+  }
+
+  async function openUserDashboard(user) {
+    currentUser = user;
+    document.getElementById('authSection').classList.add('hidden');
+    document.getElementById('userDashboard').classList.remove('hidden');
+
+    document.getElementById('uNickname').textContent = user.nickname;
+    document.getElementById('uUserId').textContent = user.user_id;
+    document.getElementById('syncIdDisplay').textContent = user.user_id;
+    document.getElementById('uRankName').textContent = getRankByXp(user.xp || 0);
+    document.getElementById('uXpVal').textContent = user.xp || 0;
+    document.getElementById('uWinsVal').textContent = user.duel_wins || 0;
+    document.getElementById('uStreakVal').textContent = `${user.streak || 1} дн.`;
+    document.getElementById('updateProfileEmail').value = user.email || '';
+
+    if (user.cert_id) {
+      document.getElementById('uCertVal').textContent = user.cert_id;
+      document.getElementById('boundCertInfo').innerHTML = `<span class="tag-ok">Привязан: ${user.cert_id}</span>`;
+    }
+    await Promise.all([loadUserNotifications(), loadUserStudyData(), loadUserAwards()]);
+  }
+  async function refreshProfile() {
+    if (!currentUser) return;
+    const rows = await sbFetch('profiles', { query: `user_id=eq.${encodeURIComponent(currentUser.user_id)}` });
+    const fresh = sbFirst(rows);
+    if (fresh) {
+      localStorage.setItem('ws_user_profile', JSON.stringify(fresh));
+      await openUserDashboard(fresh);
+    }
+  }
+
+  async function loadUserNotifications() {
+    const notifs = await sbFetch('notifications', { query: `target_id=eq.${encodeURIComponent(currentUser.user_id)}&order=created_at.desc&limit=20` });
+    const list = notifs || [];
+    const unread = list.filter(n => !n.is_read).length;
+    document.getElementById('notifBadgeCount').textContent = unread > 0 ? `(${unread})` : '';
+
+    const box = document.getElementById('notificationsList');
+    box.innerHTML = list.length ? list.map(n => `
+      <div class="item-row" style="${!n.is_read ? 'border-color:var(--primary);' : ''}">
+        <div><div style="font-weight:700;">${n.title}</div><div style="font-size:0.86rem; color:var(--muted);">${n.body}</div></div>
+        ${n.link ? `<a href="${n.link}" class="btn btn-sm">Открыть</a>` : ''}
+      </div>
+    `).join('') : '<p style="color:var(--muted);">Уведомлений пока нет.</p>';
+  }
+
+  async function markAllNotifsRead() {
+    await sbFetch('notifications', { method: 'PATCH', query: `target_id=eq.${encodeURIComponent(currentUser.user_id)}`, body: { is_read: true } });
+    loadUserNotifications();
+  }
+
+  async function attachToTeacher() {
+    const tCode = document.getElementById('attachTCode').value.trim().toUpperCase();
+    const fullName = document.getElementById('attachFullName').value.trim();
+    if (!tCode || !fullName) return alert('Введите код преподавателя/школы и ваше имя с фамилией!');
+
+    const tRows = await sbFetch('teachers', { query: `code=eq.${encodeURIComponent(tCode)}` });
+    const teacher = sbFirst(tRows);
+    if (!teacher) return alert('Преподаватель или школа с таким кодом не найдены.');
+
+    const existing = await sbFetch('teacher_students', {
+      query: `teacher_code=eq.${encodeURIComponent(tCode)}&or=(user_id.eq.${encodeURIComponent(currentUser.user_id)},student_name.ilike.${encodeURIComponent(fullName)})`
+    });
+    let stCode = `ST-${Math.floor(1000 + Math.random() * 9000)}`;
+    if (existing && existing.length > 0) {
+      stCode = existing.at(0).student_code || stCode;
+    } else {
+      await sbFetch('teacher_students', {
+        method: 'POST',
+        body: { teacher_code: tCode, student_name: fullName, student_email: currentUser.email || '', student_code: stCode, user_id: currentUser.user_id, group_name: 'Общая группа' }
+      });
+    }
+
+    const updated = await sbFetch('profiles', {
+      method: 'PATCH', query: `user_id=eq.${encodeURIComponent(currentUser.user_id)}`,
+      body: { teacher_code: tCode, student_code: stCode, full_name: fullName }
+    });
+    const fresh = sbFirst(updated);
+    if (fresh) {
+      localStorage.setItem('ws_user_profile', JSON.stringify(fresh));
+      currentUser = fresh;
+    }
+    loadUserStudyData();
+  }
+
+  async function loadUserStudyData() {
+    if (!currentUser.teacher_code) return;
+    const [tRows, stRows, lessons, results] = await Promise.all([
+      sbFetch('teachers', { query: `code=eq.${encodeURIComponent(currentUser.teacher_code)}` }),
+      sbFetch('teacher_students', { query: `teacher_code=eq.${encodeURIComponent(currentUser.teacher_code)}&student_code=eq.${encodeURIComponent(currentUser.student_code || '')}` }),
+      sbFetch('lessons', { query: `teacher_code=eq.${encodeURIComponent(currentUser.teacher_code)}&lesson_status=eq.active&order=created_at.desc` }),
+      sbFetch('lesson_results', { query: `student_name=ilike.${encodeURIComponent(currentUser.full_name || currentUser.nickname)}` })
+    ]);
+
+    linkedTeacher = sbFirst(tRows);
+    const stRecord = sbFirst(stRows);
+    if (!linkedTeacher) return;
+
+    document.getElementById('attachTeacherCard').classList.add('hidden');
+    document.getElementById('studentStudyWorkspace').classList.remove('hidden');
+    document.getElementById('stTeacherTitle').textContent = linkedTeacher.name;
+    document.getElementById('stStudentCode').textContent = currentUser.student_code || '—';
+    const myGroup = stRecord ? (stRecord.group_name || 'Общая группа') : 'Общая группа';
+    document.getElementById('stGroupLabel').textContent = myGroup;
+
+    if (linkedTeacher.call_link && linkedTeacher.call_link.trim()) {
+      const btn = document.getElementById('teacherCallBtn');
+      btn.href = linkedTeacher.call_link.trim();
+      btn.classList.remove('hidden');
+    }
+
+    const annBox = document.getElementById('stAnnouncementBox');
+    if (linkedTeacher.announcement && linkedTeacher.announcement.trim()) {
+      annBox.textContent = `📢 ${linkedTeacher.announcement}`;
+      annBox.classList.remove('hidden');
+    }
+
+    const sched = Array.isArray(linkedTeacher.schedule) ? linkedTeacher.schedule.filter(s => s.group === 'Все ученики' || s.group === myGroup || s.group === currentUser.full_name) : [];
+    if (sched.length) {
+      document.getElementById('stScheduleCard').classList.remove('hidden');
+      document.getElementById('stScheduleList').innerHTML = sched.map(s => `
+        <div class="item-row">
+          <div><b>${s.day}</b> • ${s.topic || 'Занятие'}</div>
+          ${s.link ? `<a href="${s.link}" target="_blank" class="btn btn-sm btn-accent">📹 Войти</a>` : ''}
+        </div>
+      `).join('');
+    }
+
+    completedCodes = new Set((results || []).map(r => r.lesson_code));
+    const myLessons = (lessons || []).filter(l => !l.target_group || l.target_group === 'Все ученики' || l.target_group === myGroup);
+    const lBox = document.getElementById('stLessonsList');
+    lBox.innerHTML = myLessons.length ? myLessons.map(l => {
+      const done = completedCodes.has(l.code);
+      const url = `lesson.html?code=${encodeURIComponent(l.code)}&sname=${encodeURIComponent(currentUser.full_name || currentUser.nickname)}`;
+      return `
+        <div class="item-row">
+          <div>
+            <b>${l.title}</b> <span class="code-pill" style="font-size:0.8rem;">${l.code}</span>
+            <div style="font-size:0.82rem; color:var(--muted);">Слов: ${l.words ? l.words.length : 0}${l.deadline ? ' • Срок: ' + l.deadline : ''}</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            ${done ? '<span class="tag-ok">✅ Выполнено</span>' : '<span class="tag-wait">⏳ Ожидает</span>'}
+            <a href="${url}" class="btn btn-sm">${done ? 'Повторить' : '▶ Пройти'}</a>
+          </div>
+        </div>
+      `;
+    }).join('') : '<p style="color:var(--muted);">Пока нет назначенных заданий.</p>';
+  }
+  async function applyShortXpCode() {
+    const raw = document.getElementById('shortXpCodeInput').value.trim().toUpperCase();
+    const parts = raw.split('-');
+    if (parts.length !== 2 || !parts.at(0).startsWith('X')) {
+      return alert('Неверный формат кода. Введите короткий код из приложения (например, X450-82).');
+    }
+    const xpVal = parseInt(parts.at(0).slice(1), 10);
+    const sig = parseInt(parts.at(1), 10);
+    if (isNaN(xpVal) || sig !== (xpVal * 7 + 13) % 97) {
+      return alert('Ошибка проверки кода прогресса.');
+    }
+    const nextXp = Math.max(currentUser.xp || 0, xpVal);
+    await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(currentUser.user_id)}`, body: { xp: nextXp } });
+    currentUser.xp = nextXp;
+    localStorage.setItem('ws_user_profile', JSON.stringify(currentUser));
+    document.getElementById('shortXpCodeInput').value = '';
+    openUserDashboard(currentUser);
+    alert(`Опыт успешно обновлён: ${nextXp} XP!`);
+  }
+
+  async function loadUserAwards() {
+    if (!currentUser.student_code) return;
+    const awards = await sbFetch('student_awards', { query: `student_code=eq.${encodeURIComponent(currentUser.student_code)}&order=created_at.desc` });
+    const box = document.getElementById('userAwardsList');
+    if (!awards || !awards.length) return;
+    box.innerHTML = awards.map(a => `
+      <div class="item-row">
+        <div><b>🏅 ${a.award_title}</b><div style="font-size:0.8rem; color:var(--muted);">${a.teacher_name}</div></div>
+        <button class="btn btn-sm btn-accent" onclick="downloadAwardImg('${a.student_name.replace(/'/g, "\\'")}', '${a.award_title.replace(/'/g, "\\'")}', '${a.teacher_name.replace(/'/g, "\\'")}')">📥 Скачать</button>
+      </div>
+    `).join('');
+  }
+
+  function downloadAwardImg(sName, title, tName) {
+    const c = document.getElementById('awardCanvas');
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, 900, 600);
+    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 6; ctx.strokeRect(24, 24, 852, 552);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 26px system-ui'; ctx.fillText('⚡ WORDSPRINT • ГРАМОТА', 450, 110);
+    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 46px system-ui'; ctx.fillText(sName, 450, 250);
+    ctx.fillStyle = '#34d399'; ctx.font = 'bold 28px system-ui'; ctx.fillText(title, 450, 330);
+    ctx.fillStyle = '#cbd5e1'; ctx.font = '22px system-ui'; ctx.fillText(`Выдал: ${tName}`, 450, 440);
+    const link = document.createElement('a');
+    link.download = `gramota-${sName}.png`; link.href = c.toDataURL('image/png'); link.click();
+  }
+
+  async function bindCertificate() {
+    const cid = document.getElementById('bindCertInput').value.trim().toUpperCase();
+    if (!cid) return;
+    const rows = await sbFetch('certificates', { query: `id=eq.${encodeURIComponent(cid)}` });
+    const cert = sbFirst(rows);
+    if (!cert) return alert('Сертификат с таким номером не найден.');
+    await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(currentUser.user_id)}`, body: { cert_id: cid } });
+    currentUser.cert_id = cid;
+    localStorage.setItem('ws_user_profile', JSON.stringify(currentUser));
+    document.getElementById('uCertVal').textContent = cid;
+    document.getElementById('boundCertInfo').innerHTML = `<span class="tag-ok">Привязан: ${cid} (${cert.cefr_level})</span>`;
+  }
+
+  async function saveProfileEmail() {
+    const email = document.getElementById('updateProfileEmail').value.trim();
+    await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(currentUser.user_id)}`, body: { email } });
+    currentUser.email = email;
+    localStorage.setItem('ws_user_profile', JSON.stringify(currentUser));
+    alert('Email сохранён!');
+  }
+
+  async function submitTeacherReview() {
+    if (!linkedTeacher || completedCodes.size === 0) return alert('Отзыв доступен после выполнения хотя бы 1 задания.');
+    const rating = parseInt(document.getElementById('stReviewRating').value, 10);
+    const comment = document.getElementById('stReviewText').value.trim();
+    if (!comment) return alert('Напишите текст отзыва!');
+    await sbFetch('teacher_reviews', { method: 'POST', body: { teacher_code: linkedTeacher.code, student_name: currentUser.full_name || currentUser.nickname, rating, comment } });
+    document.getElementById('stReviewText').value = '';
+    alert('Спасибо! Ваш честный отзыв опубликован.');
+  }
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    const viewId = new URLSearchParams(window.location.search).get('view');
+    if (viewId) {
+      const rows = await sbFetch('profiles', { query: `user_id=eq.${encodeURIComponent(viewId)}` });
+      const pub = sbFirst(rows);
+      if (pub) {
+        document.getElementById('authSection').classList.add('hidden');
+        document.getElementById('publicProfileView').classList.remove('hidden');
+        document.getElementById('pubUserId').textContent = pub.user_id;
+        document.getElementById('pubNickname').textContent = pub.nickname;
+        document.getElementById('pubRankBadge').textContent = getRankByXp(pub.xp || 0);
+        document.getElementById('pubXp').textContent = pub.xp || 0;
+        document.getElementById('pubWins').textContent = pub.duel_wins || 0;
+        document.getElementById('pubStreak').textContent = `${pub.streak || 1} дн.`;
+        document.getElementById('pubCert').textContent = pub.cert_id || '—';
+        document.getElementById('pubChallengeBtn').href = `duel.html?challenge=${encodeURIComponent(pub.user_id)}&targetName=${encodeURIComponent(pub.nickname)}`;
+        return;
+      }
+    }
+    const saved = getCurrentUserProfile();
+    if (saved && saved.user_id) await openUserDashboard(saved);
+  });
+</script>
+</body>
+</html>

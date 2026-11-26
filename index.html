@@ -9,77 +9,80 @@
     :root {
       --bg: #0b0f19; --card: #131a2a; --input-bg: #0d1322; --border: #232d45;
       --text: #f1f5f9; --muted: #94a3b8; --primary: #6366f1; --primary-hover: #4f46e5;
-      --accent: #10b981; --danger: #ef4444;
+      --accent: #10b981; --warning: #f59e0b; --danger: #ef4444;
     }
     [data-theme="light"] {
       --bg: #f8fafc; --card: #ffffff; --input-bg: #f1f5f9; --border: #cbd5e1;
       --text: #0f172a; --muted: #475569; --primary: #4f46e5; --primary-hover: #4338ca;
-      --accent: #059669; --danger: #dc2626;
+      --accent: #059669; --warning: #d97706; --danger: #dc2626;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); line-height: 1.6; transition: background 0.2s, color 0.2s; }
     a { color: inherit; text-decoration: none; }
     .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
-
     header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
-    .nav { display: flex; justify-content: space-between; align-items: center; min-height: 68px; flex-wrap: wrap; gap: 12px; padding: 8px 0; }
+    .nav { display: flex; justify-content: space-between; align-items: center; min-height: 66px; flex-wrap: wrap; gap: 12px; padding: 8px 0; }
     .logo { font-weight: 800; font-size: 1.25rem; display: flex; align-items: center; gap: 6px; }
-    .nav-links { display: flex; gap: 15px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
-    .nav-links a:hover { color: var(--primary); }
-    .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; }
-
+    .nav-links { display: flex; gap: 16px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); font-weight: 600; }
+    .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+    .notif-dot { background: var(--danger); color: #fff; font-size: 0.72rem; padding: 1px 6px; border-radius: 999px; font-weight: 700; margin-left: 4px; }
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 12px 20px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.95rem;
+      padding: 12px 20px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.94rem;
       cursor: pointer; background: var(--primary); color: #fff; transition: 0.2s;
     }
     .btn:hover { background: var(--primary-hover); }
     .btn-accent { background: var(--accent); color: #fff; }
     .btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
-    .btn-sm { padding: 8px 14px; font-size: 0.86rem; border-radius: 9px; }
-    .hero { padding: 52px 0 40px; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 36px; align-items: center; }
-    @media (max-width: 880px) { .hero { grid-template-columns: 1fr; padding-top: 32px; } }
-    .pill { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(16, 185, 129, 0.14); color: var(--accent); font-size: 0.84rem; font-weight: 600; margin-bottom: 16px; border: 1px solid rgba(16, 185, 129, 0.3); }
-    h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.18; margin-bottom: 16px; }
+    .btn-sm { padding: 7px 13px; font-size: 0.84rem; border-radius: 9px; }
+    .hero { padding: 48px 0 38px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 34px; align-items: center; }
+    @media (max-width: 880px) { .hero { grid-template-columns: 1fr; padding-top: 28px; } }
+    .pill { display: inline-block; padding: 5px 14px; border-radius: 999px; background: rgba(16, 185, 129, 0.14); color: var(--accent); font-size: 0.84rem; font-weight: 600; margin-bottom: 14px; border: 1px solid rgba(16, 185, 129, 0.3); }
+    h1 { font-size: 2.45rem; font-weight: 800; line-height: 1.18; margin-bottom: 16px; }
     @media (max-width: 540px) { h1 { font-size: 1.9rem; } }
-    .hero-sub { color: var(--muted); font-size: 1.05rem; margin-bottom: 24px; }
+    .hero-sub { color: var(--muted); font-size: 1.04rem; margin-bottom: 24px; }
     .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
-    .hero-meta { margin-top: 14px; font-size: 0.85rem; color: var(--muted); }
-
-    .demo-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
-    .demo-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-    .d-tab { flex: 1; padding: 8px; border-radius: 9px; border: 1px solid var(--border); background: var(--input-bg); color: var(--muted); cursor: pointer; font-weight: 600; font-size: 0.86rem; }
+    .demo-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 22px; }
+    .demo-tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+    .d-tab { flex: 1; padding: 8px 6px; border-radius: 9px; border: 1px solid var(--border); background: var(--input-bg); color: var(--muted); cursor: pointer; font-weight: 600; font-size: 0.82rem; text-align: center; }
     .d-tab.active { background: rgba(99, 102, 241, 0.18); border-color: var(--primary); color: var(--primary); }
-    .demo-word-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 22px; text-align: center; }
+    .demo-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .test-opt { width: 100%; text-align: left; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-size: 0.92rem; margin-top: 8px; }
+    .test-opt:hover { border-color: var(--primary); }
     .story-word { cursor: pointer; border-bottom: 1px dashed var(--primary); padding: 1px 3px; border-radius: 4px; display: inline-block; }
     .story-word:hover { background: rgba(99, 102, 241, 0.22); }
-
-    section { padding: 48px 0; border-top: 1px solid var(--border); }
+    section { padding: 46px 0; border-top: 1px solid var(--border); }
     .sec-title { font-size: 1.85rem; font-weight: 800; margin-bottom: 8px; text-align: center; }
-    .sec-sub { color: var(--muted); text-align: center; max-width: 660px; margin: 0 auto 32px; }
+    .sec-sub { color: var(--muted); text-align: center; max-width: 660px; margin: 0 auto 28px; }
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-    @media (max-width: 900px) { .grid-4 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 920px) { .grid-4 { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 520px) { .grid-4 { grid-template-columns: 1fr; } }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
     @media (max-width: 840px) { .grid-3 { grid-template-columns: 1fr; } }
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
-    .card h3 { font-size: 1.12rem; margin: 10px 0 6px; }
+    .card h3 { font-size: 1.1rem; margin: 8px 0 6px; }
     .card p { color: var(--muted); font-size: 0.92rem; }
-
+    .lb-tabs { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    .lb-tab { padding: 9px 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+    .lb-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
-    th, td { padding: 13px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
-    th { background: var(--input-bg); color: var(--muted); font-size: 0.82rem; text-transform: uppercase; }
-
+    th, td { padding: 13px 15px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+    th { background: var(--input-bg); color: var(--muted); font-size: 0.8rem; text-transform: uppercase; }
     .verify-box { max-width: 680px; margin: 0 auto; background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 26px; }
     .verify-row { display: flex; gap: 10px; margin-top: 12px; }
-    input, select, textarea { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.98rem; outline: none; }
-    label { display: block; font-size: 0.86rem; color: var(--muted); margin: 12px 0 5px; }
+    input, select, textarea { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin: 11px 0 5px; }
     .cert-valid { margin-top: 18px; padding: 18px; border-radius: 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.35); display: none; }
     .cert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; font-size: 0.92rem; }
-
+    .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    .filter-bar input, .filter-bar select { flex: 1; min-width: 190px; }
     .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
-    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 18px; max-width: 480px; width: 100%; padding: 26px; max-height: 90vh; overflow-y: auto; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 18px; max-width: 500px; width: 100%; padding: 24px; max-height: 90vh; overflow-y: auto; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 12px 0; }
+    .faq-item summary { font-weight: 700; cursor: pointer; }
+    .faq-item p { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -89,19 +92,14 @@
   <div class="container nav">
     <a href="index.html" class="logo">⚡ WordSprint</a>
     <nav class="nav-links">
-      <a href="#features">Возможности</a>
-      <a href="#cefr">Шкала CEFR</a>
-      <a href="#verify">Сертификат</a>
-            <a href="student.html" style="color:var(--accent); font-weight:600;">Кабинет ученика</a>
-
-      <a href="teachers.html" style="color:var(--primary); font-weight:600;">Кабинет преподавателя</a>
-      <a href="#" onclick="openLessonModal(); return false;">Пройти урок</a>
+      <a href="index.html" class="active">Главная</a>
+      <a href="profile.html" id="navProfileLink">Мой профиль</a>
+      <a href="teachers.html">Кабинет преподавателя</a>
       <a href="groups.html">Группы</a>
       <a href="duel.html">Веб-дуэль</a>
-      <a href="https://boosty.to/wordsprint/donate" target="_blank">Boosty</a>
       <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Сменить тему">☀️</button>
     </nav>
-    <button class="btn btn-sm" onclick="openDownloadModal()">📱 Скачать</button>
+    <button class="btn btn-sm" onclick="openModal('downloadModal')">📱 Скачать</button>
   </div>
 </header>
 
@@ -112,56 +110,79 @@
       <h1>Учите английский легко и подтверждайте свой уровень</h1>
       <p class="hero-sub">Более 2 005 слов от A1 до C2 с озвучкой, проверка произношения микрофоном, интерактивные рассказы с диалогами и независимое тестирование по шкале CEFR.</p>
       <div class="hero-btns">
-        <button class="btn" onclick="openDownloadModal()">📱 Скачать приложение</button>
-        <a href="duel.html" class="btn btn-accent">⚔️ Веб-дуэль с другом</a>
+        <button class="btn" onclick="openModal('downloadModal')">📱 Скачать приложение</button>
+        <a href="duel.html" class="btn btn-accent">⚔️ Веб-дуэль</a>
         <a href="#verify" class="btn btn-secondary">🏆 Проверить сертификат</a>
       </div>
-      <div class="hero-meta">Версия 1.1 • Android • Работает полностью без интернета</div>
     </div>
 
     <div class="demo-card">
       <div class="demo-tabs">
-        <button class="d-tab active" id="tabWords" onclick="switchDemoTab('words')">🎴 Тренажёр слов</button>
+        <button class="d-tab active" id="tabAdaptiveTest" onclick="switchDemoTab('test')">⚡ Адаптивный тест CEFR</button>
         <button class="d-tab" id="tabStory" onclick="switchDemoTab('story')">📖 Рассказ по клику</button>
+        <button class="d-tab" id="tabWotd" onclick="switchDemoTab('wotd')">📅 Слово дня</button>
       </div>
 
-      <div id="demoWordsPane">
-        <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:10px;">
-          <span>Демо-режим прямо на сайте</span>
-          <span id="demoCounter">Слово 1 / 4</span>
+      <div id="paneTest" class="demo-box">
+        <div id="adaptiveTestActive">
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted); margin-bottom:8px;">
+            <span>Вопрос <b id="atStep">1</b> / 10</span>
+            <span>Уровень вопроса: <b id="atLevelBadge" style="color:var(--primary);">B1</b></span>
+          </div>
+          <div id="atWord" style="font-size:1.65rem; font-weight:800; text-align:center; margin:6px 0;">reliable</div>
+          <div id="atOptions"></div>
         </div>
-        <div class="demo-word-box">
-          <div id="demoEn" style="font-size:1.85rem; font-weight:800;">accomplish</div>
-          <div id="demoTr" style="color:var(--muted); font-size:0.9rem; margin:4px 0 12px;">[əˈkʌmplɪʃ] • Уровень B2</div>
-          <button class="btn btn-secondary btn-sm" onclick="speakDemo()">🔊 Послушать произношение</button>
-          <div id="demoRu" style="margin-top:14px; font-weight:700; color:var(--accent); font-size:1.1rem;" class="hidden">достигать, выполнять</div>
-        </div>
-        <div style="display:flex; gap:10px; margin-top:14px;">
-          <button class="btn btn-secondary" style="flex:1;" onclick="toggleDemoTranslate()">👁 Показать перевод</button>
-          <button class="btn" style="flex:1;" onclick="nextDemoWord()">Следующее →</button>
+        <div id="adaptiveTestResult" class="hidden" style="text-align:center;">
+          <div style="font-size:0.85rem; color:var(--muted);">Ваш ориентировочный уровень:</div>
+          <div id="atFinalLevel" style="font-size:1.7rem; font-weight:800; color:var(--accent); margin:4px 0;">B2</div>
+          <p id="atFinalDesc" style="font-size:0.88rem; color:var(--muted); margin-bottom:12px;"></p>
+          <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-sm" onclick="openModal('downloadModal')">📱 Полный экзамен в приложении</button>
+            <button class="btn btn-secondary btn-sm" onclick="initAdaptiveTest()">🔄 Пройти заново</button>
+          </div>
         </div>
       </div>
 
-      <div id="demoStoryPane" class="hidden">
-        <div style="font-size:0.82rem; color:var(--muted); margin-bottom:10px;">Нажмите на любое слово в рассказе, чтобы увидеть перевод:</div>
-        <div class="demo-word-box" id="storyContainer" style="text-align:left; line-height:1.9; font-size:1.05rem;"></div>
-        <div id="storyTipBox" style="margin-top:12px; padding:10px 14px; border-radius:10px; background:rgba(99,102,241,0.15); color:var(--primary); font-weight:600; font-size:0.92rem;">
-          💡 Нажмите на любое слово в тексте выше
+      <div id="paneStory" class="demo-box hidden">
+        <div style="font-size:0.82rem; color:var(--muted); margin-bottom:8px;">Нажмите на любое слово в рассказе, чтобы увидеть перевод:</div>
+        <div id="storyContainer" style="line-height:1.9; font-size:1.02rem;"></div>
+        <div id="storyTipBox" style="margin-top:10px; padding:8px 12px; border-radius:9px; background:rgba(99,102,241,0.15); color:var(--primary); font-weight:600; font-size:0.88rem;">
+          💡 Нажмите на любое слово выше
+        </div>
+      </div>
+
+      <div id="paneWotd" class="demo-box hidden" style="text-align:center;">
+        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:4px;" id="wotdDateLabel">Слово дня</div>
+        <div id="wotdEn" style="font-size:1.75rem; font-weight:800;">resilient</div>
+        <div id="wotdTr" style="color:var(--muted); font-size:0.88rem; margin:2px 0 8px;">[rɪˈzɪliənt] • C1</div>
+        <div id="wotdRu" style="font-weight:700; color:var(--accent); font-size:1.05rem; margin-bottom:8px;">стойкий, быстро восстанавливающийся</div>
+        <div id="wotdEx" style="font-size:0.86rem; color:var(--muted); font-style:italic; margin-bottom:12px;">«Children are often remarkably resilient.»</div>
+        <div style="display:flex; gap:8px; justify-content:center;">
+          <button class="btn btn-secondary btn-sm" onclick="speakWotd()">🔊 Озвучить</button>
+          <button class="btn btn-sm" onclick="shareWotd()">📤 Поделиться</button>
         </div>
       </div>
     </div>
   </div>
-  <section id="features">
-    <h2 class="sec-title">Почему выбирают WordSprint</h2>
-    <p class="sec-sub">Создано для тех, кто хочет реального результата без навязчивых подписок и «жизней»</p>
-    <div class="grid-4">
-      <div class="card"><div style="font-size:1.7rem;">📚</div><h3>2 005+ слов (A1–C2)</h3><p>Словарь от базовых фраз для путешествий до продвинутой лексики с озвучкой и транскрипцией.</p></div>
-      <div class="card"><div style="font-size:1.7rem;">🎙</div><h3>6 режимов тренировки</h3><p>Тесты, карточки, аудирование, проверка произношения микрофоном, подстановка в текст и сборка слов.</p></div>
-      <div class="card"><div style="font-size:1.7rem;">📖</div><h3>Рассказы и диалоги</h3><p>Нажимайте на любое незнакомое слово в тексте для мгновенного перевода и заполняйте пропуски.</p></div>
-      <div class="card"><div style="font-size:1.7rem;">✈️</div><h3>Полный офлайн</h3><p>Занимайтесь в метро, самолёте или за городом — приложению не нужен постоянный интернет.</p></div>
+  <!-- Глобальный Лидерборд -->
+  <section id="leaderboard">
+    <h2 class="sec-title">Лидерборд WordSprint</h2>
+    <p class="sec-sub">Соревнуйтесь в дуэлях, копите опыт в приложении и бросайте вызов лучшим игрокам</p>
+    <div class="lb-tabs">
+      <button class="lb-tab active" id="lbTabDuels" onclick="switchLeaderboard('duels')">⚡ Дуэлянты</button>
+      <button class="lb-tab" id="lbTabXp" onclick="switchLeaderboard('xp')">🏆 Лига опыта (App)</button>
+      <button class="lb-tab" id="lbTabTeams" onclick="switchLeaderboard('teams')">👥 Лучшие команды</button>
     </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead id="lbTableHead"></thead>
+        <tbody id="lbTableBody"><tr><td colspan="4" style="text-align:center; color:var(--muted);">Загрузка рейтинга...</td></tr></tbody>
+      </table>
+    </div>
+    <div id="myRankBanner" class="hidden" style="margin-top:12px; text-align:center; font-size:0.9rem; color:var(--primary); font-weight:600;"></div>
   </section>
 
+  <!-- Шкала CEFR -->
   <section id="cefr">
     <h2 class="sec-title">Экзамен и шкала CEFR</h2>
     <p class="sec-sub">Таблица соответствия баллов WordSprint уровням владения языком и международным стандартам</p>
@@ -179,6 +200,8 @@
       </table>
     </div>
   </section>
+
+  <!-- Проверка сертификата -->
   <section id="verify">
     <h2 class="sec-title">Проверка подлинности сертификата</h2>
     <p class="sec-sub">Введите уникальный номер сертификата WordSprint или отсканируйте QR-код на документе</p>
@@ -187,111 +210,138 @@
         <input type="text" id="certInput" value="WS-2026-8492" placeholder="WS-2026-XXXX" style="text-transform:uppercase; font-family:monospace; font-weight:700;">
         <button class="btn" style="width:auto;" onclick="verifyCertificate()">Проверить</button>
       </div>
-      <div style="font-size:0.84rem; color:var(--muted); margin-top:8px;">Демо-база: нажмите «Проверить» с тестовым номером <b>WS-2026-8492</b></div>
+      <div style="font-size:0.84rem; color:var(--muted); margin-top:8px;">Тестовый номер для проверки: <b>WS-2026-8492</b></div>
       <div id="certResultBox" class="cert-valid"></div>
     </div>
   </section>
-
-  
-      <section id="partners">
+  <!-- Каталог репетиторов и школ -->
+  <section id="partners">
     <h2 class="sec-title">Репетиторы, школы и ученики</h2>
-    <p class="sec-sub">Единая образовательная экосистема WordSprint</p>
+    <p class="sec-sub">Все проверенные преподаватели и школы размещаются в каталоге на равных условиях</p>
 
-    <div id="verifiedTeachersGrid" class="grid-3" style="margin-bottom: 24px;"></div>
+    <div class="filter-bar">
+      <select id="filterRole" onchange="renderCatalog()">
+        <option value="all">Все форматы (Репетиторы и школы)</option>
+        <option value="tutor">Только репетиторы</option>
+        <option value="school">Только языковые школы</option>
+      </select>
+      <input type="text" id="filterSearch" placeholder="Поиск по имени, городу или уровню..." oninput="renderCatalog()">
+    </div>
+
+    <div id="verifiedTeachersGrid" class="grid-3" style="margin-bottom: 26px;"></div>
 
     <div class="grid-4">
       <div class="card">
         <div style="font-size:1.6rem;">🎓</div>
         <h3>Регистрация партнёров</h3>
-        <p style="margin-bottom:14px;">Зарегистрируйтесь как репетитор или школа и попадите в открытый каталог WordSprint после проверки.</p>
+        <p style="margin-bottom:14px;">Зарегистрируйтесь как репетитор или школа и попадите в открытый каталог после проверки.</p>
         <button class="btn btn-sm" onclick="openPartnerChoiceModal()">Зарегистрироваться</button>
       </div>
       <div class="card">
-        <div style="font-size:1.6rem;">🎒</div>
-        <h3>Кабинет ученика</h3>
-        <p style="margin-bottom:14px;">Прикрепитесь к своему репетитору или школе по коду, выполняйте задания и получайте грамоты.</p>
-        <a href="student.html" class="btn btn-sm">Открыть кабинет</a>
+        <div style="font-size:1.6rem;">👤</div>
+        <h3>Мой профиль и учёба</h3>
+        <p style="margin-bottom:14px;">Привяжите приложение, выполняйте задания от учителя, получайте грамоты и вызовы на дуэль.</p>
+        <a href="profile.html" class="btn btn-sm">Открыть профиль</a>
       </div>
       <div class="card">
         <div style="font-size:1.6rem;">👥</div>
         <h3>Учебные группы</h3>
-        <p style="margin-bottom:14px;">Объединяйтесь в команды, ставьте цели по опыту на неделю и соревнуйтесь в рейтинге.</p>
+        <p style="margin-bottom:14px;">Объединяйтесь в команды, ставьте общие цели по опыту на неделю и соревнуйтесь в рейтинге.</p>
         <a href="groups.html" class="btn btn-secondary btn-sm">Перейти в группы</a>
       </div>
       <div class="card">
         <div style="font-size:1.6rem;">⚡</div>
-        <h3>Эксклюзив на Boosty</h3>
-        <p style="margin-bottom:14px;">Дизайнерские PDF-шпаргалки по глаголам и временам, разборы сленга и поддержка проекта.</p>
-        <a href="https://boosty.to/wordsprint/donate" target="_blank" class="btn btn-accent btn-sm">Поддержать на Boosty ⚡</a>
+        <h3>Поддержать на Boosty</h3>
+        <p style="margin-bottom:14px;">Дизайнерские PDF-шпаргалки по глаголам и временам, разборы сленга и поддержка развития проекта.</p>
+        <a href="https://boosty.to/wordsprint/donate" target="_blank" class="btn btn-accent btn-sm">Открыть Boosty ⚡</a>
       </div>
     </div>
   </section>
-
 </main>
 
 <footer style="border-top:1px solid var(--border); padding:28px 0; margin-top:40px; color:var(--muted); font-size:0.9rem;">
-  <div class="container" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+  <div class="container" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; align-items:center;">
     <div>⚡ <b>WordSprint</b> — языки это просто © 2026</div>
-    <div style="display:flex; gap:18px; flex-wrap:wrap;">
+    <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+      <button class="btn btn-secondary btn-sm" onclick="openModal('faqModal')">❓ Частые вопросы</button>
+      <button class="btn btn-secondary btn-sm" onclick="openModal('ideaModal')">💡 Предложить идею</button>
       <a href="https://aesthetic-tiramisu-4416cd.netlify.app" target="_blank">Политика конфиденциальности</a>
-      <a href="https://boosty.to/wordsprint/donate" target="_blank">Boosty проекта</a>
-      <a href="admin.html" style="opacity:0.4;">Админ</a>
+      <a href="https://boosty.to/wordsprint/donate" target="_blank">Boosty</a>
+      <a href="admin.html" style="opacity:0.45;">Админ</a>
     </div>
   </div>
 </footer>
-<div class="modal-bg" id="downloadModal" onclick="if(event.target===this) this.style.display='none'">
+<!-- Окно скачивания -->
+<div class="modal-bg" id="downloadModal" onclick="if(event.target===this) closeModal('downloadModal')">
   <div class="modal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-
-      <h3 style="font-size:1.25rem;">📱 Скачать WordSprint (Android)</h3>
-      <button onclick="document.getElementById('downloadModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h3>📱 Скачать WordSprint (Android)</h3>
+      <button onclick="closeModal('downloadModal')" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
     </div>
-    <p style="color:var(--muted); font-size:0.92rem; margin-bottom:16px;">Бесплатно, без рекламы и регистрации. Выберите способ установки:</p>
-    <div style="display:grid; gap:10px;">
+    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:14px;">Бесплатно, без рекламы и навязанных подписок. Выберите удобный способ:</p>
+    <div style="display:grid; gap:10px; margin-bottom:14px;">
       <a href="WordSprint-1.1.apk" download="WordSprint-1.1.apk" class="btn btn-accent">⬇️ Скачать APK напрямую (v1.1)</a>
       <a href="https://rustore.ru" target="_blank" class="btn">📱 Открыть в RuStore</a>
       <a href="https://nashstore.ru" target="_blank" class="btn btn-secondary">📦 Открыть в NashStore</a>
     </div>
+    <div style="font-size:0.82rem; color:var(--muted); background:var(--input-bg); padding:10px 12px; border-radius:10px;">
+      💡 Если Android при установке APK спросит разрешение на установку из браузера — нажмите «Разрешить». Файл безопасен и проверен.
+    </div>
   </div>
 </div>
 
-<div class="modal-bg" id="lessonCodeModal" onclick="if(event.target===this) this.style.display='none'">
+<!-- Окно FAQ -->
+<div class="modal-bg" id="faqModal" onclick="if(event.target===this) closeModal('faqModal')">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <h3 style="font-size:1.2rem;">📚 Пройти урок по коду</h3>
-      <button onclick="document.getElementById('lessonCodeModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
+      <h3>❓ Частые вопросы</h3>
+      <button onclick="closeModal('faqModal')" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
     </div>
-    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:12px;">Введите код урока, который прислал преподаватель или школа:</p>
-    <input type="text" id="quickLessonCode" placeholder="Код урока" style="text-transform:uppercase; font-family:monospace; font-weight:700;">
-    <button class="btn" style="width:100%; margin-top:14px;" onclick="goToLesson()">▶ Открыть задание</button>
+    <details class="faq-item" open>
+      <summary>Приложение действительно 100% бесплатное и работает без интернета?</summary>
+      <p>Да. Весь словарь из 2 005+ слов, озвучка, рассказы и экзамен CEFR вшиты внутрь приложения. Интернет нужен только для синхронизации опыта с сайтом и скачивания уроков от учителя.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Как работодатель или вуз проверит мой сертификат CEFR?</summary>
+      <p>На каждом сертификате есть уникальный номер (например, WS-2026-8492) и QR-код. При сканировании открывается эта страница с официальным подтверждением баллов по всем 4 навыкам.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Как репетитору или школе попасть в каталог?</summary>
+      <p>Нажмите «Зарегистрироваться» в блоке партнёров, заполните анкету и укажите подтверждающие документы (диплом/сертификат для репетитора или ИНН/лицензию для школы). После проверки карточка появится в каталоге на равных условиях со всеми.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Как привязать прогресс из приложения к сайту?</summary>
+      <p>Создайте единый профиль на вкладке «Мой профиль» (это займёт 10 секунд) и введите выданный код в настройках профиля в приложении.</p>
+    </details>
   </div>
 </div>
 
-<div class="modal-bg" id="attachStudentModal" onclick="if(event.target===this) this.style.display='none'">
+<!-- Окно: Предложить идею от любого пользователя -->
+<div class="modal-bg" id="ideaModal" onclick="if(event.target===this) closeModal('ideaModal')">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <h3 style="font-size:1.2rem;">🎓 Прикрепиться к репетитору или школе</h3>
-      <button onclick="document.getElementById('attachStudentModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
+      <h3>💡 Предложить идею для WordSprint</h3>
+      <button onclick="closeModal('ideaModal')" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
     </div>
-    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:10px;">Введите код вашего преподавателя или школы, чтобы отображаться в их журнале учеников:</p>
-    <label>Код преподавателя или школы</label>
-    <input type="text" id="attachTeacherCode" placeholder="Код партнёра" style="text-transform:uppercase; font-family:monospace; font-weight:700;">
-    <label>Ваше имя и фамилия</label>
-    <input type="text" id="attachStudentName" placeholder="Введите имя и фамилию">
-    <label>Контакт для связи (необязательно)</label>
-    <input type="text" id="attachStudentContact" placeholder="Telegram или телефон">
-    <button class="btn btn-accent" style="width:100%; margin-top:14px;" id="attachSubmitBtn" onclick="submitAttachStudent()">✅ Прикрепиться</button>
+    <p style="color:var(--muted); font-size:0.9rem;">Напишите, какие слова, режимы тренировок или функции на сайте вы бы хотели увидеть:</p>
+    <label>Ваше имя или никнейм</label>
+    <input type="text" id="publicIdeaAuthor" placeholder="Как вас подписать?">
+    <label>Ваша идея или предложение</label>
+    <textarea id="publicIdeaText" style="min-height:95px;" placeholder="Опишите вашу идею..."></textarea>
+    <button class="btn btn-accent" style="width:100%; margin-top:14px;" onclick="submitPublicIdea()">🚀 Отправить основателю</button>
   </div>
 </div>
-<div class="modal-bg" id="partnerModal" onclick="if(event.target===this) this.style.display='none'">
+
+<!-- Окно: Регистрация репетитора или школы -->
+<div class="modal-bg" id="partnerModal" onclick="if(event.target===this) closeModal('partnerModal')">
   <div class="modal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h3 id="partnerModalTitle" style="font-size:1.2rem;">🎓 Регистрация партнёра</h3>
-      <button onclick="document.getElementById('partnerModal').style.display='none'" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
+      <h3 id="partnerModalTitle">🎓 Регистрация партнёра</h3>
+      <button onclick="closeModal('partnerModal')" style="background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer;">✕</button>
     </div>
 
     <div id="partnerRoleStep">
-      <p style="color:var(--muted); font-size:0.92rem; margin-bottom:16px;">Выберите формат работы, чтобы открыть нужную форму:</p>
+      <p style="color:var(--muted); font-size:0.92rem; margin-bottom:16px;">Выберите формат работы, чтобы открыть нужную анкету:</p>
       <div style="display:grid; gap:10px;">
         <button class="btn" onclick="selectPartnerRole('tutor')">👨‍🏫 Я репетитор</button>
         <button class="btn btn-secondary" onclick="selectPartnerRole('school')">🏫 Я школа</button>
@@ -301,7 +351,7 @@
     <div id="tutorFormStep" class="hidden">
       <label>Имя и фамилия</label>
       <input type="text" id="tName" placeholder="Введите имя и фамилию">
-      <label>Email (сюда придёт уведомление об одобрении)</label>
+      <label>Email (сюда придёт уведомление о проверке)</label>
       <input type="email" id="tEmail" placeholder="Введите ваш Email">
       <label>Город и формат (онлайн / офлайн)</label>
       <input type="text" id="tCity" placeholder="Город или формат занятий">
@@ -313,7 +363,7 @@
       </select>
       <label>Подтверждение (ID сертификата WS или ссылка на диплом / IELTS / ЕГЭ)</label>
       <input type="text" id="tProof" placeholder="Укажите ID или ссылку">
-      <label>Контакт для связи (Telegram или VK)</label>
+      <label>Контакт для учеников (Telegram или VK)</label>
       <input type="text" id="tContact" placeholder="Ссылка или никнейм">
       <label>О себе и методике</label>
       <textarea id="tBio" style="min-height:70px;" placeholder="Кратко расскажите о вашем опыте"></textarea>
@@ -321,15 +371,15 @@
     </div>
 
     <div id="schoolFormStep" class="hidden">
-      <label>Полное или сокращённое название школы / организации</label>
-      <input type="text" id="sName" placeholder="Введите официальное название">
-      <label>Email организации (сюда придёт уведомление об одобрении)</label>
+      <label>Официальное название школы / организации</label>
+      <input type="text" id="sName" placeholder="Введите название школы">
+      <label>Email организации (сюда придёт уведомление о проверке)</label>
       <input type="email" id="sEmail" placeholder="Введите Email школы">
       <label>ИНН и ОГРН организации</label>
-      <input type="text" id="sInn" placeholder="Укажите ИНН и ОГРН для проверки">
-      <label>Номер образовательной лицензии или ссылка на скан / выписку</label>
-      <input type="text" id="sProof" placeholder="Номер лицензии или ссылка на документ">
-      <label>Город / регион или онлайн-формат</label>
+      <input type="text" id="sInn" placeholder="Укажите ИНН и ОГРН">
+      <label>Номер образовательной лицензии или ссылка на документ</label>
+      <input type="text" id="sProof" placeholder="Номер лицензии или ссылка">
+      <label>Город или онлайн-формат</label>
       <input type="text" id="sCity" placeholder="Города присутствия или онлайн">
       <label>Направления и уровни обучения</label>
       <input type="text" id="sLevel" placeholder="Уровни CEFR и программы">
@@ -344,12 +394,100 @@
       <div style="font-size:2.4rem;">✅</div>
       <h4 style="margin:8px 0;">Заявка отправлена на проверку!</h4>
       <p style="color:var(--muted); font-size:0.9rem;">Ваш персональный код для входа в кабинет:</p>
-      <div id="newPartnerCode" style="font-family:monospace; font-size:1.3rem; font-weight:800; color:var(--accent); margin:10px 0;">WS-000</div>
+      <div id="newPartnerCode" style="font-family:monospace; font-size:1.3rem; font-weight:800; color:var(--accent); margin:10px 0;">WS-0000</div>
       <a href="teachers.html" class="btn btn-sm">Перейти в кабинет →</a>
     </div>
   </div>
 </div>
 <script>
+  const TEST_POOL = {
+    A1: [
+      { w: 'apple', ok: 'яблоко', opts: ['яблоко', 'груша', 'стол', 'книга'] },
+      { w: 'morning', ok: 'утро', opts: ['вечер', 'утро', 'ночь', 'неделя'] },
+      { w: 'friend', ok: 'друг', opts: ['враг', 'сосед', 'друг', 'учитель'] }
+    ],
+    A2: [
+      { w: 'journey', ok: 'путешествие', opts: ['путешествие', 'остановка', 'покупка', 'ошибка'] },
+      { w: 'improve', ok: 'улучшать', opts: ['ухудшать', 'улучшать', 'забывать', 'терять'] },
+      { w: 'weather', ok: 'погода', opts: ['одежда', 'природа', 'погода', 'климат'] }
+    ],
+    B1: [
+      { w: 'reliable', ok: 'надёжный', opts: ['надёжный', 'опасный', 'временный', 'случайный'] },
+      { w: 'purpose', ok: 'цель, назначение', opts: ['причина', 'цель, назначение', 'сомнение', 'последствие'] },
+      { w: 'achieve', ok: 'достигать', opts: ['избегать', 'откладывать', 'достигать', 'разрушать'] }
+    ],
+    B2: [
+      { w: 'accomplish', ok: 'выполнять, достигать', opts: ['отменять', 'выполнять, достигать', 'подозревать', 'упрощать'] },
+      { w: 'accurate', ok: 'точный', opts: ['аккуратный', 'точный', 'сложный', 'быстрый'] },
+      { w: 'reluctant', ok: 'неохотный, вынужденный', opts: ['радостный', 'неохотный, вынужденный', 'решительный', 'уверенный'] }
+    ],
+    C1: [
+      { w: 'inevitable', ok: 'неизбежный', opts: ['невероятный', 'неизбежный', 'незаметный', 'неудачный'] },
+      { w: 'ambiguous', ok: 'двусмысленный', opts: ['амбициозный', 'двусмысленный', 'очевидный', 'прозрачный'] },
+      { w: 'scrutinize', ok: 'тщательно изучать', opts: ['игнорировать', 'тщательно изучать', 'критиковать', 'ускорять'] }
+    ],
+    C2: [
+      { w: 'ubiquitous', ok: 'вездесущий, повсеместный', opts: ['уникальный', 'вездесущий, повсеместный', 'устаревший', 'скрытый'] },
+      { w: 'ephemeral', ok: 'мимолётный, недолговечный', opts: ['вечный', 'мимолётный, недолговечный', 'тяжёлый', 'загадочный'] }
+    ]
+  };
+  const LEVELS_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+  let atStep = 0, atLevelIdx = 2, atScore = 0, atUsed = new Set();
+
+  function initAdaptiveTest() {
+    atStep = 0; atLevelIdx = 2; atScore = 0; atUsed.clear();
+    document.getElementById('adaptiveTestActive').classList.remove('hidden');
+    document.getElementById('adaptiveTestResult').classList.add('hidden');
+    nextAdaptiveQuestion();
+  }
+
+  function nextAdaptiveQuestion() {
+    if (atStep >= 10) return finishAdaptiveTest();
+    atStep++;
+    const lvl = LEVELS_ORDER.at(atLevelIdx);
+    const pool = TEST_POOL[lvl].filter(item => !atUsed.has(item.w));
+    const q = pool.length ? pool.at(Math.floor(Math.random() * pool.length)) : TEST_POOL[lvl].at(0);
+    atUsed.add(q.w);
+
+    document.getElementById('atStep').textContent = atStep;
+    document.getElementById('atLevelBadge').textContent = lvl;
+    document.getElementById('atWord').textContent = q.w;
+
+    const optsBox = document.getElementById('atOptions');
+    optsBox.innerHTML = '';
+    [...q.opts].sort(() => Math.random() - 0.5).forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'test-opt';
+      btn.textContent = opt;
+      btn.onclick = () => {
+        if (opt === q.ok) {
+          atScore += (atLevelIdx + 1) * 3;
+          if (atLevelIdx < LEVELS_ORDER.length - 1) atLevelIdx++;
+        } else {
+          if (atLevelIdx > 0) atLevelIdx--;
+        }
+        nextAdaptiveQuestion();
+      };
+      optsBox.appendChild(btn);
+    });
+  }
+
+  function finishAdaptiveTest() {
+    document.getElementById('adaptiveTestActive').classList.add('hidden');
+    document.getElementById('adaptiveTestResult').classList.remove('hidden');
+    const finalLvl = LEVELS_ORDER.at(atLevelIdx);
+    const descs = {
+      A1: 'Начальный уровень. Отличная база для старта ежедневных тренировок!',
+      A2: 'Элементарный уровень. Вы уже понимаете повседневные фразы.',
+      B1: 'Средний уровень. Уверенная база для путешествий и общения.',
+      B2: 'Выше среднего. Вы понимаете сложную лексику и оттенки смысла.',
+      C1: 'Продвинутый уровень. Отличный словарный запас!',
+      C2: 'Уровень владения в совершенстве. Блестящий результат!'
+    };
+    document.getElementById('atFinalLevel').textContent = finalLvl;
+    document.getElementById('atFinalDesc').textContent = descs[finalLvl];
+  }
+
   const STORY_WORDS = [
     ['Yesterday', 'вчера'], ['I', 'я'], ['decided', 'решил'], ['to', 'чтобы'], ['start', 'начать'],
     ['my', 'моё'], ['journey', 'путешествие'], ['in', 'в'], ['English.', 'английском языке.'],
@@ -358,55 +496,117 @@
     ['helps', 'помогает'], ['you', 'тебе'], ['achieve', 'достичь'], ['great', 'отличных'], ['results!', 'результатов!']
   ];
 
-  const DEMO_WORDS = [
-    { en: 'accomplish', tr: '[əˈkʌmplɪʃ] • Уровень B2', ru: 'достигать, выполнять' },
-    { en: 'inevitable', tr: '[ɪnˈevɪtəbl] • Уровень C1', ru: 'неизбежный, неминуемый' },
-    { en: 'reliable', tr: '[rɪˈlaɪəbl] • Уровень B1', ru: 'надёжный, проверенный' },
-    { en: 'accurate', tr: '[ˈækjərət] • Уровень B2', ru: 'точный, безошибочный' }
-  ];
-  let demoIdx = 0;
-
   function renderStory() {
-    document.getElementById('storyContainer').innerHTML = STORY_WORDS.map(([en, ru]) =>
-      `<span class="story-word" onclick="showStoryTip('${en.replace(/[.,!]/g, '')} — ${ru}')">${en}</span>`
+    document.getElementById('storyContainer').innerHTML = STORY_WORDS.map(pair =>
+      `<span class="story-word" onclick="document.getElementById('storyTipBox').textContent='📖 Перевод: ${pair.at(0).replace(/[.,!]/g, '')} — ${pair.at(1)}'">${pair.at(0)}</span>`
     ).join(' ');
   }
 
-  function switchDemoTab(tab) {
-    document.getElementById('tabWords').classList.toggle('active', tab === 'words');
-    document.getElementById('tabStory').classList.toggle('active', tab === 'story');
-    document.getElementById('demoWordsPane').classList.toggle('hidden', tab !== 'words');
-    document.getElementById('demoStoryPane').classList.toggle('hidden', tab !== 'story');
+  const WOTD_LIST = [
+    { en: 'resilient', tr: '[rɪˈzɪliənt] • C1', ru: 'стойкий, быстро восстанавливающийся', ex: 'Children are often remarkably resilient.' },
+    { en: 'perseverance', tr: '[ˌpɜːsɪˈvɪərəns] • C1', ru: 'настойчивость, упорство', ex: 'Success requires patience and perseverance.' },
+    { en: 'enhance', tr: '[ɪnˈhɑːns] • B2', ru: 'улучшать, усиливать', ex: 'Good lighting will enhance the room.' },
+    { en: 'crucial', tr: '[ˈkruːʃl] • B2', ru: 'ключевой, решающий', ex: 'Practice is crucial for learning languages.' }
+  ];
+
+  function initWotd() {
+    const dayIdx = Math.floor(Date.now() / 86400000) % WOTD_LIST.length;
+    const item = WOTD_LIST.at(dayIdx);
+    document.getElementById('wotdEn').textContent = item.en;
+    document.getElementById('wotdTr').textContent = item.tr;
+    document.getElementById('wotdRu').textContent = item.ru;
+    document.getElementById('wotdEx').textContent = `«${item.ex}»`;
   }
 
-  function speakDemo() {
-    const u = new SpeechSynthesisUtterance(DEMO_WORDS[demoIdx].en);
+  function speakWotd() {
+    const u = new SpeechSynthesisUtterance(document.getElementById('wotdEn').textContent);
     u.lang = 'en-US'; u.rate = 0.9;
     speechSynthesis.speak(u);
   }
 
-  function toggleDemoTranslate() { document.getElementById('demoRu').classList.toggle('hidden'); }
-
-  function nextDemoWord() {
-    demoIdx = (demoIdx + 1) % DEMO_WORDS.length;
-    const w = DEMO_WORDS[demoIdx];
-    document.getElementById('demoCounter').textContent = `Слово ${demoIdx + 1} / ${DEMO_WORDS.length}`;
-    document.getElementById('demoEn').textContent = w.en;
-    document.getElementById('demoTr').textContent = w.tr;
-    document.getElementById('demoRu').textContent = w.ru;
-    document.getElementById('demoRu').classList.add('hidden');
-    speakDemo();
+  function shareWotd() {
+    const text = `📅 Слово дня в WordSprint: ${document.getElementById('wotdEn').textContent} — ${document.getElementById('wotdRu').textContent}`;
+    navigator.clipboard.writeText(text);
+    alert('Слово дня скопировано для отправки другу!');
   }
 
-  function showStoryTip(text) { document.getElementById('storyTipBox').textContent = '📖 Перевод: ' + text; }
-  function openDownloadModal() { document.getElementById('downloadModal').style.display = 'flex'; }
-  function openLessonModal() { document.getElementById('lessonCodeModal').style.display = 'flex'; }
-  function openAttachModal() { document.getElementById('attachStudentModal').style.display = 'flex'; }
+  function switchDemoTab(tab) {
+    ['tabAdaptiveTest', 'tabStory', 'tabWotd'].forEach(id => document.getElementById(id).classList.remove('active'));
+    ['paneTest', 'paneStory', 'paneWotd'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    if (tab === 'test') { document.getElementById('tabAdaptiveTest').classList.add('active'); document.getElementById('paneTest').classList.remove('hidden'); }
+    if (tab === 'story') { document.getElementById('tabStory').classList.add('active'); document.getElementById('paneStory').classList.remove('hidden'); }
+    if (tab === 'wotd') { document.getElementById('tabWotd').classList.add('active'); document.getElementById('paneWotd').classList.remove('hidden'); }
+  }
+</script>
+<script>
+  let cachedCatalog = [], cachedReviews = [], currentLbTab = 'duels';
 
-  function goToLesson() {
-    const code = document.getElementById('quickLessonCode').value.trim().toUpperCase();
-    if (!code) return alert('Введите код урока!');
-    location.href = `lesson.html?code=${encodeURIComponent(code)}`;
+  function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+  function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+  async function switchLeaderboard(tab) {
+    currentLbTab = tab;
+    ['lbTabDuels', 'lbTabXp', 'lbTabTeams'].forEach(id => document.getElementById(id).classList.remove('active'));
+    if (tab === 'duels') document.getElementById('lbTabDuels').classList.add('active');
+    if (tab === 'xp') document.getElementById('lbTabXp').classList.add('active');
+    if (tab === 'teams') document.getElementById('lbTabTeams').classList.add('active');
+
+    const head = document.getElementById('lbTableHead');
+    const body = document.getElementById('lbTableBody');
+    const me = getCurrentUserProfile();
+
+    try {
+      if (tab === 'teams') {
+        head.innerHTML = '<tr><th>Место</th><th>Команда / Группа</th><th>Участников</th><th>Общий опыт</th></tr>';
+        const groups = await sbFetch('groups', { query: 'order=created_at.desc&limit=30' });
+        const ranked = (groups || []).map(g => {
+          const m = Array.isArray(g.members) ? g.members : [];
+          const sumXp = m.reduce((s, x) => s + (x.xp || 0), 0);
+          return { title: g.title, count: m.length, sumXp };
+        }).sort((a, b) => b.sumXp - a.sumXp).slice(0, 5);
+
+        body.innerHTML = ranked.length ? ranked.map((g, i) => `
+          <tr><td><b>#${i + 1}</b></td><td><b>${g.title}</b></td><td>${g.count} чел.</td><td><b style="color:var(--accent);">${g.sumXp} XP</b></td></tr>
+        `).join('') : '<tr><td colspan="4" style="text-align:center; color:var(--muted);">Команд пока нет</td></tr>';
+        document.getElementById('myRankBanner').classList.add('hidden');
+        return;
+      }
+
+      const orderCol = tab === 'duels' ? 'duel_wins.desc,xp.desc' : 'xp.desc';
+      const profiles = await sbFetch('profiles', { query: `order=${orderCol}&limit=50` });
+      const list = profiles || [];
+
+      head.innerHTML = tab === 'duels'
+        ? '<tr><th>Место</th><th>Игрок</th><th>Побед в дуэлях</th><th>Вызов</th></tr>'
+        : '<tr><th>Место</th><th>Игрок</th><th>Опыт (XP)</th><th>Вызов</th></tr>';
+
+      const top10 = list.slice(0, 10);
+      body.innerHTML = top10.length ? top10.map((p, i) => {
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
+        const val = tab === 'duels' ? `${p.duel_wins || 0} побед` : `${p.xp || 0} XP`;
+        const isSelf = me && me.user_id === p.user_id;
+        const challengeBtn = isSelf
+          ? '<span style="color:var(--muted); font-size:0.82rem;">Это вы</span>'
+          : `<a href="duel.html?challenge=${encodeURIComponent(p.user_id)}&targetName=${encodeURIComponent(p.nickname)}" class="btn btn-secondary btn-sm">⚔️ Вызов</a>`;
+        return `
+          <tr>
+            <td><b>${medal}</b></td>
+            <td><a href="profile.html?view=${encodeURIComponent(p.user_id)}" style="font-weight:700; color:var(--primary);">${p.nickname}</a> <small style="color:var(--muted);">(${getRankByXp(p.xp || 0)})</small></td>
+            <td><b>${val}</b></td>
+            <td>${challengeBtn}</td>
+          </tr>
+        `;
+      }).join('') : '<tr><td colspan="4" style="text-align:center; color:var(--muted);">Рейтинг пока формируется</td></tr>';
+
+      const banner = document.getElementById('myRankBanner');
+      if (me) {
+        const myIdx = list.findIndex(p => p.user_id === me.user_id);
+        if (myIdx >= 0) {
+          banner.classList.remove('hidden');
+          banner.textContent = `Ваша позиция в этом рейтинге: #${myIdx + 1}`;
+        } else banner.classList.add('hidden');
+      }
+    } catch (e) { console.error(e); }
   }
 
   function openPartnerChoiceModal() {
@@ -415,7 +615,7 @@
     document.getElementById('tutorFormStep').classList.add('hidden');
     document.getElementById('schoolFormStep').classList.add('hidden');
     document.getElementById('partnerSuccessStep').classList.add('hidden');
-    document.getElementById('partnerModal').style.display = 'flex';
+    openModal('partnerModal');
   }
 
   function selectPartnerRole(role) {
@@ -438,21 +638,19 @@
     const telegram = document.getElementById(isTutor ? 'tContact' : 'sContact').value.trim();
     const bio = document.getElementById(isTutor ? 'tBio' : 'sBio').value.trim();
 
-    const innVal = !isTutor ? (document.getElementById('sInn')?.value.trim() || '') : '';
+    const innVal = !isTutor ? (document.getElementById('sInn').value.trim()) : '';
     const rawProof = document.getElementById(isTutor ? 'tProof' : 'sProof').value.trim();
-    const proof_url = isTutor ? rawProof : `ИНН/ОГРН: ${innVal} | Лицензия/док: ${rawProof}`;
+    const proof_url = isTutor ? rawProof : `ИНН/ОГРН: ${innVal} | Лицензия: ${rawProof}`;
 
     if (!name || !email || !telegram || !rawProof) {
-      return alert('Пожалуйста, заполните название/имя, Email, документы и контакт!');
+      return alert('Пожалуйста, заполните имя/название, Email, документы и контакт!');
     }
 
-    const fullName = isTutor ? name : `🏫 Школа: ${name}`;
     const code = generateShortCode(isTutor ? 'WS' : 'SCH');
-
     try {
       await sbFetch('teachers', {
         method: 'POST',
-        body: { code, name: fullName, email, city_format, level, proof_url, telegram, bio, verified: false, status: 'pending' }
+        body: { code, name, email, city_format, level, proof_url, telegram, bio, verified: false, status: 'pending', is_plus: false }
       });
       localStorage.setItem('ws_teacher_code', code);
       document.getElementById('tutorFormStep').classList.add('hidden');
@@ -461,28 +659,19 @@
       document.getElementById('newPartnerCode').textContent = code;
     } catch (e) { alert('Ошибка отправки: ' + e.message); }
   }
-  async function submitAttachStudent() {
-    const teacher_code = document.getElementById('attachTeacherCode').value.trim().toUpperCase();
-    const student_name = document.getElementById('attachStudentName').value.trim();
-    const student_contact = document.getElementById('attachStudentContact').value.trim();
-
-    if (!teacher_code || !student_name) return alert('Введите код преподавателя/школы и ваше имя!');
-
-    const btn = document.getElementById('attachSubmitBtn');
-    btn.disabled = true; btn.textContent = '⏳ Проверяем код...';
+  async function submitPublicIdea() {
+    const author = document.getElementById('publicIdeaAuthor').value.trim() || 'Пользователь сайта';
+    const idea_text = document.getElementById('publicIdeaText').value.trim();
+    if (!idea_text) return alert('Напишите текст идеи!');
     try {
-      const teachers = await sbFetch('teachers', { query: `code=eq.${encodeURIComponent(teacher_code)}` });
-      if (!teachers || !teachers.length) {
-        return alert('Преподаватель или школа с таким кодом не найдены.');
-      }
-      await sbFetch('teacher_students', {
+      await sbFetch('partner_ideas', {
         method: 'POST',
-        body: { teacher_code, student_name, student_contact }
+        body: { teacher_code: 'USER', teacher_name: author, idea_text }
       });
-      document.getElementById('attachStudentModal').style.display = 'none';
-      alert(`Готово! Вы успешно прикреплены к: ${teachers.name}`);
+      document.getElementById('publicIdeaText').value = '';
+      closeModal('ideaModal');
+      alert('Спасибо! Ваша идея отправлена основателю WordSprint.');
     } catch (e) { alert('Ошибка: ' + e.message); }
-    finally { btn.disabled = false; btn.textContent = '✅ Прикрепиться'; }
   }
 
   async function verifyCertificate() {
@@ -493,14 +682,15 @@
     box.innerHTML = '⏳ Проверяем документ в базе WordSprint...';
     try {
       const rows = await sbFetch('certificates', { query: `id=eq.${encodeURIComponent(id)}` });
-      if (!rows || !rows.length) {
+      const c = sbFirst(rows);
+      if (!c) {
         box.style.borderColor = '#ef4444';
         box.style.background = 'rgba(239,68,68,0.12)';
         box.innerHTML = `❌ Сертификат с номером <b>${id}</b> не найден в реестре.`;
         return;
       }
-      const c = rows;
       const s = c.skills || {};
+      const shareUrl = `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/index.html?cert=${c.id}#verify`;
       box.style.borderColor = 'rgba(16, 185, 129, 0.4)';
       box.style.background = 'rgba(16, 185, 129, 0.1)';
       box.innerHTML = `
@@ -513,45 +703,92 @@
           <div><b>Vocabulary / Grammar:</b> ${s.vocabulary || c.score} / ${s.grammar || c.score}</div>
           <div><b>Listening / Production:</b> ${s.listening || c.score} / ${s.production || c.score}</div>
         </div>
+        <button class="btn btn-secondary btn-sm" style="margin-top:12px;" onclick="navigator.clipboard.writeText('${shareUrl}'); alert('Ссылка на проверку для резюме скопирована!')">🔗 Скопировать ссылку для резюме</button>
       `;
-    } catch (e) { box.innerHTML = '⚠️ Ошибка соединения с базой: ' + e.message; }
+    } catch (e) { box.innerHTML = '⚠️ Ошибка соединения: ' + e.message; }
   }
 
-   async function loadVerifiedTeachers() {
+  async function loadVerifiedTeachers() {
     try {
       const [list, reviews] = await Promise.all([
         sbFetch('teachers', { query: 'verified=eq.true&order=created_at.desc' }),
         sbFetch('teacher_reviews', { query: 'order=created_at.desc' })
       ]);
-      const grid = document.getElementById('verifiedTeachersGrid');
-      if (!list || !list.length) return;
-
-      grid.innerHTML = list.map(t => {
-        const tRevs = (reviews || []).filter(r => r.teacher_code === t.code);
-        const revHtml = tRevs.length
-          ? `<div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border); font-size:0.84rem;">
-               <div style="font-weight:700; color:var(--primary); margin-bottom:4px;">Отзывы учеников (${tRevs.length}):</div>
-               <div style="color:var(--muted);">«${tRevs.comment}» — <b>${tRevs.student_name}</b> (${tRevs.rating}/5)</div>
-             </div>`
-          : '';
-
-        return `
-          <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="background:rgba(16,185,129,0.15); color:var(--accent); padding:3px 8px; border-radius:6px; font-size:0.78rem; font-weight:700;">Проверен</span>
-              <span style="font-family:monospace; color:var(--muted); font-size:0.85rem;">${t.code}</span>
-            </div>
-            <h3>${t.name}</h3>
-            <div style="font-size:0.85rem; color:var(--primary); margin-bottom:8px;">${t.level || ''} • ${t.city_format || 'Онлайн'}</div>
-            <p style="margin-bottom:12px;">${t.bio || 'Партнёр образовательной платформы WordSprint.'}</p>
-            <div style="font-size:0.88rem; color:var(--accent); font-weight:600;">Связаться: ${t.telegram}</div>
-            ${revHtml}
-          </div>
-        `;
-      }).join('');
+      cachedCatalog = list || [];
+      cachedReviews = reviews || [];
+      renderCatalog();
     } catch (e) { console.error(e); }
   }
 
+  function renderCatalog() {
+    const roleFilter = document.getElementById('filterRole').value;
+    const query = document.getElementById('filterSearch').value.trim().toLowerCase();
+    const grid = document.getElementById('verifiedTeachersGrid');
+
+    const filtered = cachedCatalog.filter(t => {
+      const isSchool = String(t.code || '').startsWith('SCH-');
+      if (roleFilter === 'school' && !isSchool) return false;
+      if (roleFilter === 'tutor' && isSchool) return false;
+      if (query) {
+        const hay = `${t.name} ${t.city_format || ''} ${t.level || ''} ${t.bio || ''}`.toLowerCase();
+        if (!hay.includes(query)) return false;
+      }
+      return true;
+    });
+
+    if (!filtered.length) {
+      grid.innerHTML = '<p style="color:var(--muted); grid-column:1/-1; text-align:center;">По выбранным фильтрам партнёров пока не найдено.</p>';
+      return;
+    }
+
+    grid.innerHTML = filtered.map(t => {
+      const tRevs = cachedReviews.filter(r => r.teacher_code === t.code);
+      const revBlock = tRevs.length
+        ? `<details style="margin-top:10px; padding-top:8px; border-top:1px solid var(--border); font-size:0.84rem;">
+             <summary style="cursor:pointer; color:var(--primary); font-weight:600;">Отзывы учеников (${tRevs.length})</summary>
+             <div style="margin-top:6px; display:grid; gap:6px;">
+               ${tRevs.slice(0, 3).map(r => `<div style="color:var(--muted);">«${r.comment}» — <b>${r.student_name}</b> (${r.rating}/5)</div>`).join('')}
+             </div>
+           </details>`
+        : '';
+
+      return `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="background:rgba(16,185,129,0.15); color:var(--accent); padding:3px 8px; border-radius:6px; font-size:0.78rem; font-weight:700;">Проверен</span>
+            <span style="font-family:monospace; color:var(--muted); font-size:0.85rem;">${t.code}</span>
+          </div>
+          <h3>${t.name}</h3>
+          <div style="font-size:0.85rem; color:var(--primary); margin-bottom:8px;">${t.level || ''} • ${t.city_format || 'Онлайн'}</div>
+          <p style="margin-bottom:12px;">${t.bio || 'Партнёр образовательной платформы WordSprint.'}</p>
+          <div style="font-size:0.88rem; color:var(--accent); font-weight:600;">Связаться: ${t.telegram}</div>
+          ${revBlock}
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    initAdaptiveTest();
+    renderStory();
+    initWotd();
+    switchLeaderboard('duels');
+    loadVerifiedTeachers();
+
+    const me = getCurrentUserProfile();
+    if (me && me.user_id) {
+      const notifs = await sbFetch('notifications', { query: `target_id=eq.${encodeURIComponent(me.user_id)}&is_read=eq.false&select=id` });
+      if (notifs && notifs.length > 0) {
+        document.getElementById('navProfileLink').innerHTML = `Мой профиль <span class="notif-dot">${notifs.length}</span>`;
+      }
+    }
+
+    const certParam = new URLSearchParams(window.location.search).get('cert');
+    if (certParam) {
+      document.getElementById('certInput').value = certParam.toUpperCase();
+      verifyCertificate();
+    }
+  });
 </script>
 </body>
 </html>
