@@ -147,6 +147,16 @@
       </div>
     </div>
         <div class="card">
+      <h2>👥 Учебные группы</h2>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Код</th><th>Название группы</th><th>Участников</th><th>Цель XP</th><th>Действия</th></tr></thead>
+          <tbody id="groupsAdminTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+        <div class="card">
       <h2>💡 Идеи и пожелания от репетиторов и школ</h2>
       <div id="partnerIdeasAdminList" style="color:var(--muted); font-size:0.9rem;">Загрузка...</div>
     </div>
@@ -169,27 +179,37 @@
   }
   window.addEventListener('DOMContentLoaded', () => { if (sessionStorage.getItem('ws_admin') === '1') openPanel(); });
 
-   async function loadAllAdmin() {
+     async function loadAllAdmin() {
     try {
-      const [teachers, students, lessons, certs, ideas] = await Promise.all([
+      const [teachers, students, lessons, certs, groups, ideas] = await Promise.all([
         sbFetch('teachers', { query: 'order=created_at.desc' }),
-        sbFetch('teacher_students', { query: 'select=id' }),
+        sbFetch('teacher_students', { query: 'select=id,teacher_code' }),
         sbFetch('lessons', { query: 'select=id' }),
         sbFetch('certificates', { query: 'order=issued_at.desc' }),
+        sbFetch('groups', { query: 'order=created_at.desc' }),
         sbFetch('partner_ideas', { query: 'order=created_at.desc' })
       ]);
 
+      const validCodes = new Set(teachers.map(t => t.code));
+      const activeStudentsCount = students.filter(s => validCodes.has(s.teacher_code)).length;
+
       document.getElementById('stTeachers').textContent = teachers.length;
-      document.getElementById('stStudents').textContent = students.length;
+      document.getElementById('stStudents').textContent = activeStudentsCount;
       document.getElementById('stLessons').textContent = lessons.length;
       document.getElementById('stCerts').textContent = certs.length;
 
       const tBody = document.getElementById('teachersTable');
       tBody.innerHTML = teachers.length ? teachers.map(t => {
         const dt = t.created_at ? new Date(t.created_at).toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
+        const isApproved = t.status === 'approved' || t.verified === true;
+        const isRejected = t.status === 'rejected';
+
         let stHtml = '<span class="badge-wait">⏳ На проверке</span>';
-        if (t.status === 'approved' || t.verified) stHtml = '<span class="badge-ok">✅ Одобрен</span>';
-        else if (t.status === 'rejected') stHtml = '<span class="badge-rej">❌ Отклонена</span>';
+        if (isApproved) stHtml = '<span class="badge-ok">✅ Одобрен</span>';
+        else if (isRejected) stHtml = '<span class="badge-rej">❌ Отклонена</span>';
+
+        const approveBtn = !isApproved ? `<button class="btn btn-sm btn-ok" onclick="setTeacherStatus('${t.id}', 'approved')">Одобрить</button>` : '';
+        const rejectBtn = !isRejected ? `<button class="btn btn-sm btn-warn" onclick="setTeacherStatus('${t.id}', 'rejected')">Отклонить</button>` : '';
 
         return `
           <tr>
@@ -200,14 +220,27 @@
             <td>${t.telegram || '—'}<br><small style="color:#a5b4fc;">${t.email || ''}</small></td>
             <td>${stHtml}<br><small style="color:#fbbf24;">${t.is_plus ? '✨ Плюс активен' : ''}</small></td>
             <td style="display:flex; gap:5px; flex-wrap:wrap;">
-              <button class="btn btn-sm btn-ok" onclick="setTeacherStatus('${t.id}', 'approved')">Одобрить</button>
-              <button class="btn btn-sm btn-warn" onclick="setTeacherStatus('${t.id}', 'rejected')">Отклонить</button>
+              ${approveBtn}
+              ${rejectBtn}
               <button class="btn btn-sm" onclick="togglePlusStatus('${t.id}', ${!!t.is_plus})">${t.is_plus ? 'Снять Плюс' : '✨ Дать Плюс'}</button>
-              <button class="btn btn-sm btn-del" onclick="deleteTeacher('${t.id}')">Удалить</button>
+              <button class="btn btn-sm btn-del" onclick="deleteTeacher('${t.id}', '${t.code}')">Удалить</button>
             </td>
           </tr>
         `;
       }).join('') : '<tr><td colspan="7" style="color:var(--muted); text-align:center;">Заявок пока нет</td></tr>';
+
+      const gBody = document.getElementById('groupsAdminTable');
+      if (gBody) {
+        gBody.innerHTML = groups && groups.length ? groups.map(g => `
+          <tr>
+            <td><b style="font-family:monospace; color:#34d399;">${g.code}</b></td>
+            <td><b>${g.title}</b></td>
+            <td>${Array.isArray(g.members) ? g.members.length : 0} чел.</td>
+            <td>${g.weekly_goal} XP</td>
+            <td><button class="btn btn-sm btn-del" onclick="deleteGroupAdmin('${g.id}', '${g.title.replace(/'/g, "\\'")}')">Удалить</button></td>
+          </tr>
+        `).join('') : '<tr><td colspan="5" style="color:var(--muted); text-align:center;">Групп пока нет</td></tr>';
+      }
 
       const cBody = document.getElementById('certsTable');
       cBody.innerHTML = certs.length ? certs.map(c => {
@@ -239,20 +272,14 @@
     } catch (e) { alert('Ошибка загрузки: ' + e.message); }
   }
 
-  async function togglePlusStatus(id, currentState) {
-    await sbFetch('teachers', { method: 'PATCH', query: `id=eq.${id}`, body: { is_plus: !currentState } });
-    loadAllAdmin();
-  }
-
-
   async function setTeacherStatus(id, newStatus) {
     const isApproved = newStatus === 'approved';
     const updated = await sbFetch('teachers', {
       method: 'PATCH', query: `id=eq.${id}`,
       body: { verified: isApproved, status: newStatus }
     });
-    if (updated && updated && updated.email) {
-      const t = updated;
+    const t = Array.isArray(updated) ? updated.at(0) : updated;
+    if (t && t.email) {
       if (isApproved) {
         const subj = encodeURIComponent('WordSprint — Ваша заявка одобрена!');
         const body = encodeURIComponent(`Здравствуйте, ${t.name}!\n\nВаша заявка одобрена. Ваш код входа в кабинет: ${t.code}\nСсылка на кабинет: ${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/teachers.html`);
@@ -266,9 +293,26 @@
     loadAllAdmin();
   }
 
-  async function deleteTeacher(id) {
-    if (!confirm('Удалить эту запись?')) return;
+  async function togglePlusStatus(id, currentState) {
+    await sbFetch('teachers', { method: 'PATCH', query: `id=eq.${id}`, body: { is_plus: !currentState } });
+    loadAllAdmin();
+  }
+
+  async function deleteTeacher(id, code) {
+    if (!confirm('Удалить эту запись вместе со всеми её прикреплёнными учениками и уроками?')) return;
+    await Promise.all([
+      sbFetch('teacher_students', { method: 'DELETE', query: `teacher_code=eq.${encodeURIComponent(code)}` }),
+      sbFetch('lessons', { method: 'DELETE', query: `teacher_code=eq.${encodeURIComponent(code)}` }),
+      sbFetch('student_awards', { method: 'DELETE', query: `teacher_code=eq.${encodeURIComponent(code)}` }),
+      sbFetch('teacher_reviews', { method: 'DELETE', query: `teacher_code=eq.${encodeURIComponent(code)}` })
+    ]);
     await sbFetch('teachers', { method: 'DELETE', query: `id=eq.${id}` });
+    loadAllAdmin();
+  }
+
+  async function deleteGroupAdmin(id, title) {
+    if (!confirm(`Удалить группу «${title}»?`)) return;
+    await sbFetch('groups', { method: 'DELETE', query: `id=eq.${id}` });
     loadAllAdmin();
   }
 
@@ -286,7 +330,7 @@
     if (!full_name) return alert('Введите имя кандидата!');
 
     const id = `WS-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-    const skills = { vocabulary: nums, grammar: nums, listening: nums, production: nums };
+    const skills = { vocabulary: nums.at(0), grammar: nums.at(1), listening: nums.at(2), production: nums.at(3) };
     try {
       await sbFetch('certificates', { method: 'POST', body: { id, full_name, score, cefr_level, skills } });
       const verifyUrl = `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/index.html?cert=${id}#verify`;
@@ -299,3 +343,5 @@
 </script>
 </body>
 </html>
+
+

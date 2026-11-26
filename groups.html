@@ -9,49 +9,56 @@
     :root {
       --bg: #0b0f19; --card: #131a2a; --input-bg: #0d1322; --border: #232d45;
       --text: #f1f5f9; --muted: #94a3b8; --primary: #6366f1; --primary-hover: #4f46e5;
-      --accent: #10b981;
+      --accent: #10b981; --warning: #f59e0b;
     }
     [data-theme="light"] {
       --bg: #f8fafc; --card: #ffffff; --input-bg: #f1f5f9; --border: #cbd5e1;
       --text: #0f172a; --muted: #475569; --primary: #4f46e5; --primary-hover: #4338ca;
-      --accent: #059669;
+      --accent: #059669; --warning: #d97706;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
     a { color: inherit; text-decoration: none; }
-    .container { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
     header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
     .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; flex-wrap: wrap; gap: 10px; }
     .logo { font-weight: 800; font-size: 1.25rem; }
     .nav-links { display: flex; gap: 15px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
     .nav-links a:hover, .nav-links a.active { color: var(--primary); font-weight: 600; }
     .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
-    .hero { padding: 36px 0 20px; text-align: center; }
-    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    .hero { padding: 34px 0 18px; text-align: center; }
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: 6px; }
     .subtitle { color: var(--muted); max-width: 640px; margin: 0 auto; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 22px 0; }
     @media (max-width: 780px) { .grid-2 { grid-template-columns: 1fr; } }
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
     .card h2 { font-size: 1.2rem; margin-bottom: 8px; }
     .desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
-    label { display: block; font-size: 0.88rem; color: var(--muted); margin: 12px 0 6px; }
+    label { display: block; font-size: 0.86rem; color: var(--muted); margin: 12px 0 6px; }
     input, select {
       width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
       background: var(--input-bg); color: var(--text); font-size: 1rem; outline: none;
     }
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 12px 18px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.95rem;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 12px 18px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.94rem;
       cursor: pointer; background: var(--primary); color: #fff; width: 100%; margin-top: 16px;
     }
     .btn-accent { background: var(--accent); color: #fff; }
     .btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
     .btn-sm { padding: 7px 12px; font-size: 0.84rem; width: auto; margin-top: 0; }
-    .code-pill { font-family: monospace; font-size: 1.3rem; font-weight: 800; background: var(--input-bg); padding: 6px 14px; border-radius: 8px; color: var(--accent); border: 1px solid var(--border); display: inline-block; letter-spacing: 2px; }
-    .member-row { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+    .code-pill { font-family: monospace; font-size: 1.2rem; font-weight: 800; background: var(--input-bg); padding: 4px 12px; border-radius: 8px; color: var(--accent); border: 1px solid var(--border); display: inline-block; letter-spacing: 2px; }
+    .stats-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    @media (max-width: 640px) { .stats-3 { grid-template-columns: 1fr; } }
+    .stat-mini { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+    .stat-mini b { font-size: 1.35rem; display: block; }
+    .stat-mini span { font-size: 0.82rem; color: var(--muted); }
+    .member-row { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
     .member-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
     .bar-bg { width: 100%; height: 10px; background: var(--border); border-radius: 999px; overflow: hidden; }
-    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 999px; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 999px; transition: width 0.3s; }
+    .saved-chip { background: var(--card); border: 1px solid var(--border); padding: 6px 12px; border-radius: 9px; font-size: 0.86rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .saved-chip:hover { border-color: var(--primary); }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -61,6 +68,7 @@
     <a href="index.html" class="logo">⚡ WordSprint</a>
     <nav class="nav-links">
       <a href="index.html">Главная</a>
+      <a href="student.html">Кабинет ученика</a>
       <a href="teachers.html">Кабинет преподавателя</a>
       <a href="lesson.html">Пройти урок</a>
       <a href="groups.html" class="active">Группы</a>
@@ -70,11 +78,16 @@
   </div>
 </header>
 
-<main class="container">
+<main class="container" style="padding-bottom: 60px;">
   <section class="hero">
     <h1>Учебные группы WordSprint</h1>
-    <p class="subtitle">Учите английский вместе с друзьями или классом и отслеживайте общий прогресс.</p>
+    <p class="subtitle">Учите английский вместе с друзьями или классом, выполняйте недельную цель и соревнуйтесь в рейтинге.</p>
   </section>
+
+  <div id="savedGroupsBar" class="hidden" style="margin-bottom: 16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    <span style="font-size:0.86rem; color:var(--muted);">Мои группы:</span>
+    <div id="savedGroupsChips" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+  </div>
 
   <div id="groupSetup" class="grid-2">
     <div class="card">
@@ -87,7 +100,7 @@
 
     <div class="card">
       <h2>✨ Создать новую группу</h2>
-      <p class="desc">Создайте закрытую комнату и пригласите участников по коду.</p>
+      <p class="desc">Создайте закрытую комнату и пригласите участников по ссылке или коду.</p>
       <label>Название группы</label>
       <input type="text" id="createTitle" placeholder="Введите название группы">
       <label>Цель на неделю для каждого (XP)</label>
@@ -102,35 +115,39 @@
     </div>
   </div>
 
-  <div id="groupRoom" class="card hidden" style="margin: 24px 0 60px;">
+  <div id="groupRoom" class="card hidden">
     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; border-bottom:1px solid var(--border); padding-bottom:18px; margin-bottom:20px;">
       <div>
-        <div style="font-size:0.85rem; color:var(--muted);">Недельная цель: <b id="roomGoal">350</b> XP</div>
+        <div style="font-size:0.85rem; color:var(--muted);">Недельная цель: <b id="roomGoal">350</b> XP на участника</div>
         <h2 id="roomTitle" style="font-size:1.5rem; margin:4px 0;">—</h2>
         <div>Код группы: <span class="code-pill" id="roomCode">000000</span></div>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="btn btn-accent btn-sm" onclick="copyInviteLink()">🔗 Пригласить</button>
         <button class="btn btn-secondary btn-sm" onclick="refreshGroup()">🔄 Обновить</button>
-        <button class="btn btn-secondary btn-sm" onclick="leaveGroup()">Выйти</button>
+        <button class="btn btn-secondary btn-sm" onclick="leaveGroup()">Сменить группу</button>
       </div>
     </div>
 
-        <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:22px;">
+    <div class="stats-3">
+      <div class="stat-mini"><b id="statGroupMembers">0</b><span>Участников в группе</span></div>
+      <div class="stat-mini"><b id="statGroupTotalXp">0 XP</b><span>Общий опыт команды</span></div>
+      <div class="stat-mini"><b id="statGroupCompleted">0 / 0</b><span>Выполнили недельную цель</span></div>
+    </div>
+
+    <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:22px;">
       <div style="font-weight:700; margin-bottom:4px;">📲 Синхронизировать XP из приложения WordSprint</div>
-      <div style="font-size:0.85rem; color:var(--muted); margin-bottom:10px;">Откройте Профиль в приложении WordSprint → «Код прогресса для группы» и вставьте его сюда:</div>
+      <div style="font-size:0.85rem; color:var(--muted); margin-bottom:10px;">Скопируйте защищённый код прогресса из раздела «Профиль» в приложении WordSprint (формат <code>WSXP-ИМЯ-XP-КОД</code>):</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <input type="text" id="xpSyncCodeInput" placeholder="Вставьте код из приложения" style="flex:1; min-width:200px; font-family:monospace; text-transform:uppercase;">
-        <button class="btn btn-sm" onclick="syncXpFromCode()">🔄 Обновить XP</button>
+        <input type="text" id="xpSyncCodeInput" placeholder="Вставьте код из приложения" style="flex:1; min-width:210px; font-family:monospace; text-transform:uppercase;">
+        <button class="btn btn-sm" onclick="syncXpFromCode()">🔄 Обновить мой XP</button>
       </div>
     </div>
 
-
-    <h3 style="margin-bottom:14px;">🏅 Участники группы</h3>
+    <h3 style="margin-bottom:14px;">🏅 Лидерборд участников</h3>
     <div id="membersList"></div>
   </div>
 </main>
-
 <script>
   let currentGroup = null;
 
@@ -141,15 +158,38 @@
     return res;
   }
 
+  function rememberGroup(code, title) {
+    const saved = JSON.parse(localStorage.getItem('ws_saved_groups') || '[]');
+    const filtered = saved.filter(g => g.code !== code);
+    filtered.unshift({ code, title });
+    localStorage.setItem('ws_saved_groups', JSON.stringify(filtered.slice(0, 6)));
+    renderSavedGroupsChips();
+  }
+
+  function renderSavedGroupsChips() {
+    const saved = JSON.parse(localStorage.getItem('ws_saved_groups') || '[]');
+    const bar = document.getElementById('savedGroupsBar');
+    const box = document.getElementById('savedGroupsChips');
+    if (!saved.length) {
+      bar.classList.add('hidden');
+      return;
+    }
+    bar.classList.remove('hidden');
+    box.innerHTML = saved.map(g =>
+      `<button class="saved-chip" onclick="loadGroupByCode('${g.code}')"><b>${g.title}</b> <span style="font-family:monospace; color:var(--accent);">${g.code}</span></button>`
+    ).join('');
+  }
+
   window.addEventListener('DOMContentLoaded', async () => {
+    renderSavedGroupsChips();
     const urlCode = new URLSearchParams(window.location.search).get('code');
     if (urlCode) {
       document.getElementById('joinCode').value = urlCode.toUpperCase();
       await joinGroup();
       return;
     }
-    const saved = localStorage.getItem('ws_active_group_code');
-    if (saved) await loadGroupByCode(saved);
+    const active = localStorage.getItem('ws_active_group_code');
+    if (active) await loadGroupByCode(active);
   });
 
   async function createGroup() {
@@ -164,11 +204,17 @@
       const code = gen6Code();
       const members = [{ name: creator, xp: 0 }];
       const rows = await sbFetch('groups', { method: 'POST', body: { code, title, weekly_goal, members } });
-      localStorage.setItem('ws_active_group_code', code);
-      localStorage.setItem('ws_group_user', creator);
-      openRoom(rows[0]);
-    } catch (e) { alert('Ошибка: ' + e.message); }
-    finally { btn.disabled = false; btn.textContent = '🏆 Создать группу'; }
+      const created = Array.isArray(rows) ? rows.at(0) : rows;
+      if (created && created.code) {
+        localStorage.setItem('ws_active_group_code', code);
+        rememberGroup(code, title);
+        openRoom(created);
+      }
+    } catch (e) {
+      alert('Ошибка создания: ' + e.message);
+    } finally {
+      btn.disabled = false; btn.textContent = '🏆 Создать группу';
+    }
   }
 
   async function joinGroup() {
@@ -178,87 +224,106 @@
     const btn = document.getElementById('joinBtn');
     btn.disabled = true; btn.textContent = '⏳ Поиск группы...';
     try {
-      const rows = await sbFetch('groups', { query: `code=eq.${encodeURIComponent(code)}` });
-      if (!rows || !rows.length) return alert('Группа с таким кодом не найдена.');
-      localStorage.setItem('ws_active_group_code', code);
-      openRoom(rows[0]);
-    } catch (e) { alert('Ошибка: ' + e.message); }
-    finally { btn.disabled = false; btn.textContent = '🚀 Войти в группу'; }
+      await loadGroupByCode(code, true);
+    } finally {
+      btn.disabled = false; btn.textContent = '🚀 Войти в группу';
+    }
   }
 
-  async function loadGroupByCode(code) {
+  async function loadGroupByCode(code, showAlert = false) {
     try {
       const rows = await sbFetch('groups', { query: `code=eq.${encodeURIComponent(code)}` });
-      if (rows && rows.length) openRoom(rows[0]);
-    } catch (e) { console.error(e); }
+      const group = Array.isArray(rows) ? rows.at(0) : rows;
+      if (!group || !group.code) {
+        if (showAlert) alert('Группа с таким кодом не найдена.');
+        return;
+      }
+      localStorage.setItem('ws_active_group_code', group.code);
+      rememberGroup(group.code, group.title);
+      openRoom(group);
+    } catch (e) {
+      if (showAlert) alert('Ошибка: ' + e.message);
+    }
   }
 
   function openRoom(group) {
     currentGroup = group;
     document.getElementById('groupSetup').classList.add('hidden');
     document.getElementById('groupRoom').classList.remove('hidden');
-    document.getElementById('roomTitle').textContent = group.title;
-    document.getElementById('roomCode').textContent = group.code;
-    document.getElementById('roomGoal').textContent = group.weekly_goal;
+    document.getElementById('roomTitle').textContent = group.title || 'Учебная группа';
+    document.getElementById('roomCode').textContent = group.code || '—';
+    document.getElementById('roomGoal').textContent = group.weekly_goal || 350;
 
-    const savedName = localStorage.getItem('ws_group_user') || '';
-    document.getElementById('memberNameInput').value = savedName;
+    const members = Array.isArray(group.members) ? [...group.members].sort((a, b) => (b.xp || 0) - (a.xp || 0)) : [];
+    const totalXp = members.reduce((sum, m) => sum + (m.xp || 0), 0);
+    const doneGoal = members.filter(m => (m.xp || 0) >= group.weekly_goal).length;
 
-    const members = (group.members || []).sort((a, b) => b.xp - a.xp);
+    document.getElementById('statGroupMembers').textContent = members.length;
+    document.getElementById('statGroupTotalXp').textContent = `${totalXp} XP`;
+    document.getElementById('statGroupCompleted').textContent = `${doneGoal} / ${members.length}`;
+
     const list = document.getElementById('membersList');
     list.innerHTML = members.length ? members.map((m, i) => {
-      const pct = Math.min(100, Math.round((m.xp / group.weekly_goal) * 100));
+      const xpVal = m.xp || 0;
+      const pct = Math.min(100, Math.round((xpVal / group.weekly_goal) * 100));
       const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
       return `
         <div class="member-row">
           <div class="member-top">
-            <div><b>${medal} ${m.name}</b> ${pct >= 100 ? '<span style="color:var(--accent); font-weight:700;">✅ Цель выполнена!</span>' : ''}</div>
-            <div style="font-weight:700;">${m.xp} / ${group.weekly_goal} XP (${pct}%)</div>
+            <div><b>${medal} ${m.name}</b> ${pct >= 100 ? '<span style="color:var(--accent); font-weight:700; margin-left:6px;">✅ Цель выполнена</span>' : ''}</div>
+            <div style="font-weight:700;">${xpVal} / ${group.weekly_goal} XP (${pct}%)</div>
           </div>
           <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
         </div>
       `;
-    }).join('') : '<p style="color:var(--muted);">Пока нет участников. Впишите своё имя и XP выше!</p>';
+    }).join('') : '<p style="color:var(--muted);">Пока нет участников.</p>';
   }
 
-    async function syncXpFromCode() {
+  async function syncXpFromCode() {
     if (!currentGroup) return;
     const raw = document.getElementById('xpSyncCodeInput').value.trim().toUpperCase();
-    // Формат кода из приложения: WSXP-ИМЯ-XP-КОНТРОЛЬНАЯ_СУММА
     const parts = raw.split('-');
-    if (parts.length !== 4 || parts !== 'WSXP') {
-      return alert('Неверный формат кода. Скопируйте код прогресса из приложения WordSprint.');
+    if (parts.length !== 4 || parts.at(0) !== 'WSXP') {
+      return alert('Неверный формат кода. Скопируйте код прогресса из приложения WordSprint (формат WSXP-ИМЯ-XP-КОД).');
     }
-    const name = parts;
-    const newXp = parseInt(parts, 10);
-    const check = parseInt(parts, 10);
+    const name = parts.at(1);
+    const newXp = parseInt(parts.at(2), 10);
+    const check = parseInt(parts.at(3), 10);
     const expectedCheck = (newXp * 7 + name.length * 13) % 97;
 
     if (isNaN(newXp) || check !== expectedCheck) {
       return alert('Ошибка проверки кода: данные повреждены или изменены вручную.');
     }
 
-    const members = [...(currentGroup.members || [])];
+    const members = Array.isArray(currentGroup.members) ? [...currentGroup.members] : [];
     const idx = members.findIndex(m => m.name.toLowerCase() === name.toLowerCase());
-    if (idx >= 0) members[idx].xp = newXp;
+    if (idx >= 0) members.at(idx).xp = newXp;
     else members.push({ name, xp: newXp });
 
     const updated = await sbFetch('groups', { method: 'PATCH', query: `id=eq.${currentGroup.id}`, body: { members } });
+    const freshGroup = Array.isArray(updated) ? updated.at(0) : updated;
     document.getElementById('xpSyncCodeInput').value = '';
-    openRoom((updated && updated) || { ...currentGroup, members });
+    openRoom(freshGroup || { ...currentGroup, members });
     alert(`Прогресс синхронизирован: ${name} — ${newXp} XP!`);
   }
 
-  async function refreshGroup() { if (currentGroup) await loadGroupByCode(currentGroup.code); }
+  async function refreshGroup() {
+    if (currentGroup) await loadGroupByCode(currentGroup.code, true);
+  }
+
   function leaveGroup() {
-    localStorage.removeItem('ws_active_group_code'); currentGroup = null;
+    localStorage.removeItem('ws_active_group_code');
+    currentGroup = null;
     document.getElementById('groupRoom').classList.add('hidden');
     document.getElementById('groupSetup').classList.remove('hidden');
   }
+
   function copyInviteLink() {
-    const base = window.location.protocol === 'file:' ? `${WS_CONFIG.SITE_URL}/groups.html` : `${window.location.origin}${window.location.pathname}`;
+    const base = window.location.protocol.startsWith('http')
+      ? `${window.location.origin}${window.location.pathname}`
+      : `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/groups.html`;
     navigator.clipboard.writeText(`Присоединяйся к нашей группе «${currentGroup.title}» в WordSprint! Код: ${currentGroup.code}\n${base}?code=${currentGroup.code}`);
-    alert('Приглашение скопировано!');
+    alert('Приглашение в группу скопировано!');
   }
 </script>
 </body>

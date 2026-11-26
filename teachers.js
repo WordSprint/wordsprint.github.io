@@ -37,9 +37,10 @@ async function registerTeacher() {
       method: 'POST',
       body: { code, name, email, city_format, level, proof_url, telegram, bio, verified: false, status: 'pending', is_plus: false }
     });
-    if (data && data.length > 0) {
+    const created = Array.isArray(data) ? data.at(0) : data;
+    if (created && created.code) {
       localStorage.setItem('ws_teacher_code', code);
-      setActiveTeacher(data);
+      setActiveTeacher(created);
     }
   } catch (e) {
     alert('Ошибка регистрации: ' + e.message);
@@ -53,9 +54,10 @@ async function loginTeacher() {
   if (!code) return alert('Введите код!');
   try {
     const rows = await sbFetch('teachers', { query: `code=eq.${encodeURIComponent(code)}` });
-    if (!rows || !rows.length) return alert('Партнёр с таким кодом не найден.');
+    const teacher = Array.isArray(rows) ? rows.at(0) : rows;
+    if (!teacher || !teacher.code) return alert('Партнёр с таким кодом не найден.');
     localStorage.setItem('ws_teacher_code', code);
-    setActiveTeacher(rows);
+    setActiveTeacher(teacher);
   } catch (e) {
     alert('Ошибка входа: ' + e.message);
   }
@@ -74,20 +76,20 @@ function logoutTeacher() {
 
 function setActiveTeacher(t) {
   currentTeacher = t;
-  const isSchool = t.code.startsWith('SCH-');
+  const isSchool = String(t.code || '').startsWith('SCH-');
   document.getElementById('pageMainTitle').textContent = isSchool ? 'Кабинет школы' : 'Кабинет преподавателя';
 
   document.getElementById('guestLoginBar').classList.add('hidden');
   document.getElementById('guestRegisterCard').classList.add('hidden');
   document.getElementById('profileHeaderCard').classList.remove('hidden');
-  document.getElementById('dashTeacherName').textContent = t.name;
-  document.getElementById('dashTeacherCode').textContent = t.code;
+  document.getElementById('dashTeacherName').textContent = t.name || '—';
+  document.getElementById('dashTeacherCode').textContent = t.code || '—';
 
   const badge = document.getElementById('dashVerifyStatus');
   const notice = document.getElementById('pendingNoticeText');
   const workspace = document.getElementById('verifiedWorkspace');
 
-  if (t.status === 'approved' || t.verified) {
+  if (t.status === 'approved' || t.verified === true) {
     badge.className = 'tag-ok';
     badge.textContent = t.is_plus ? '✅ Подтверждён • ✨ Партнёр Плюс' : '✅ Подтверждён';
     notice.classList.add('hidden');
@@ -129,6 +131,7 @@ function setActiveTeacher(t) {
     workspace.classList.add('hidden');
   }
 }
+
 
 function switchWorkspaceTab(tab) {
   const map = {
@@ -244,7 +247,7 @@ function triggerWordImageUpload(btn) {
 }
 
 async function uploadWordImageFile(input) {
-  const file = input.files[0];
+  const file = input.files && input.files.item(0);
   if (!file) return;
   if (file.size > 15 * 1024 * 1024) return alert('Картинка не должна превышать 15 МБ.');
 
@@ -328,7 +331,7 @@ function parseBulkLines(text) {
   return text.split('\n').map(l => l.replace(/^\d+[\.\)\-\s]+/, '').trim()).filter(Boolean).map(line => {
     const parts = line.split(/\t|[-—–:=]/);
     if (parts.length >= 2) {
-      const en = parts[0].trim();
+      const en = parts.at(0).trim();
       const ru = parts.slice(1).join('-').trim();
       if (en && ru) return { en, ru };
     }
@@ -351,7 +354,7 @@ function applyBulkImport() {
   autoSaveDraft();
 }
 async function uploadLessonMedia(input) {
-  const file = input.files[0];
+  const file = input.files && input.files.item(0);
   if (!file) return;
   if (file.size > 50 * 1024 * 1024) return alert('Файл превышает лимит 50 МБ.');
 
@@ -391,17 +394,19 @@ function addMediaQuestionRow(qText = '', opts = ['', '', ''], correctIdx = 0) {
   div.className = 'mq-edit-item';
   div.style.cssText = 'background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px; margin-bottom:8px;';
   const radioName = 'mq_corr_' + Math.random().toString(36).slice(2, 7);
+  const optionsHtml = Array.from({ length: 3 }, (_, i) => `
+    <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
+      <input type="radio" name="${radioName}" value="${i}" ${correctIdx === i ? 'checked' : ''} style="width:auto;" title="Отметить правильный">
+      <input type="text" class="mq-opt" placeholder="Вариант ответа ${i + 1}" value="${opts.at(i) || ''}" style="padding:7px 10px; font-size:0.86rem;">
+    </div>
+  `).join('');
+
   div.innerHTML = `
     <div style="display:flex; gap:6px; margin-bottom:6px;">
       <input type="text" class="mq-q" placeholder="Вопрос по видео / аудио / материалу" value="${qText}">
       <button type="button" class="btn btn-del btn-sm" onclick="this.closest('.mq-edit-item').remove()">✕</button>
     </div>
-    ${[0, 1, 2].map(i => `
-      <div style="display:flex; align-items:center; gap:6px; margin-top:4px;">
-        <input type="radio" name="${radioName}" value="${i}" ${correctIdx === i ? 'checked' : ''} style="width:auto;" title="Отметить правильный">
-        <input type="text" class="mq-opt" placeholder="Вариант ответа ${i + 1}" value="${opts[i] || ''}" style="padding:7px 10px; font-size:0.86rem;">
-      </div>
-    `).join('')}
+    ${optionsHtml}
   `;
   box.appendChild(div);
 }
