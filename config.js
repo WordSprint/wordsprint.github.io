@@ -46,11 +46,34 @@ async function sbFetch(table, options = {}) {
   return text ? JSON.parse(text) : null;
 }
 
-function generateShortCode(prefix, customBase = '') {
-  if (customBase) {
-    const clean = customBase.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
-    const num = Math.floor(10 + Math.random() * 89);
-    return `${prefix}-${clean || 'PRO'}${num}`;
-  }
-  return `${prefix}-${Math.floor(100 + Math.random() * 900)}`;
+function sbFirst(data) {
+  return Array.isArray(data) ? (data.at(0) || null) : data;
+}
+
+function generateShortCode(prefix) {
+  return `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
+function getRankByXp(xp) {
+  if (xp >= 2500) return 'Мастер слов';
+  if (xp >= 1200) return 'Эксперт';
+  if (xp >= 500) return 'Знаток';
+  if (xp >= 150) return 'Спринтер';
+  return 'Новичок';
+}
+
+async function sendAppNotification(targetId, title, body, link = '') {
+  if (!targetId) return;
+  try {
+    await sbFetch('notifications', {
+      method: 'POST',
+      body: { target_id: targetId, title, body, link }
+    });
+  } catch (e) { console.error(e); }
+}
+
+function getCurrentUserProfile() {
+  try {
+    return JSON.parse(localStorage.getItem('ws_user_profile') || 'null');
+  } catch (e) { return null; }
 }
