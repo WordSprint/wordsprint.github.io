@@ -1,10 +1,10 @@
 const WS_CONFIG = {
-  SUPABASE_URL: 'https://lbmyaivuprfdetdymioj.supabase.co/rest/v1/',
+  SUPABASE_URL: 'https://supabase.co',
   SUPABASE_KEY: 'sb_publishable_bxVIJPkFbxF7cooVc6HxJQ_C3yTpetr',
   ADMIN_PASSWORD: 'wordsprint2026',
-  SITE_URL: 'https://wordsprint.github.io/',
-  BOOSTY_URL: 'https://boosty.to/wordsprint/donate',
-  PRIVACY_URL: 'https://aesthetic-tiramisu-4416cd.netlify.app'
+  SITE_URL: 'https://github.io',
+  BOOSTY_URL: 'https://boosty.to',
+  PRIVACY_URL: 'https://netlify.app'
 };
 
 (function initTheme() {
@@ -27,23 +27,24 @@ window.addEventListener('DOMContentLoaded', () => {
   if (btn) btn.textContent = cur === 'dark' ? '☀️' : '🌙';
 });
 
-async function appSbFetch(table, opts = {}) {
-  const { method = 'GET', query = '', body = null } = opts;
-  const res = await fetch(`${SB_URL}${table}${query ? '?' + query : ''}`, {
+async function sbFetch(table, options = {}) {
+  const { method = 'GET', query = '', body = null, prefer = 'return=representation' } = options;
+  const base = WS_CONFIG.SUPABASE_URL.endsWith('/') ? WS_CONFIG.SUPABASE_URL : WS_CONFIG.SUPABASE_URL + '/';
+  const url = `${base}${table}${query ? '?' + query : ''}`;
+
+  const res = await fetch(url, {
     method,
     headers: {
-      'apikey': SB_KEY,
-      'Authorization': `Bearer ${SB_KEY}`,
+      'apikey': WS_CONFIG.SUPABASE_KEY,
       'Content-Type': 'application/json',
-      'Prefer': 'return=representation'
+      'Prefer': prefer
     },
     body: body ? JSON.stringify(body) : null
   });
   if (!res.ok) throw new Error(await res.text());
-  const txt = await res.text();
-  return txt ? JSON.parse(txt) : null;
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
 }
-
 
 function sbFirst(data) {
   return Array.isArray(data) ? (data.at(0) || null) : data;
