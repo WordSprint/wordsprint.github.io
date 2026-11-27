@@ -1,8 +1,8 @@
 const WS_CONFIG = {
-  SUPABASE_URL: 'https://supabase.co',
+  SUPABASE_URL: 'https://lbmyaivuprfdetdymioj.supabase.co/rest/v1/',
   SUPABASE_KEY: 'sb_publishable_bxVIJPkFbxF7cooVc6HxJQ_C3yTpetr',
   ADMIN_PASSWORD: 'wordsprint2026',
-  SITE_URL: 'https://github.io',
+  SITE_URL: 'https://wordsprint.github.io',
   BOOSTY_URL: 'https://boosty.to',
   PRIVACY_URL: 'https://netlify.app'
 };
