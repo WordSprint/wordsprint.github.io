@@ -3,55 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Прохождение урока — WordSprint</title>
+  <title>Урок WordSprint</title>
   <script src="config.js"></script>
   <style>
     :root {
       --bg: #0b0f19; --card: #131a2a; --input-bg: #0d1322; --border: #232d45;
-      --text: #f1f5f9; --muted: #94a3b8; --primary: #6366f1; --primary-hover: #4f46e5;
-      --accent: #10b981; --danger: #ef4444;
+      --text: #f1f5f9; --muted: #94a3b8; --primary: #6366f1; --accent: #10b981; --danger: #ef4444;
     }
     [data-theme="light"] {
       --bg: #f8fafc; --card: #ffffff; --input-bg: #f1f5f9; --border: #cbd5e1;
-      --text: #0f172a; --muted: #475569; --primary: #4f46e5; --primary-hover: #4338ca;
-      --accent: #059669; --danger: #dc2626;
+      --text: #0f172a; --muted: #475569; --primary: #4f46e5; --accent: #059669; --danger: #dc2626;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
     a { color: inherit; text-decoration: none; }
     .container { max-width: 720px; margin: 0 auto; padding: 0 20px; }
-    header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
-    .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; gap: 10px; }
-    .logo { font-weight: 800; font-size: 1.2rem; }
+    header { border-bottom: 1px solid var(--border); background: var(--card); }
+    .nav { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+    .logo { font-weight: 800; font-size: 1.25rem; }
     .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 26px; margin-top: 28px; }
-    h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 26px; margin-top: 26px; }
+    h1 { font-size: 1.7rem; font-weight: 800; margin-bottom: 6px; }
     .desc { color: var(--muted); font-size: 0.94rem; margin-bottom: 18px; }
-    label { display: block; font-size: 0.86rem; color: var(--muted); margin: 14px 0 6px; }
-    input {
-      width: 100%; padding: 13px 15px; border-radius: 10px; border: 1px solid var(--border);
-      background: var(--input-bg); color: var(--text); font-size: 1rem; outline: none;
-    }
-    input:focus { border-color: var(--primary); }
-    .btn {
-      width: 100%; padding: 13px 18px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.98rem;
-      cursor: pointer; background: var(--primary); color: #fff; margin-top: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .btn:hover { background: var(--primary-hover); }
+    label { display: block; font-size: 0.85rem; color: var(--muted); margin: 12px 0 6px; }
+    input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 1rem; outline: none; }
+    .btn { width: 100%; padding: 13px 18px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.96rem; cursor: pointer; background: var(--primary); color: #fff; margin-top: 14px; }
     .btn-accent { background: var(--accent); color: #fff; }
-    .btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
-    .top-bar { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; font-weight: 600; }
-    .word-display { text-align: center; padding: 24px 14px; background: var(--input-bg); border-radius: 14px; border: 1px solid var(--border); margin-bottom: 18px; }
-    .en-word { font-size: 2rem; font-weight: 800; }
-    .context-box { margin-top: 10px; font-size: 0.98rem; color: var(--muted); font-style: italic; }
-    .word-img { max-height: 150px; border-radius: 10px; margin: 10px auto 0; display: block; }
-    .speak-btn { margin-top: 10px; background: rgba(99, 102, 241, 0.15); color: var(--primary); border: 1px solid rgba(99, 102, 241, 0.35); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-    .options { display: grid; gap: 10px; }
-    .opt-btn { padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 1rem; text-align: left; cursor: pointer; font-weight: 500; }
-    .opt-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--accent); color: var(--accent); font-weight: 700; }
-    .opt-btn.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: var(--danger); }
-    .media-frame { width: 100%; border-radius: 12px; border: 1px solid var(--border); margin: 12px 0; background: #000; }
-    .mq-card { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    .btn-sec { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
+    .word-box { text-align: center; padding: 24px 14px; background: var(--input-bg); border-radius: 14px; border: 1px solid var(--border); margin: 16px 0; }
+    .en-word { font-size: 1.9rem; font-weight: 800; }
+    .opt-btn { width: 100%; padding: 13px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.98rem; text-align: left; cursor: pointer; margin-bottom: 8px; }
+    .opt-btn.ok { background: rgba(16, 185, 129, 0.2); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+    .opt-btn.bad { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: var(--danger); }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -59,344 +42,196 @@
 <header>
   <div class="container nav">
     <a href="index.html" class="logo">⚡ WordSprint</a>
-    <div style="display:flex; gap:14px; align-items:center;">
-      <a href="student.html" style="color:var(--muted); font-size:0.9rem;">Кабинет ученика</a>
-      <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">☀️</button>
-    </div>
+    <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()">☀️</button>
   </div>
 </header>
+
 <main class="container" style="padding-bottom: 60px;">
-  <!-- Шаг 1: Ввод кода урока -->
-  <div id="stepCode" class="card">
-    <h1>📚 Домашнее задание по коду</h1>
-    <p class="desc">Введите код урока от преподавателя или школы и ваше имя.</p>
-    <label>Код урока</label>
-    <input type="text" id="inputLessonCode" placeholder="Код урока" style="text-transform:uppercase; font-family:monospace; font-weight:700;">
-    <label>Имя и фамилия ученика</label>
-    <input type="text" id="inputStudentName" placeholder="Введите имя и фамилию">
-    <button class="btn" id="startBtn" onclick="findAndStartLesson()">▶ Открыть задание</button>
+  <div id="enterBox" class="card">
+    <h1>📚 Интерактивный урок</h1>
+    <p class="desc">Вы вошли под профилем <b id="lessonUserLabel" style="color:var(--accent);">—</b>. Введите код урока от преподавателя:</p>
+    <label>Код урока (например, LESSON-4821)</label>
+    <input type="text" id="lessonCodeInput" placeholder="LESSON-0000" style="text-transform:uppercase; font-family:monospace; font-weight:800; font-size:1.1rem;">
+    <button class="btn btn-accent" onclick="loadLesson()">🚀 Начать урок</button>
   </div>
 
-  <!-- Шаг 1.5: Медиаматериал урока (видео / аудио / фото / PDF) + вопросы -->
-  <div id="stepMedia" class="card hidden">
-    <h1 id="mediaLessonTitle">Материал к уроку</h1>
-    <p class="desc" id="lessonInstructionText"></p>
-    <div id="mediaViewerBox"></div>
-    <div id="mediaQuestionsBox" style="margin-top:16px;"></div>
-    <button class="btn btn-accent" onclick="finishMediaStep()">Перейти к тренировке слов →</button>
+  <div id="theoryBox" class="card hidden">
+    <h1 id="theoryTitle">Теория перед практикой</h1>
+    <p id="theoryBody" style="white-space:pre-line; color:var(--text); margin:14px 0; line-height:1.7;"></p>
+    <button class="btn btn-accent" onclick="startQuizWords()">▶ Перейти к упражнениям</button>
   </div>
 
-  <!-- Шаг 2: Тренировка слов -->
-  <div id="stepQuiz" class="card hidden">
-    <div class="top-bar">
-      <span id="quizTitle">Урок</span>
-      <span>Слово <b id="qCurrent">1</b> / <b id="qTotal">5</b> • Верно: <b id="qCorrect">0</b></span>
+  <div id="quizBox" class="card hidden">
+    <div style="display:flex; justify-content:space-between; color:var(--muted); font-weight:700; font-size:0.9rem;">
+      <span id="lessonHeaderTitle">Урок</span>
+      <span>Слово <b id="qStep">1</b> / <b id="qTotal">10</b></span>
     </div>
-    <div class="word-display">
-      <div id="modeHint" style="font-size:0.82rem; color:var(--primary); font-weight:600; margin-bottom:6px;">Выберите правильный перевод</div>
-      <div class="en-word" id="wordText">word</div>
-      <div class="context-box hidden" id="contextDisplay"></div>
-      <img id="wordImageDisplay" class="word-img hidden" alt="">
-      <button class="speak-btn" onclick="speakCurrent()">🔊 Озвучить</button>
+    <div class="word-box">
+      <div class="en-word" id="qWord">word</div>
+      <div id="qHint" style="color:var(--muted); font-size:0.88rem; margin-top:6px;"></div>
+      <button onclick="speakWord()" style="margin-top:10px; background:rgba(99,102,241,0.16); color:var(--primary); border:1px solid rgba(99,102,241,0.35); padding:6px 14px; border-radius:8px; cursor:pointer; font-weight:600;">🔊 Озвучить</button>
     </div>
-    <div class="options" id="optionsBox"></div>
-    <div id="spellingBox" class="hidden">
-      <input type="text" id="spellingInput" placeholder="Напишите слово на английском..." autocomplete="off" onkeydown="if(event.key==='Enter') checkSpelling()">
-      <button class="btn" onclick="checkSpelling()">Проверить ответ</button>
+    <div id="optionsContainer"></div>
+    <div id="spellContainer" class="hidden">
+      <input type="text" id="spellInput" placeholder="Напишите слово по-английски..." onkeydown="if(event.key==='Enter') checkSpell()">
+      <button class="btn" onclick="checkSpell()">Проверить</button>
     </div>
   </div>
 
-  <!-- Шаг 3: Финал и отчёт -->
-  <div id="stepFinish" class="card hidden" style="text-align:center;">
-    <div style="font-size:3rem; margin-bottom:8px;">🎉</div>
-    <h1>Задание выполнено!</h1>
-    <p class="desc" id="finishSummary">Результат отправлен преподавателю.</p>
-    <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:18px; text-align:left; font-size:0.92rem; white-space:pre-line;" id="reportPreview"></div>
-    <button class="btn" onclick="copyReport()">📋 Скопировать отчёт</button>
-    <button class="btn btn-secondary" onclick="sendReportEmail()">✉️ Отправить отчёт на почту учителю</button>
-    <a href="student.html" class="btn btn-accent">В кабинет ученика</a>
+  <div id="finishBox" class="card hidden" style="text-align:center;">
+    <div style="font-size:3rem;">🎉</div>
+    <h1 style="margin:8px 0;">Урок завершён!</h1>
+    <p class="desc" id="finalScoreText"></p>
+    <button class="btn" id="retryMistakesBtn" onclick="retryMistakes()">🔁 Повторить ошибки</button>
+    <a href="profile.html" class="btn btn-sec" style="display:inline-flex; justify-content:center;">👤 Вернуться в профиль</a>
   </div>
 </main>
 <script>
-  let lessonData = null, studentName = '', teacherEmail = '';
-  let queue = [], initialTotal = 0, firstTryCorrect = 0;
-  let attemptedSet = new Set(), mistakesSet = new Set(), locked = false;
+  let me = null, currentLesson = null, wordsList = new Array(), idx = 0, mistakes = new Array(), locked = false;
 
   window.addEventListener('DOMContentLoaded', () => {
-    const p = new URLSearchParams(window.location.search);
-    const code = p.get('code');
-    const sname = p.get('sname');
-    if (code) document.getElementById('inputLessonCode').value = code.toUpperCase();
-    if (sname) document.getElementById('inputStudentName').value = sname;
+    me = getCurrentUserProfile();
+    if (!me || !me.user_id) {
+      window.location.href = `profile.html?return=${encodeURIComponent(window.location.href)}`;
+      return;
+    }
+    document.getElementById('lessonUserLabel').textContent = `${me.full_name || me.nickname} (${me.user_id})`;
+    const code = new URLSearchParams(window.location.search).get('code');
+    if (code) {
+      document.getElementById('lessonCodeInput').value = code.toUpperCase();
+      loadLesson();
+    }
   });
 
-  async function findAndStartLesson() {
-    const code = document.getElementById('inputLessonCode').value.trim().toUpperCase();
-    studentName = document.getElementById('inputStudentName').value.trim();
+  async function loadLesson() {
+    const code = document.getElementById('lessonCodeInput').value.trim().toUpperCase();
     if (!code) return alert('Введите код урока!');
-    if (!studentName) return alert('Введите ваше имя и фамилию!');
-
-    const btn = document.getElementById('startBtn');
-    btn.disabled = true; btn.textContent = '⏳ Загружаем урок...';
     try {
       const rows = await sbFetch('lessons', { query: `code=eq.${encodeURIComponent(code)}` });
-      if (!rows || !rows.length) return alert('Урок с таким кодом не найден.');
+      const lesson = sbFirst(rows);
+      if (!lesson) return alert('Урок с таким кодом не найден.');
+      if (lesson.lesson_status === 'closed') return alert('Преподаватель закрыл приём ответов по этому уроку.');
 
-      lessonData = rows;
-      if (lessonData.teacher_code) {
-        const tRows = await sbFetch('teachers', { query: `code=eq.${encodeURIComponent(lessonData.teacher_code)}&select=email` });
-        if (tRows && tRows.length) teacherEmail = tRows.email || '';
-      }
+      currentLesson = lesson;
+      wordsList = Array.from(lesson.words || new Array());
+      if (lesson.settings && lesson.settings.shuffle) wordsList.sort(() => Math.random() - 0.5);
 
-      document.getElementById('stepCode').classList.add('hidden');
-
-      const hasMedia = lessonData.media_url && lessonData.media_url.trim();
-      const hasInstruction = lessonData.settings && lessonData.settings.instruction;
-      const hasMQ = Array.isArray(lessonData.media_questions) && lessonData.media_questions.length > 0;
-
-      if (hasMedia || hasInstruction || hasMQ) {
-        renderMediaStep();
+      document.getElementById('enterBox').classList.add('hidden');
+      if (lesson.theory_text && lesson.theory_text.trim()) {
+        document.getElementById('theoryTitle').textContent = lesson.title;
+        document.getElementById('theoryBody').textContent = lesson.theory_text;
+        document.getElementById('theoryBox').classList.remove('hidden');
       } else {
-        startWordsQuiz();
+        startQuizWords();
       }
-    } catch (e) {
-      alert('Ошибка загрузки: ' + e.message);
-    } finally {
-      btn.disabled = false; btn.textContent = '▶ Открыть задание';
-    }
+    } catch (e) { alert('Ошибка загрузки урока: ' + e.message); }
   }
 
-  function renderMediaStep() {
-    document.getElementById('stepMedia').classList.remove('hidden');
-    document.getElementById('mediaLessonTitle').textContent = lessonData.title;
-    const instr = (lessonData.settings && lessonData.settings.instruction) || 'Изучите материал к уроку и ответьте на вопросы перед тренировкой слов.';
-    document.getElementById('lessonInstructionText').textContent = instr;
-
-    const viewer = document.getElementById('mediaViewerBox');
-    const url = (lessonData.media_url || '').trim();
-    const type = lessonData.media_type || '';
-
-    if (url) {
-      if (type === 'image' || /\.(jpg|jpeg|png|webp|gif)$/i.test(url)) {
-        viewer.innerHTML = `<img src="${url}" style="max-width:100%; border-radius:12px; border:1px solid var(--border);">`;
-      } else if (type === 'audio' || /\.(mp3|wav|ogg|m4a)$/i.test(url)) {
-        viewer.innerHTML = `<audio controls src="${url}" style="width:100%; margin:10px 0;"></audio>`;
-      } else if (type === 'video' || /\.(mp4|webm|mov)$/i.test(url)) {
-        viewer.innerHTML = `<video controls src="${url}" class="media-frame" style="max-height:380px;"></video>`;
-      } else if (url.includes('://youtube.com') || url.includes('youtu.be/')) {
-        const vid = url.includes('v=') ? url.split('v=').split('&') : url.split('youtu.be/').split('?');
-        viewer.innerHTML = `<iframe class="media-frame" height="340" src="https://youtube.com{vid}" allowfullscreen></iframe>`;
-      } else {
-        viewer.innerHTML = `<a href="${url}" target="_blank" class="btn btn-secondary">📎 Открыть прикреплённый материал / видео</a>`;
-      }
-    }
-
-    const mqBox = document.getElementById('mediaQuestionsBox');
-    const mqs = Array.isArray(lessonData.media_questions) ? lessonData.media_questions : [];
-    if (mqs.length) {
-      mqBox.innerHTML = '<h3 style="margin-bottom:10px; font-size:1.05rem;">Вопросы к материалу:</h3>' + mqs.map((q, idx) => `
-        <div class="mq-card">
-          <div style="font-weight:700; margin-bottom:8px;">${idx + 1}. ${q.question}</div>
-          ${(q.options || []).map((opt, oIdx) => `
-            <label style="display:flex; align-items:center; gap:8px; margin:6px 0; cursor:pointer; color:var(--text);">
-              <input type="radio" name="mq_${idx}" value="${oIdx}" style="width:auto;"> ${opt}
-            </label>
-          `).join('')}
-        </div>
-      `).join('');
-    }
-  }
-
-  function finishMediaStep() {
-    const mqs = Array.isArray(lessonData.media_questions) ? lessonData.media_questions : [];
-    for (let i = 0; i < mqs.length; i++) {
-      const checked = document.querySelector(`input[name="mq_${i}"]:checked`);
-      if (!checked) return alert(`Пожалуйста, ответьте на вопрос №${i + 1} к материалу!`);
-      if (parseInt(checked.value, 10) !== mqs[i].correctIndex) {
-        return alert(`Ответ на вопрос №${i + 1} неверный. Пересмотрите материал и попробуйте снова!`);
-      }
-    }
-    document.getElementById('stepMedia').classList.add('hidden');
-    startWordsQuiz();
-  }
-  function startWordsQuiz() {
-    let wordsList = [...(lessonData.words || [])];
-    const settings = lessonData.settings || { repeatErrors: true, shuffle: true };
-    if (settings.shuffle !== false) {
-      wordsList.sort(() => Math.random() - 0.5);
-    }
-
-    queue = wordsList.map((w, idx) => ({ ...w, _id: idx }));
-    initialTotal = queue.length;
-    firstTryCorrect = 0;
-    attemptedSet.clear();
-    mistakesSet.clear();
-
-    document.getElementById('quizTitle').textContent = lessonData.title;
-    document.getElementById('stepQuiz').classList.remove('hidden');
+  function startQuizWords() {
+    document.getElementById('theoryBox').classList.add('hidden');
+    document.getElementById('quizBox').classList.remove('hidden');
+    document.getElementById('lessonHeaderTitle').textContent = currentLesson.title;
+    idx = 0; mistakes = new Array();
     renderQuestion();
   }
 
-  function speakCurrent() {
-    if (!queue.length) return;
-    const u = new SpeechSynthesisUtterance(queue.en);
-    u.lang = 'en-US'; u.rate = 0.9;
+  function speakWord() {
+    const cur = wordsList.at(idx);
+    if (!cur) return;
+    const u = new SpeechSynthesisUtterance(cur.en);
+    u.lang = 'en-US'; u.rate = 0.92;
     speechSynthesis.speak(u);
   }
 
   function renderQuestion() {
     locked = false;
-    const current = queue;
-    const mode = lessonData.mode || 'translate';
-    const isSpelling = mode === 'spelling' || (mode === 'mixed' && attemptedSet.size % 2 === 1);
-    const isListening = mode === 'listening';
+    const cur = wordsList.at(idx);
+    if (!cur) return finishLesson();
 
-    document.getElementById('qCurrent').textContent = Math.min(attemptedSet.size + 1, initialTotal);
-    document.getElementById('qTotal').textContent = initialTotal;
-    document.getElementById('qCorrect').textContent = firstTryCorrect;
+    document.getElementById('qStep').textContent = idx + 1;
+    document.getElementById('qTotal').textContent = wordsList.length;
+    document.getElementById('qHint').textContent = cur.hint || '';
 
-    // Контекст с автоматическим пропуском слова
-    const ctxEl = document.getElementById('contextDisplay');
-    if (current.hint && current.hint.trim()) {
-      const escaped = current.en.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const masked = current.hint.replace(new RegExp(escaped, 'gi'), '[ _____ ]');
-      ctxEl.textContent = `«${masked}»`;
-      ctxEl.classList.remove('hidden');
-    } else {
-      ctxEl.classList.add('hidden');
-    }
+    const mode = currentLesson.mode || 'translate';
+    const optBox = document.getElementById('optionsContainer');
+    const spellBox = document.getElementById('spellContainer');
+    optBox.innerHTML = '';
+    spellBox.classList.add('hidden');
 
-    // Картинка к слову, если учитель прикрепил
-    const imgEl = document.getElementById('wordImageDisplay');
-    if (current.img && current.img.trim()) {
-      imgEl.src = current.img.trim();
-      imgEl.classList.remove('hidden');
-    } else {
-      imgEl.classList.add('hidden');
-    }
-
-    const optBox = document.getElementById('optionsBox');
-    const spellBox = document.getElementById('spellingBox');
-
-    if (isSpelling) {
-      document.getElementById('modeHint').textContent = '✍️ Напишите английское слово по его переводу';
-      document.getElementById('wordText').textContent = current.ru;
-      optBox.classList.add('hidden');
+    if (mode === 'spelling') {
+      document.getElementById('qWord').textContent = cur.ru;
+      document.getElementById('spellInput').value = '';
       spellBox.classList.remove('hidden');
-      const inp = document.getElementById('spellingInput');
-      inp.value = '';
-      inp.style.borderColor = 'var(--border)';
-      inp.focus();
-    } else {
-      spellBox.classList.add('hidden');
-      optBox.classList.remove('hidden');
-      document.getElementById('modeHint').textContent = isListening ? '🎧 Прослушайте слово и выберите перевод' : 'Выберите правильный перевод';
-      document.getElementById('wordText').textContent = isListening ? '🎧 • • • • •' : current.en;
-
-      const wrongPool = lessonData.words.filter(w => w.ru !== current.ru).map(w => w.ru);
-      const shuffledWrong = wrongPool.sort(() => Math.random() - 0.5).slice(0, 3);
-      const options = [current.ru, ...shuffledWrong].sort(() => Math.random() - 0.5);
-
-      optBox.innerHTML = '';
-      options.forEach(opt => {
-        const b = document.createElement('button');
-        b.className = 'opt-btn';
-        b.textContent = opt;
-        b.onclick = () => checkAnswer(b, opt);
-        optBox.appendChild(b);
-      });
-      speakCurrent();
+      return;
     }
+
+    document.getElementById('qWord').textContent = mode === 'listening' ? '🎧 • • • • •' : cur.en;
+    speakWord();
+
+    const wrongs = wordsList.filter(w => w.ru !== cur.ru).sort(() => Math.random() - 0.5).slice(0, 3).map(w => w.ru);
+    while (wrongs.length < 3) wrongs.push(`Вариант ${wrongs.length + 1}`);
+    const opts = new Array(cur.ru, ...wrongs).sort(() => Math.random() - 0.5);
+
+    opts.forEach(o => {
+      const b = document.createElement('button');
+      b.className = 'opt-btn';
+      b.textContent = o;
+      b.onclick = () => {
+        if (locked) return;
+        locked = true;
+        document.getElementById('qWord').textContent = cur.en;
+        if (o === cur.ru) b.classList.add('ok');
+        else {
+          b.classList.add('bad');
+          mistakes.push(cur);
+          document.querySelectorAll('.opt-btn').forEach(x => { if (x.textContent === cur.ru) x.classList.add('ok'); });
+        }
+        setTimeout(() => { idx++; renderQuestion(); }, 650);
+      };
+      optBox.appendChild(b);
+    });
   }
 
-  function checkAnswer(btn, chosen) {
+  function checkSpell() {
     if (locked) return;
     locked = true;
-    const current = queue;
-    document.getElementById('wordText').textContent = current.en;
-    const isFirstTry = !attemptedSet.has(current._id);
-    attemptedSet.add(current._id);
-
-    const repeatErrors = !lessonData.settings || lessonData.settings.repeatErrors !== false;
-
-    if (chosen === current.ru) {
-      btn.classList.add('correct');
-      if (isFirstTry) firstTryCorrect++;
-      queue.shift();
-    } else {
-      btn.classList.add('wrong');
-      mistakesSet.add(current.en);
-      document.querySelectorAll('.opt-btn').forEach(b => {
-        if (b.textContent === current.ru) b.classList.add('correct');
-      });
-      const failed = queue.shift();
-      if (repeatErrors) queue.push(failed);
-    }
-
-    setTimeout(() => queue.length === 0 ? finishLesson() : renderQuestion(), 850);
-  }
-
-  function checkSpelling() {
-    if (locked) return;
-    const current = queue;
-    const typed = document.getElementById('spellingInput').value.trim().toLowerCase();
-    if (!typed) return;
-    locked = true;
-
-    const isFirstTry = !attemptedSet.has(current._id);
-    attemptedSet.add(current._id);
-    const repeatErrors = !lessonData.settings || lessonData.settings.repeatErrors !== false;
-    const inp = document.getElementById('spellingInput');
-
-    if (typed === current.en.trim().toLowerCase()) {
-      inp.style.borderColor = 'var(--accent)';
-      if (isFirstTry) firstTryCorrect++;
-      queue.shift();
-      speakCurrent();
-    } else {
-      inp.style.borderColor = 'var(--danger)';
-      mistakesSet.add(current.en);
-      alert(`Неверно. Правильное написание: ${current.en}`);
-      const failed = queue.shift();
-      if (repeatErrors) queue.push(failed);
-    }
-
-    setTimeout(() => queue.length === 0 ? finishLesson() : renderQuestion(), 600);
+    const cur = wordsList.at(idx);
+    const val = document.getElementById('spellInput').value.trim().toLowerCase();
+    if (val !== cur.en.toLowerCase()) mistakes.push(cur);
+    speakWord();
+    setTimeout(() => { idx++; renderQuestion(); }, 650);
   }
 
   async function finishLesson() {
-    document.getElementById('stepQuiz').classList.add('hidden');
-    document.getElementById('stepFinish').classList.remove('hidden');
-    const mistakesArr = Array.from(mistakesSet);
-    const pct = Math.round((firstTryCorrect / initialTotal) * 100);
+    document.getElementById('quizBox').classList.add('hidden');
+    document.getElementById('finishBox').classList.remove('hidden');
+
+    const total = wordsList.length;
+    const score = Math.max(0, total - mistakes.length);
+    const pct = Math.round((score / Math.max(1, total)) * 100);
+    const studentName = me.full_name || me.nickname;
+
+    document.getElementById('finalScoreText').textContent = `${studentName}, ваш результат: ${score} из ${total} (${pct}%)`;
+    document.getElementById('retryMistakesBtn').classList.toggle('hidden', mistakes.length === 0);
 
     try {
       await sbFetch('lesson_results', {
         method: 'POST',
         body: {
-          lesson_code: lessonData.code, student_name: studentName,
-          score: firstTryCorrect, total: initialTotal, mistakes: mistakesArr
+          lesson_code: currentLesson.code,
+          student_name: studentName,
+          score, total,
+          mistakes: mistakes.map(m => m.en),
+          is_checked: false
         }
       });
-      document.getElementById('finishSummary').textContent = '✅ Результат автоматически сохранён в журнале преподавателя!';
-    } catch (e) {
-      document.getElementById('finishSummary').textContent = 'Задание пройдено! Скопируйте отчёт и отправьте учителю.';
-    }
-
-    document.getElementById('reportPreview').textContent =
-      `📚 Отчёт WordSprint (${lessonData.code})\n👤 Ученик: ${studentName}\n📝 Тема: ${lessonData.title}\n🏆 Результат: ${firstTryCorrect}/${initialTotal} (${pct}%)\n` +
-      (mistakesArr.length ? `⚠️ Повторить: ${mistakesArr.join(', ')}` : '✨ Выполнено без единой ошибки!');
+    } catch (e) { console.error(e); }
   }
 
-  function copyReport() {
-    navigator.clipboard.writeText(document.getElementById('reportPreview').textContent);
-    alert('Отчёт скопирован!');
-  }
-
-  function sendReportEmail() {
-    const subj = encodeURIComponent(`WordSprint: Отчёт по уроку ${lessonData.code} (${studentName})`);
-    const body = encodeURIComponent(document.getElementById('reportPreview').textContent);
-    window.open(`mailto:${teacherEmail}?subject=${subj}&body=${body}`, '_blank');
+  function retryMistakes() {
+    wordsList = Array.from(mistakes);
+    document.getElementById('finishBox').classList.add('hidden');
+    startQuizWords();
   }
 </script>
 </body>

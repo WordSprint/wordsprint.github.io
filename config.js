@@ -27,24 +27,23 @@ window.addEventListener('DOMContentLoaded', () => {
   if (btn) btn.textContent = cur === 'dark' ? '☀️' : '🌙';
 });
 
-async function sbFetch(table, options = {}) {
-  const { method = 'GET', query = '', body = null, prefer = 'return=representation' } = options;
-  const base = WS_CONFIG.SUPABASE_URL.endsWith('/') ? WS_CONFIG.SUPABASE_URL : WS_CONFIG.SUPABASE_URL + '/';
-  const url = `${base}${table}${query ? '?' + query : ''}`;
-
-  const res = await fetch(url, {
+async function appSbFetch(table, opts = {}) {
+  const { method = 'GET', query = '', body = null } = opts;
+  const res = await fetch(`${SB_URL}${table}${query ? '?' + query : ''}`, {
     method,
     headers: {
-      'apikey': WS_CONFIG.SUPABASE_KEY,
+      'apikey': SB_KEY,
+      'Authorization': `Bearer ${SB_KEY}`,
       'Content-Type': 'application/json',
-      'Prefer': prefer
+      'Prefer': 'return=representation'
     },
     body: body ? JSON.stringify(body) : null
   });
   if (!res.ok) throw new Error(await res.text());
-  const text = await res.text();
-  return text ? JSON.parse(text) : null;
+  const txt = await res.text();
+  return txt ? JSON.parse(txt) : null;
 }
+
 
 function sbFirst(data) {
   return Array.isArray(data) ? (data.at(0) || null) : data;

@@ -68,19 +68,25 @@
     </nav>
   </div>
 </header>
-
 <main class="container" style="padding-bottom: 60px;">
   <section class="hero">
     <h1>Учебные группы WordSprint</h1>
     <p class="subtitle">Учите английский вместе с друзьями или классом, выполняйте недельную цель и соревнуйтесь в рейтинге.</p>
   </section>
 
+  <div id="groupsAuthGate" class="card hidden" style="max-width:560px; margin:20px auto; text-align:center;">
+    <div style="font-size:2.6rem;">🔐</div>
+    <h2 style="margin-top:8px;">Войдите в профиль WordSprint</h2>
+    <p class="desc" id="groupsAuthDesc">Создавать учебные группы и вступать в них могут только пользователи с единым профилем. Сразу после регистрации вы автоматически попадёте в группу!</p>
+    <a id="groupsAuthBtn" href="profile.html" class="btn btn-accent">👤 Войти или создать профиль</a>
+  </div>
+
   <div id="savedGroupsBar" class="hidden" style="margin-bottom: 16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
     <span style="font-size:0.86rem; color:var(--muted);">Мои группы:</span>
     <div id="savedGroupsChips" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
   </div>
 
-  <div id="groupSetup" class="grid-2">
+  <div id="groupSetup" class="grid-2 hidden">
     <div class="card">
       <h2>🔑 Войти в группу</h2>
       <p class="desc">Введите 6-значный код группы от друга или преподавателя.</p>
@@ -91,7 +97,7 @@
 
     <div class="card">
       <h2>✨ Создать новую группу</h2>
-      <p class="desc">Создайте закрытую комнату и пригласите участников по ссылке или коду.</p>
+      <p class="desc">Вы создаёте группу от имени <b id="creatorProfileLabel" style="color:var(--accent);">—</b>.</p>
       <label>Название группы</label>
       <input type="text" id="createTitle" placeholder="Введите название группы">
       <label>Цель на неделю для каждого (XP)</label>
@@ -100,8 +106,6 @@
         <option value="350" selected>350 XP — Уверенный темп</option>
         <option value="700">700 XP — Интенсив</option>
       </select>
-      <label>Ваше имя (подставится из профиля, если выполнен вход)</label>
-      <input type="text" id="createCreator" placeholder="Введите ваше имя">
       <button class="btn btn-accent" id="createBtn" onclick="createGroup()">🏆 Создать группу</button>
     </div>
   </div>
@@ -134,6 +138,7 @@
 </main>
 <script>
   let currentGroup = null;
+  let me = null;
 
   function gen6Code() {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -150,44 +155,64 @@
     renderSavedGroupsChips();
   }
 
+  function forgetGroup(code) {
+    const saved = JSON.parse(localStorage.getItem('ws_saved_groups') || '[]').filter(g => g.code !== code);
+    localStorage.setItem('ws_saved_groups', JSON.stringify(saved));
+    renderSavedGroupsChips();
+  }
+
   function renderSavedGroupsChips() {
     const saved = JSON.parse(localStorage.getItem('ws_saved_groups') || '[]');
     const bar = document.getElementById('savedGroupsBar');
     const box = document.getElementById('savedGroupsChips');
-    if (!saved.length) { bar.classList.add('hidden'); return; }
+    if (!saved.length || !me) { bar.classList.add('hidden'); return; }
     bar.classList.remove('hidden');
     box.innerHTML = saved.map(g =>
-      `<button class="saved-chip" onclick="loadGroupByCode('${g.code}')"><b>${g.title}</b> <span style="font-family:monospace; color:var(--accent);">${g.code}</span></button>`
+      `<button class="saved-chip" onclick="loadGroupByCode('${g.code}', true)"><b>${g.title}</b> <span style="font-family:monospace; color:var(--accent);">${g.code}</span></button>`
     ).join('');
   }
 
   window.addEventListener('DOMContentLoaded', async () => {
-    renderSavedGroupsChips();
-    const me = getCurrentUserProfile();
-    if (me && me.nickname) document.getElementById('createCreator').value = me.nickname;
-
+    me = getCurrentUserProfile();
     const urlCode = new URLSearchParams(window.location.search).get('code');
+
+    if (!me || !me.user_id) {
+      document.getElementById('groupsAuthGate').classList.remove('hidden');
+      if (urlCode) {
+        document.getElementById('groupsAuthDesc').textContent = `Вас пригласили в учебную группу (${urlCode.toUpperCase()}). Создайте профиль или войдите — и система автоматически добавит вас в эту группу!`;
+      }
+      document.getElementById('groupsAuthBtn').href = `profile.html?return=${encodeURIComponent(window.location.href)}`;
+      return;
+    }
+
+    document.getElementById('groupSetup').classList.remove('hidden');
+    document.getElementById('creatorProfileLabel').textContent = `${me.nickname} (${me.user_id})`;
+    renderSavedGroupsChips();
+
     if (urlCode) {
       document.getElementById('joinCode').value = urlCode.toUpperCase();
       await joinGroup();
       return;
     }
     const active = localStorage.getItem('ws_active_group_code');
-    if (active) await loadGroupByCode(active);
+    if (active) await loadGroupByCode(active, false);
   });
 
   async function createGroup() {
     const title = document.getElementById('createTitle').value.trim();
     const weekly_goal = parseInt(document.getElementById('createGoal').value, 10);
-    const creator = document.getElementById('createCreator').value.trim();
-    if (!title || !creator) return alert('Введите название группы и ваше имя!');
+    if (!title) return alert('Введите название группы!');
 
-    const me = getCurrentUserProfile();
     const btn = document.getElementById('createBtn');
     btn.disabled = true; btn.textContent = '⏳ Создаём...';
     try {
+      const freshRows = await sbFetch('profiles', { query: `user_id=eq.${encodeURIComponent(me.user_id)}` });
+      const freshMe = sbFirst(freshRows) || me;
+      localStorage.setItem('ws_user_profile', JSON.stringify(freshMe));
+      me = freshMe;
+
       const code = gen6Code();
-      const members = [{ name: creator, xp: me ? (me.xp || 0) : 0, user_id: me ? me.user_id : '' }];
+      const members = [{ name: me.nickname, xp: me.xp || 0, user_id: me.user_id }];
       const rows = await sbFetch('groups', { method: 'POST', body: { code, title, weekly_goal, members } });
       const created = sbFirst(rows);
       if (created && created.code) {
@@ -213,7 +238,9 @@
       const rows = await sbFetch('groups', { query: `code=eq.${encodeURIComponent(code)}` });
       const group = sbFirst(rows);
       if (!group || !group.code) {
-        if (showAlert) alert('Группа с таким кодом не найдена.');
+        forgetGroup(code);
+        if (localStorage.getItem('ws_active_group_code') === code) localStorage.removeItem('ws_active_group_code');
+        if (showAlert) alert('Эта группа не найдена или была удалена.');
         return;
       }
       localStorage.setItem('ws_active_group_code', group.code);
@@ -223,49 +250,32 @@
   }
 
   async function syncCurrentUserToGroup(group) {
-    const me = getCurrentUserProfile();
-    if (me && me.user_id) {
-      const freshRows = await sbFetch('profiles', { query: `user_id=eq.${encodeURIComponent(me.user_id)}` });
-      const freshMe = sbFirst(freshRows) || me;
-      localStorage.setItem('ws_user_profile', JSON.stringify(freshMe));
+    const freshRows = await sbFetch('profiles', { query: `user_id=eq.${encodeURIComponent(me.user_id)}` });
+    const freshMe = sbFirst(freshRows) || me;
+    localStorage.setItem('ws_user_profile', JSON.stringify(freshMe));
+    me = freshMe;
 
-      const members = Array.isArray(group.members) ? [...group.members] : [];
-      const idx = members.findIndex(m => m.user_id === freshMe.user_id || m.name.toLowerCase() === freshMe.nickname.toLowerCase());
-      if (idx >= 0) {
-        members.at(idx).xp = freshMe.xp || 0;
-        members.at(idx).user_id = freshMe.user_id;
-        members.at(idx).name = freshMe.nickname;
-      } else {
-        members.push({ name: freshMe.nickname, xp: freshMe.xp || 0, user_id: freshMe.user_id });
-      }
-      const updated = await sbFetch('groups', { method: 'PATCH', query: `id=eq.${group.id}`, body: { members } });
-      openRoom(sbFirst(updated) || { ...group, members });
-      return;
+    const members = Array.isArray(group.members) ? [...group.members] : [];
+    const idx = members.findIndex(m => m.user_id === freshMe.user_id);
+    if (idx >= 0) {
+      members.at(idx).xp = freshMe.xp || 0;
+      members.at(idx).name = freshMe.nickname;
+    } else {
+      members.push({ name: freshMe.nickname, xp: freshMe.xp || 0, user_id: freshMe.user_id });
     }
-    openRoom(group);
+    const updated = await sbFetch('groups', { method: 'PATCH', query: `id=eq.${group.id}`, body: { members } });
+    openRoom(sbFirst(updated) || { ...group, members });
   }
+
   function openRoom(group) {
     currentGroup = group;
-    const me = getCurrentUserProfile();
     document.getElementById('groupSetup').classList.add('hidden');
     document.getElementById('groupRoom').classList.remove('hidden');
     document.getElementById('roomTitle').textContent = group.title || 'Учебная группа';
     document.getElementById('roomCode').textContent = group.code || '—';
     document.getElementById('roomGoal').textContent = group.weekly_goal || 350;
 
-    const banner = document.getElementById('autoSyncProfileBanner');
-    if (me && me.user_id) {
-      banner.innerHTML = `✅ Ваш профиль <b>${me.nickname}</b> (${me.user_id}) привязан — опыт (<b>${me.xp || 0} XP</b>) синхронизируется автоматически.`;
-    } else {
-      banner.innerHTML = `
-        <div style="font-weight:700; margin-bottom:6px;">📲 Синхронизировать XP без профиля (короткий код из приложения)</div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <input type="text" id="guestNameGrp" placeholder="Ваше имя" style="flex:1; min-width:140px;">
-          <input type="text" id="guestShortXp" placeholder="Код (X450-82)" style="width:145px; font-family:monospace; text-transform:uppercase;">
-          <button class="btn btn-sm" onclick="syncGuestShortXp()">Обновить XP</button>
-        </div>
-      `;
-    }
+    document.getElementById('autoSyncProfileBanner').innerHTML = `✅ Ваш профиль <b>${me.nickname}</b> (${me.user_id}) привязан — опыт (<b>${me.xp || 0} XP</b>) синхронизируется автоматически.`;
 
     const members = Array.isArray(group.members) ? [...group.members].sort((a, b) => (b.xp || 0) - (a.xp || 0)) : [];
     const totalXp = members.reduce((sum, m) => sum + (m.xp || 0), 0);
@@ -280,7 +290,7 @@
       const xpVal = m.xp || 0;
       const pct = Math.min(100, Math.round((xpVal / group.weekly_goal) * 100));
       const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`;
-      const isSelf = me && m.user_id === me.user_id;
+      const isSelf = m.user_id === me.user_id;
 
       const nameHtml = m.user_id
         ? `<a href="profile.html?view=${encodeURIComponent(m.user_id)}" style="color:var(--primary); text-decoration:underline;">${m.name}</a>`
@@ -308,24 +318,6 @@
     }).join('') : '<p style="color:var(--muted);">Пока нет участников.</p>';
   }
 
-  async function syncGuestShortXp() {
-    const name = document.getElementById('guestNameGrp').value.trim();
-    const raw = document.getElementById('guestShortXp').value.trim().toUpperCase();
-    const parts = raw.split('-');
-    if (!name || parts.length !== 2 || !parts.at(0).startsWith('X')) return alert('Введите имя и короткий код прогресса (например, X450-82).');
-    const newXp = parseInt(parts.at(0).slice(1), 10);
-    const sig = parseInt(parts.at(1), 10);
-    if (isNaN(newXp) || sig !== (newXp * 7 + 13) % 97) return alert('Неверный код прогресса.');
-
-    const members = Array.isArray(currentGroup.members) ? [...currentGroup.members] : [];
-    const idx = members.findIndex(m => m.name.toLowerCase() === name.toLowerCase());
-    if (idx >= 0) members.at(idx).xp = newXp;
-    else members.push({ name, xp: newXp, user_id: '' });
-
-    const updated = await sbFetch('groups', { method: 'PATCH', query: `id=eq.${currentGroup.id}`, body: { members } });
-    openRoom(sbFirst(updated) || { ...currentGroup, members });
-  }
-
   async function refreshGroup() { if (currentGroup) await loadGroupByCode(currentGroup.code, true); }
   function leaveGroup() {
     localStorage.removeItem('ws_active_group_code');
@@ -336,8 +328,13 @@
 
   function copyInviteLink() {
     const base = `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/groups.html`;
-    navigator.clipboard.writeText(`Присоединяйся к нашей группе «${currentGroup.title}» в WordSprint! Код: ${currentGroup.code}\n${base}?code=${currentGroup.code}`);
-    alert('Приглашение в группу скопировано!');
+    const text = `Присоединяйся к нашей группе «${currentGroup.title}» в WordSprint! Код: ${currentGroup.code}\n${base}?code=${currentGroup.code}`;
+    if (navigator.share) {
+      navigator.share({ title: `Группа «${currentGroup.title}» в WordSprint`, text, url: `${base}?code=${currentGroup.code}` });
+    } else {
+      navigator.clipboard.writeText(text);
+      alert('Приглашение в группу скопировано!');
+    }
   }
 </script>
 </body>

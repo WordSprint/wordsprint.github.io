@@ -31,7 +31,7 @@
     .desc { color: var(--muted); font-size: 0.94rem; margin-bottom: 18px; }
     label { display: block; font-size: 0.85rem; color: var(--muted); margin: 12px 0 6px; }
     input, select { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 1rem; outline: none; }
-    .btn { width: 100%; padding: 13px 18px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.96rem; cursor: pointer; background: var(--primary); color: #fff; margin-top: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn { width: 100%; padding: 13px 18px; border-radius: 12px; border: none; font-weight: 700; font-size: 0.96rem; cursor: pointer; background: var(--primary); color: #fff; margin-top: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-accent { background: var(--accent); color: #fff; }
     .btn-secondary { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
     .mode-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
@@ -73,10 +73,17 @@
 </header>
 
 <main class="container" style="padding-bottom: 60px;">
-  <div id="duelIntro" class="card">
+  <div id="authGateCard" class="card hidden" style="text-align:center;">
+    <div style="font-size:2.6rem;">🔐</div>
+    <h1 style="margin-top:8px;">Войдите в профиль WordSprint</h1>
+    <p class="desc">Участвовать в веб-дуэлях, бросать вызовы соперникам и сохранять победы в рейтинг могут только пользователи с единым профилем.</p>
+    <a id="authRedirectBtn" href="profile.html" class="btn btn-accent">👤 Войти или создать профиль</a>
+  </div>
+
+  <div id="duelIntro" class="card hidden">
     <div id="challengeBanner" class="hidden" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.4); padding:12px 14px; border-radius:12px; margin-bottom:16px; font-weight:600; color:var(--primary);"></div>
     <h1 id="introTitle">⚔️ Веб-дуэль по английскому</h1>
-    <p class="desc" id="introDesc">Выберите режим, уровень сложности и бросьте вызов сопернику или другу по ссылке.</p>
+    <p class="desc" id="introDesc">Вы играете под профилем <b id="activeDuelNick" style="color:var(--accent);">—</b>. Выберите режим и бросьте вызов сопернику!</p>
 
     <label>Режим дуэли</label>
     <div class="mode-row">
@@ -101,12 +108,14 @@
       <option value="C1-C2">Продвинутый (C1 – C2)</option>
     </select>
 
-    <label>Ваше имя / никнейм</label>
-    <input type="text" id="playerName" placeholder="Введите имя">
+    <div id="opponentPickerWrap">
+      <label>Отправить уведомление-вызов игроку (необязательно)</label>
+      <input type="text" id="opponentTargetInput" placeholder="Никнейм или ID соперника (например, WSU-1234)">
+    </div>
+
     <button class="btn" id="startDuelBtn" onclick="startDuel()">🚀 Начать раунд</button>
   </div>
 
-  <!-- Экран 1: Классический блиц / На слух -->
   <div id="duelQuiz" class="card hidden">
     <div class="top-bar">
       <span>Раунд <b id="qIdx">1</b> / 8</span>
@@ -119,7 +128,6 @@
     <div class="options" id="qOptions"></div>
   </div>
 
-  <!-- Экран 2: Режим «Пары 5×5 на время» -->
   <div id="duelMatch" class="card hidden">
     <div class="top-bar">
       <span>Собрано пар: <b id="matchScore" style="color:var(--accent);">0</b></span>
@@ -132,15 +140,17 @@
     </div>
   </div>
 
-  <!-- Финал -->
   <div id="duelResult" class="card hidden" style="text-align:center;">
     <div style="font-size:3rem;">🏆</div>
     <h1 id="resHeadline">Раунд завершён!</h1>
     <p class="desc" id="resStats"></p>
     <div id="inviteBlock">
       <p style="font-size:0.88rem; color:var(--muted); margin-bottom:8px;">Отправьте ссылку другу, чтобы он сыграл на этом же наборе слов:</p>
-      <input type="text" id="shareLink" readonly style="font-size:0.84rem; text-align:center; margin-bottom:10px;">
-      <button class="btn btn-accent" onclick="copyDuelLink()">📋 Скопировать ссылку-вызов</button>
+      <input type="text" id="shareLink" readonly style="font-size:0.84rem; text-align:center; margin-bottom:10px;" onclick="this.select()">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+        <button class="btn btn-accent" style="margin-top:0;" onclick="copyDuelLink()">📋 Скопировать</button>
+        <button class="btn" style="margin-top:0;" onclick="shareDuelNative()">📤 Поделиться</button>
+      </div>
     </div>
     <button class="btn btn-secondary" onclick="location.href='duel.html'">🔄 Сыграть ещё раз</button>
   </div>
@@ -174,11 +184,9 @@
     ]
   };
 
-  let duelMode = 'blitz', duelLevel = 'B1-B2', duelWords = [], friendDuelId = null, friendData = null;
+  let me = null, duelMode = 'blitz', duelLevel = 'B1-B2', duelWords = [], friendDuelId = null, friendData = null;
   let challengeUserId = null, challengeUserName = '';
   let idx = 0, score = 0, startTime = 0, timerInt = null, locked = false;
-
-  // Переменные для режима «Пары 5×5»
   let matchSlots = [], matchDeck = [], selectedLeft = null, selectedRight = null, matchSecondsLeft = 45;
 
   function selectDuelMode(m) {
@@ -188,8 +196,15 @@
   }
 
   window.addEventListener('DOMContentLoaded', async () => {
-    const me = getCurrentUserProfile();
-    if (me && me.nickname) document.getElementById('playerName').value = me.nickname;
+    me = getCurrentUserProfile();
+    if (!me || !me.user_id) {
+      document.getElementById('authGateCard').classList.remove('hidden');
+      document.getElementById('authRedirectBtn').href = `profile.html?return=${encodeURIComponent(window.location.href)}`;
+      return;
+    }
+
+    document.getElementById('duelIntro').classList.remove('hidden');
+    document.getElementById('activeDuelNick').textContent = `${me.nickname} (${me.user_id})`;
 
     const p = new URLSearchParams(window.location.search);
     friendDuelId = p.get('d');
@@ -197,12 +212,14 @@
     challengeUserName = p.get('targetName') || '';
 
     if (challengeUserId && challengeUserName) {
+      document.getElementById('opponentTargetInput').value = challengeUserId;
       const ban = document.getElementById('challengeBanner');
       ban.textContent = `⚔️ Прямой вызов игроку ${challengeUserName}! После раунда соперник получит уведомление.`;
       ban.classList.remove('hidden');
     }
 
     if (friendDuelId) {
+      document.getElementById('opponentPickerWrap').classList.add('hidden');
       const rows = await sbFetch('duels', { query: `id=eq.${encodeURIComponent(friendDuelId)}` });
       friendData = sbFirst(rows);
       if (friendData) {
@@ -217,8 +234,6 @@
   });
 
   function startDuel() {
-    const name = document.getElementById('playerName').value.trim();
-    if (!name) return alert('Введите ваше имя!');
     duelLevel = friendData ? friendData.level : document.getElementById('duelLevel').value;
     const pool = [...POOLS[duelLevel]].sort(() => Math.random() - 0.5);
 
@@ -247,8 +262,8 @@
     document.getElementById('matchScore').textContent = '0';
     document.getElementById('matchTimer').textContent = matchSecondsLeft;
     selectedLeft = null; selectedRight = null;
-    matchSlots = matchDeck.splice(0, 5).map((item, i) => ({ slot: i, en: item.en, ru: item.ru, busy: false }));
-    renderMatchBoard(false);
+    matchSlots = matchDeck.splice(0, 5).map((item, i) => ({ slot: i, en: item.en, ru: item.ru }));
+    renderMatchBoard();
 
     timerInt = setInterval(() => {
       matchSecondsLeft--;
@@ -260,71 +275,44 @@
     }, 1000);
   }
 
-  function renderMatchBoard(animateNewSlot = false, targetSlot = -1) {
+  function renderMatchBoard() {
     const leftCol = document.getElementById('matchLeftCol');
     const rightCol = document.getElementById('matchRightCol');
     const rightOrder = [...matchSlots].sort(() => Math.random() - 0.5);
-
-    leftCol.innerHTML = matchSlots.map(s => `
-      <div class="match-card ${animateNewSlot && s.slot === targetSlot ? 'spawning' : ''}" data-slot="${s.slot}" data-side="left" onclick="pickMatchCard(this, 'left', ${s.slot})">${s.en}</div>
-    `).join('');
-
-    rightCol.innerHTML = rightOrder.map(s => `
-      <div class="match-card ${animateNewSlot && s.slot === targetSlot ? 'spawning' : ''}" data-slot="${s.slot}" data-side="right" onclick="pickMatchCard(this, 'right', ${s.slot})">${s.ru}</div>
-    `).join('');
-
-    if (animateNewSlot && targetSlot >= 0) {
-      requestAnimationFrame(() => {
-        document.querySelectorAll(`.match-card[data-slot="${targetSlot}"]`).forEach(el => el.classList.remove('spawning'));
-      });
-    }
+    leftCol.innerHTML = matchSlots.map(s => `<div class="match-card" data-slot="${s.slot}" data-side="left" onclick="pickMatchCard(this, 'left', ${s.slot})">${s.en}</div>`).join('');
+    rightCol.innerHTML = rightOrder.map(s => `<div class="match-card" data-slot="${s.slot}" data-side="right" onclick="pickMatchCard(this, 'right', ${s.slot})">${s.ru}</div>`).join('');
   }
-
   function pickMatchCard(el, side, slot) {
     if (el.classList.contains('fading-out') || el.classList.contains('ok')) return;
     document.querySelectorAll(`.match-card[data-side="${side}"]`).forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
-
     if (side === 'left') selectedLeft = { el, slot };
     else selectedRight = { el, slot };
 
     if (selectedLeft && selectedRight) {
       const L = selectedLeft, R = selectedRight;
       selectedLeft = null; selectedRight = null;
-
       if (L.slot === R.slot) {
         score++;
         document.getElementById('matchScore').textContent = score;
         L.el.classList.remove('selected'); R.el.classList.remove('selected');
         L.el.classList.add('ok'); R.el.classList.add('ok');
-
-        setTimeout(() => {
-          L.el.classList.add('fading-out');
-          R.el.classList.add('fading-out');
-        }, 250);
-
+        setTimeout(() => { L.el.classList.add('fading-out'); R.el.classList.add('fading-out'); }, 250);
         setTimeout(() => {
           const nextPair = matchDeck.shift() || POOLS[duelLevel].at(Math.floor(Math.random() * POOLS[duelLevel].length));
           matchSlots[L.slot] = { slot: L.slot, en: nextPair.en, ru: nextPair.ru };
-          L.el.textContent = nextPair.en;
-          R.el.textContent = nextPair.ru;
-          L.el.className = 'match-card spawning';
-          R.el.className = 'match-card spawning';
-          requestAnimationFrame(() => {
-            L.el.classList.remove('spawning');
-            R.el.classList.remove('spawning');
-          });
-        }, 1600);
+          L.el.textContent = nextPair.en; R.el.textContent = nextPair.ru;
+          L.el.className = 'match-card spawning'; R.el.className = 'match-card spawning';
+          requestAnimationFrame(() => { L.el.classList.remove('spawning'); R.el.classList.remove('spawning'); });
+        }, 1550);
       } else {
         L.el.classList.remove('selected'); R.el.classList.remove('selected');
         L.el.classList.add('err'); R.el.classList.add('err');
-        setTimeout(() => {
-          L.el.classList.remove('err');
-          R.el.classList.remove('err');
-        }, 550);
+        setTimeout(() => { L.el.classList.remove('err'); R.el.classList.remove('err'); }, 550);
       }
     }
   }
+
   function speakCurrent() {
     const cur = duelWords.at(idx);
     if (!cur) return;
@@ -367,16 +355,14 @@
   async function finishDuel(fixedSeconds = null) {
     clearInterval(timerInt);
     const elapsed = fixedSeconds !== null ? fixedSeconds : parseFloat(((performance.now() - startTime) / 1000).toFixed(1));
-    const pName = document.getElementById('playerName').value.trim();
+    const pName = me.nickname;
 
     document.getElementById('duelQuiz').classList.add('hidden');
     document.getElementById('duelMatch').classList.add('hidden');
     document.getElementById('duelResult').classList.remove('hidden');
 
-    const me = getCurrentUserProfile();
     const isWin = !friendData || score > friendData.player1_score || (score === friendData.player1_score && elapsed < friendData.player1_time);
-
-    if (me && me.user_id && isWin) {
+    if (isWin) {
       const nextWins = (me.duel_wins || 0) + 1;
       const nextXp = (me.xp || 0) + 25;
       await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(me.user_id)}`, body: { duel_wins: nextWins, xp: nextXp } });
@@ -386,36 +372,71 @@
 
     if (friendData) {
       document.getElementById('inviteBlock').classList.add('hidden');
-      const winText = isWin ? '🎉 Вы победили соперника!' : '🤝 Достойная игра!';
-      document.getElementById('resHeadline').textContent = winText;
+      document.getElementById('resHeadline').textContent = isWin ? '🎉 Вы победили соперника!' : '🤝 Достойная игра!';
       document.getElementById('resStats').textContent = `${pName}: ${score} очков (${elapsed} сек) против ${friendData.player1_name}: ${friendData.player1_score} очков (${friendData.player1_time} сек)`;
-    } else {
-      const unit = duelMode === 'match' ? 'пар' : 'из 8';
-      document.getElementById('resStats').textContent = `${pName}, ваш результат: ${score} ${unit} за ${elapsed} сек!`;
-      try {
-        const res = await sbFetch('duels', {
-          method: 'POST',
-          body: { level: duelLevel, mode: duelMode, words: duelWords, player1_name: pName, player1_score: score, player1_time: elapsed }
-        });
-        const created = sbFirst(res);
-        const link = `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/duel.html?d=${created.id}`;
+      return;
+    }
+
+    const unit = duelMode === 'match' ? 'пар' : 'из 8';
+    document.getElementById('resStats').textContent = `${pName}, ваш результат: ${score} ${unit} за ${elapsed} сек!`;
+    const baseUrl = WS_CONFIG.SITE_URL.replace(/\/$/, '');
+
+    try {
+      const res = await sbFetch('duels', {
+        method: 'POST',
+        body: { level: duelLevel, mode: duelMode, words: duelWords, player1_name: pName, player1_score: score, player1_time: elapsed }
+      });
+      const created = sbFirst(res);
+      if (created && created.id) {
+        const link = `${baseUrl}/duel.html?d=${created.id}`;
         document.getElementById('shareLink').value = link;
 
-        if (challengeUserId) {
-          await sendAppNotification(
-            challengeUserId,
-            `⚔️ Вызов на дуэль от ${pName}!`,
-            `${pName} набрал(а) ${score} ${unit} за ${elapsed} сек. Попробуй побить рекорд!`,
-            `duel.html?d=${created.id}`
-          );
+        const targetRaw = document.getElementById('opponentTargetInput').value.trim();
+        if (targetRaw) {
+          const q = targetRaw.toUpperCase().startsWith('WSU-')
+            ? `user_id=eq.${encodeURIComponent(targetRaw.toUpperCase())}`
+            : `nickname=ilike.${encodeURIComponent(targetRaw)}`;
+          const foundRows = await sbFetch('profiles', { query: q });
+          const targetUser = sbFirst(foundRows);
+          if (targetUser && targetUser.user_id) {
+            await sendAppNotification(
+              targetUser.user_id,
+              `⚔️ Вызов на дуэль от ${pName}!`,
+              `${pName} набрал(а) ${score} ${unit} за ${elapsed} сек. Прими вызов!`,
+              `duel.html?d=${created.id}`
+            );
+          }
         }
-      } catch (e) { console.error(e); }
+      }
+    } catch (e) {
+      document.getElementById('shareLink').value = `${baseUrl}/duel.html`;
     }
   }
 
   function copyDuelLink() {
-    navigator.clipboard.writeText(document.getElementById('shareLink').value);
-    alert('Ссылка-вызов скопирована!');
+    const inp = document.getElementById('shareLink');
+    if (!inp.value) return;
+    inp.select();
+    inp.setSelectionRange(0, 99999);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(inp.value).then(() => alert('Ссылка-вызов скопирована!')).catch(() => {
+        document.execCommand('copy');
+        alert('Ссылка-вызов скопирована!');
+      });
+    } else {
+      document.execCommand('copy');
+      alert('Ссылка-вызов скопирована!');
+    }
+  }
+
+  function shareDuelNative() {
+    const url = document.getElementById('shareLink').value;
+    if (!url) return;
+    if (navigator.share) {
+      navigator.share({ title: 'Вызов на веб-дуэль WordSprint!', text: `Попробуй побить мой результат в WordSprint!`, url });
+    } else {
+      copyDuelLink();
+    }
   }
 </script>
 </body>
