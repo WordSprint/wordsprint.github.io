@@ -2,9 +2,12 @@ const WS_CONFIG = {
   SUPABASE_URL: 'https://lbmyaivuprfdetdymioj.supabase.co/rest/v1/',
   SUPABASE_KEY: 'sb_publishable_bxVIJPkFbxF7cooVc6HxJQ_C3yTpetr',
   ADMIN_PASSWORD: 'wordsprint2026',
-  SITE_URL: 'https://wordsprint.github.io',
-  BOOSTY_URL: 'https://boosty.to',
-  PRIVACY_URL: 'https://netlify.app'
+  SITE_URL: ' https://wordsprint.github.io/',
+  BOOSTY_URL: 'https://boosty.to/wordsprint/donate',
+  PRIVACY_URL: 'https://aesthetic-tiramisu-4416cd.netlify.app',
+  EMAILJS_PUBLIC_KEY: 'YkfVn2Q1E2OpaTj_R',
+  EMAILJS_SERVICE_ID: 'service_326zpuc',
+  EMAILJS_TEMPLATE_ID: 'template_ofg2u88'
 };
 
 (function initTheme() {
@@ -62,6 +65,25 @@ function getRankByXp(xp) {
   return 'Новичок';
 }
 
+async function sendEmailAlert(toEmail, toName, subject, message, link = '') {
+  if (!toEmail || !WS_CONFIG.EMAILJS_PUBLIC_KEY) return;
+  const fullLink = link
+    ? (link.startsWith('http') ? link : `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/${link.replace(/^\//, '')}`)
+    : WS_CONFIG.SITE_URL;
+  try {
+    await fetch('https://emailjs.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: WS_CONFIG.EMAILJS_SERVICE_ID,
+        template_id: WS_CONFIG.EMAILJS_TEMPLATE_ID,
+        user_id: WS_CONFIG.EMAILJS_PUBLIC_KEY,
+        template_params: { to_email: toEmail, to_name: toName || 'Участник', subject, message, link: fullLink }
+      })
+    });
+  } catch (e) { console.error('Email error:', e); }
+}
+
 async function sendAppNotification(targetId, title, body, link = '') {
   if (!targetId) return;
   try {
@@ -69,6 +91,16 @@ async function sendAppNotification(targetId, title, body, link = '') {
       method: 'POST',
       body: { target_id: targetId, title, body, link }
     });
+
+    if (targetId.startsWith('WSU-')) {
+      const rows = await sbFetch('profiles', { query: `user_id=eq.${encodeURIComponent(targetId)}` });
+      const u = sbFirst(rows);
+      if (u && u.email) await sendEmailAlert(u.email, u.nickname, title, body, link);
+    } else if (targetId.startsWith('WS-') || targetId.startsWith('TCH-') || targetId.startsWith('SCH-')) {
+      const rows = await sbFetch('teachers', { query: `code=eq.${encodeURIComponent(targetId)}` });
+      const t = sbFirst(rows);
+      if (t && t.email) await sendEmailAlert(t.email, t.name, title, body, link);
+    }
   } catch (e) { console.error(e); }
 }
 
