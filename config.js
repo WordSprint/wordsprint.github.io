@@ -10,11 +10,40 @@ const WS_CONFIG = {
   EMAILJS_TEMPLATE_ID: 'template_ofg2u88'
 };
 (function initFavicon() {
-  const link = document.createElement('link');
-  link.rel = 'icon';
-  link.type = 'image/svg+xml';
-  link.href = 'favicon.svg?v=2';
-  document.head.appendChild(link);
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+
+    // Синий фон со скруглёнными углами
+    ctx.fillStyle = '#3b4cc0';
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 64, 64, 14);
+    ctx.fill();
+
+    // Белая молния по центру (удали следующие 8 строк, если нужен просто сплошной синий квадрат)
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(36, 10);
+    ctx.lineTo(16, 36);
+    ctx.lineTo(31, 36);
+    ctx.lineTo(28, 54);
+    ctx.lineTo(48, 28);
+    ctx.lineTo(33, 28);
+    ctx.closePath();
+    ctx.fill();
+
+    const pngUrl = canvas.toDataURL('image/png');
+    document.querySelectorAll("link[rel*='icon']").forEach(el => el.remove());
+
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = 'image/png';
+    link.sizes = '64x64';
+    link.href = pngUrl;
+    document.head.appendChild(link);
+  } catch (e) {}
 })();
 
 
