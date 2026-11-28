@@ -272,7 +272,7 @@
     speechSynthesis.onvoiceschanged = pickBestEnglishVoice;
   }
 
-    let activeAudioPlayer = null;
+     let activeAudioPlayer = null;
 
   function speakCurrent(rate = 0.92) {
     const cur = duelWords.at(idx);
@@ -284,23 +284,34 @@
       activeAudioPlayer = null;
     }
 
-    const ttsUrl = `https://google.com{encodeURIComponent(word)}`;
-    const audio = new Audio(ttsUrl);
+    const primaryUrl = `https://youdao.com{encodeURIComponent(word)}&type=2`;
+    const backupUrl = `https://streamelements.com{encodeURIComponent(word)}`;
+
+    const audio = new Audio(primaryUrl);
     audio.playbackRate = rate;
     activeAudioPlayer = audio;
 
+    audio.onerror = () => {
+      const backupAudio = new Audio(backupUrl);
+      backupAudio.playbackRate = rate;
+      activeAudioPlayer = backupAudio;
+      backupAudio.play().catch(() => speakFallbackBrowser(word, rate));
+    };
+
     audio.play().catch(() => {
-      if (!('speechSynthesis' in window)) return;
-      const enVoice = speechSynthesis.getVoices().find(v => v.lang && v.lang.toLowerCase().startsWith('en'));
-      if (!enVoice) return;
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(word);
-      u.voice = enVoice;
-      u.lang = 'en-US';
-      u.rate = rate;
-      speechSynthesis.speak(u);
+      speakFallbackBrowser(word, rate);
     });
   }
+
+  function speakFallbackBrowser(word, rate) {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(word);
+    u.lang = 'en-US';
+    u.rate = rate;
+    speechSynthesis.speak(u);
+  }
+
 
 
 
