@@ -156,6 +156,52 @@
   </div>
 </main>
 <script>
+  window.addEventListener('DOMContentLoaded', async () => {
+    const p = new URLSearchParams(window.location.search);
+    const urlDuelId = p.get('d');
+    if (urlDuelId) sessionStorage.setItem('ws_pending_duel_id', urlDuelId);
+
+    me = getCurrentUserProfile();
+    if (!me || !me.user_id) {
+      document.getElementById('authGateCard').classList.remove('hidden');
+      document.getElementById('authRedirectBtn').href = `profile.html?return=${encodeURIComponent(window.location.href)}`;
+      return;
+    }
+
+    document.getElementById('duelIntro').classList.remove('hidden');
+    document.getElementById('activeDuelNick').textContent = `${me.nickname} (${me.user_id})`;
+
+    friendDuelId = urlDuelId || sessionStorage.getItem('ws_pending_duel_id');
+    if (friendDuelId) sessionStorage.removeItem('ws_pending_duel_id');
+
+    challengeUserId = p.get('challenge');
+    challengeUserName = p.get('targetName') || '';
+
+    if (challengeUserId && challengeUserName && !friendDuelId) {
+      document.getElementById('opponentTargetInput').value = challengeUserId;
+      const ban = document.getElementById('challengeBanner');
+      ban.textContent = `⚔️ Прямой вызов игроку ${challengeUserName}! После раунда соперник получит уведомление.`;
+      ban.classList.remove('hidden');
+    }
+
+    if (friendDuelId) {
+      document.getElementById('opponentPickerWrap').classList.add('hidden');
+      try {
+        const rows = await sbFetch('duels', { query: `id=eq.${encodeURIComponent(friendDuelId)}` });
+        friendData = sbFirst(rows);
+        if (friendData) {
+          document.getElementById('introTitle').textContent = `⚔️ Вызов от ${friendData.player1_name}!`;
+          document.getElementById('introDesc').textContent = `Результат соперника: ${friendData.player1_score} очков за ${friendData.player1_time} сек. Попробуйте побить!`;
+          duelLevel = friendData.level;
+          duelMode = friendData.mode || 'blitz';
+          selectDuelMode(duelMode);
+          document.getElementById('duelLevel').disabled = true;
+        }
+      } catch (e) { console.error(e); }
+    }
+  });
+
+
   const POOLS = {
     'A1-A2': [
       { en: 'journey', ru: 'путешествие' }, { en: 'weather', ru: 'погода' }, { en: 'improve', ru: 'улучшать' },
@@ -352,7 +398,7 @@
     });
   }
 
-  async function finishDuel(fixedSeconds = null) {
+    async function finishDuel(fixedSeconds = null) {
     clearInterval(timerInt);
     const elapsed = fixedSeconds !== null ? fixedSeconds : parseFloat(((performance.now() - startTime) / 1000).toFixed(1));
     const pName = me.nickname;
@@ -361,24 +407,26 @@
     document.getElementById('duelMatch').classList.add('hidden');
     document.getElementById('duelResult').classList.remove('hidden');
 
-    const isWin = !friendData || score > friendData.player1_score || (score === friendData.player1_score && elapsed < friendData.player1_time);
-    if (isWin) {
-      const nextWins = (me.duel_wins || 0) + 1;
-      const nextXp = (me.xp || 0) + 25;
-      await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(me.user_id)}`, body: { duel_wins: nextWins, xp: nextXp } });
-      me.duel_wins = nextWins; me.xp = nextXp;
-      localStorage.setItem('ws_user_profile', JSON.stringify(me));
-    }
-
     if (friendData) {
+      const isWin = score > friendData.player1_score || (score === friendData.player1_score && elapsed < friendData.player1_time);
+      if (isWin) {
+        const nextWins = (me.duel_wins || 0) + 1;
+        const nextXp = (me.xp || 0) + 25;
+        await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(me.user_id)}`, body: { duel_wins: nextWins, xp: nextXp } });
+        me.duel_wins = nextWins; me.xp = nextXp;
+        localStorage.setItem('ws_user_profile', JSON.stringify(me));
+      }
+
       document.getElementById('inviteBlock').classList.add('hidden');
-      document.getElementById('resHeadline').textContent = isWin ? '🎉 Вы победили соперника!' : '🤝 Достойная игра!';
+      document.getElementById('resHeadline').textContent = isWin ? '🎉 Вы победили соперника! (+1 победа, +25 XP)' : '🤝 Соперник оказался быстрее или точнее!';
       document.getElementById('resStats').textContent = `${pName}: ${score} очков (${elapsed} сек) против ${friendData.player1_name}: ${friendData.player1_score} очков (${friendData.player1_time} сек)`;
       return;
     }
 
+    // Одиночный раунд для создания вызова — победу в топ НЕ начисляем до ответа соперника
     const unit = duelMode === 'match' ? 'пар' : 'из 8';
-    document.getElementById('resStats').textContent = `${pName}, ваш результат: ${score} ${unit} за ${elapsed} сек!`;
+    document.getElementById('resHeadline').textContent = '⚔️ Вызов создан!';
+    document.getElementById('resStats').textContent = `${pName}, ваш результат: ${score} ${unit} за ${elapsed} сек. Отправьте ссылку сопернику — победа засчитается в реальном сравнении результатов!`;
     const baseUrl = WS_CONFIG.SITE_URL.replace(/\/$/, '');
 
     try {
@@ -388,8 +436,8 @@
       });
       const created = sbFirst(res);
       if (created && created.id) {
-        const link = `${baseUrl}/duel.html?d=${created.id}`;
-        document.getElementById('shareLink').value = link;
+        const fullDuelUrl = `${baseUrl}/duel.html?d=${created.id}`;
+        document.getElementById('shareLink').value = fullDuelUrl;
 
         const targetRaw = document.getElementById('opponentTargetInput').value.trim();
         if (targetRaw) {
@@ -402,8 +450,8 @@
             await sendAppNotification(
               targetUser.user_id,
               `⚔️ Вызов на дуэль от ${pName}!`,
-              `${pName} набрал(а) ${score} ${unit} за ${elapsed} сек. Прими вызов!`,
-              `duel.html?d=${created.id}`
+              `${pName} набрал(а) ${score} ${unit} за ${elapsed} сек. Перейдите по ссылке и попробуйте побить результат!`,
+              fullDuelUrl
             );
           }
         }
@@ -412,6 +460,7 @@
       document.getElementById('shareLink').value = `${baseUrl}/duel.html`;
     }
   }
+
 
   function copyDuelLink() {
     const inp = document.getElementById('shareLink');
