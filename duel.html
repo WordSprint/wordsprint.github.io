@@ -76,7 +76,7 @@
   <div id="authGateCard" class="card hidden" style="text-align:center;">
     <div style="font-size:2.6rem;">🔐</div>
     <h1 style="margin-top:8px;">Войдите в профиль WordSprint</h1>
-    <p class="desc">Участвовать в веб-дуэлях, бросать вызовы соперникам и сохранять победы в рейтинг могут только пользователи с единым профилем.</p>
+    <p class="desc">Участвовать в веб-дуэлях и бросать вызовы соперникам могут только пользователи с единым профилем.</p>
     <a id="authRedirectBtn" href="profile.html" class="btn btn-accent">👤 Войти или создать профиль</a>
   </div>
 
@@ -85,37 +85,38 @@
     <h1 id="introTitle">⚔️ Веб-дуэль по английскому</h1>
     <p class="desc" id="introDesc">Вы играете под профилем <b id="activeDuelNick" style="color:var(--accent);">—</b>. Выберите режим и бросьте вызов сопернику!</p>
 
-    <label>Режим дуэли</label>
-    <div class="mode-row">
-      <div class="m-pill active" data-mode="blitz" onclick="selectDuelMode('blitz')">⚡ Блиц (8 слов)</div>
-      <div class="m-pill" data-mode="match" onclick="selectDuelMode('match')">🔗 Пары 5×5 на время</div>
-      <div class="m-pill" data-mode="listening" onclick="selectDuelMode('listening')">🎧 На слух (8 слов)</div>
-    </div>
+    <div id="duelSettingsWrap">
+      <label>Режим дуэли</label>
+      <div class="mode-row">
+        <div class="m-pill active" data-mode="blitz" onclick="selectDuelMode('blitz')">⚡ Блиц (8 слов)</div>
+        <div class="m-pill" data-mode="match" onclick="selectDuelMode('match')">🔗 Пары 5×5 на время</div>
+        <div class="m-pill" data-mode="listening" onclick="selectDuelMode('listening')">🎧 На слух (8 слов)</div>
+      </div>
 
-    <div id="matchTimeWrap" class="hidden">
-      <label>Время на упражнение «Пары 5×5»</label>
-      <select id="matchDurationSelect">
-        <option value="30">30 секунд (Спринт)</option>
-        <option value="45" selected>45 секунд (Стандарт)</option>
-        <option value="60">60 секунд (Марафон)</option>
+      <div id="matchTimeWrap" class="hidden">
+        <label>Время на упражнение «Пары 5×5»</label>
+        <select id="matchDurationSelect">
+          <option value="30">30 секунд (Спринт)</option>
+          <option value="45" selected>45 секунд (Стандарт)</option>
+          <option value="60">60 секунд (Марафон)</option>
+        </select>
+      </div>
+
+      <label>Уровень сложности слов</label>
+      <select id="duelLevel">
+        <option value="A1-A2">Начальный (A1 – A2)</option>
+        <option value="B1-B2" selected>Средний (B1 – B2)</option>
+        <option value="C1-C2">Продвинутый (C1 – C2)</option>
       </select>
-    </div>
 
-    <label>Уровень сложности слов</label>
-    <select id="duelLevel">
-      <option value="A1-A2">Начальный (A1 – A2)</option>
-      <option value="B1-B2" selected>Средний (B1 – B2)</option>
-      <option value="C1-C2">Продвинутый (C1 – C2)</option>
-    </select>
-
-    <div id="opponentPickerWrap">
-      <label>Отправить уведомление-вызов игроку (необязательно)</label>
-      <input type="text" id="opponentTargetInput" placeholder="Никнейм или ID соперника (например, WSU-1234)">
+      <div id="opponentPickerWrap">
+        <label>Отправить уведомление-вызов игроку (необязательно)</label>
+        <input type="text" id="opponentTargetInput" placeholder="Никнейм или ID соперника (например, WSU-1234)">
+      </div>
     </div>
 
     <button class="btn" id="startDuelBtn" onclick="startDuel()">🚀 Начать раунд</button>
   </div>
-
   <div id="duelQuiz" class="card hidden">
     <div class="top-bar">
       <span>Раунд <b id="qIdx">1</b> / 8</span>
@@ -123,7 +124,10 @@
     </div>
     <div class="word-box">
       <div class="en-word" id="qWord">accomplish</div>
-      <button onclick="speakCurrent()" style="margin-top:10px; background:rgba(99,102,241,0.16); color:var(--primary); border:1px solid rgba(99,102,241,0.35); padding:6px 14px; border-radius:8px; cursor:pointer; font-weight:600;">🔊 Озвучить</button>
+      <div style="display:flex; justify-content:center; gap:8px; margin-top:12px;">
+        <button onclick="speakCurrent(1.0)" style="background:rgba(99,102,241,0.16); color:var(--primary); border:1px solid rgba(99,102,241,0.35); padding:6px 14px; border-radius:8px; cursor:pointer; font-weight:600;">🔊 Озвучить</button>
+        <button onclick="speakCurrent(0.7)" style="background:var(--card); color:var(--muted); border:1px solid var(--border); padding:6px 12px; border-radius:8px; cursor:pointer; font-weight:600;">🐢 Медленно</button>
+      </div>
     </div>
     <div class="options" id="qOptions"></div>
   </div>
@@ -152,10 +156,141 @@
         <button class="btn" style="margin-top:0;" onclick="shareDuelNative()">📤 Поделиться</button>
       </div>
     </div>
-    <button class="btn btn-secondary" onclick="location.href='duel.html'">🔄 Сыграть ещё раз</button>
+    <button class="btn btn-secondary" onclick="location.href='duel.html'">🔄 Новая дуэль</button>
   </div>
 </main>
 <script>
+  const POOLS = {
+    'A1-A2': [
+      { en: 'journey', ru: 'путешествие' }, { en: 'weather', ru: 'погода' }, { en: 'improve', ru: 'улучшать' },
+      { en: 'decision', ru: 'решение' }, { en: 'mistake', ru: 'ошибка' }, { en: 'prepare', ru: 'готовиться' },
+      { en: 'advice', ru: 'совет' }, { en: 'healthy', ru: 'здоровый' }, { en: 'bridge', ru: 'мост' },
+      { en: 'suddenly', ru: 'внезапно' }, { en: 'borrow', ru: 'одалживать' }, { en: 'neighbor', ru: 'сосед' },
+      { en: 'century', ru: 'столетие' }, { en: 'believe', ru: 'верить' }, { en: 'careful', ru: 'осторожный' },
+      { en: 'luggage', ru: 'багаж' }, { en: 'schedule', ru: 'расписание' }, { en: 'expensive', ru: 'дорогой' },
+      { en: 'comfortable', ru: 'удобный' }, { en: 'dangerous', ru: 'опасный' }, { en: 'delicious', ru: 'вкусный' },
+      { en: 'explain', ru: 'объяснять' }, { en: 'forget', ru: 'забывать' }, { en: 'happen', ru: 'случаться' },
+      { en: 'include', ru: 'включать' }, { en: 'island', ru: 'остров' }, { en: 'knowledge', ru: 'знание' },
+      { en: 'language', ru: 'язык' }, { en: 'library', ru: 'библиотека' }, { en: 'medicine', ru: 'лекарство' },
+      { en: 'message', ru: 'сообщение' }, { en: 'mountain', ru: 'гора' }, { en: 'necessary', ru: 'необходимый' },
+      { en: 'opposite', ru: 'напротив' }, { en: 'passenger', ru: 'пассажир' }, { en: 'pleasure', ru: 'удовольствие' },
+      { en: 'possible', ru: 'возможный' }, { en: 'promise', ru: 'обещать' }, { en: 'receive', ru: 'получать' },
+      { en: 'remember', ru: 'помнить' }, { en: 'scissors', ru: 'ножницы' }, { en: 'serious', ru: 'серьёзный' },
+      { en: 'stranger', ru: 'незнакомец' }, { en: 'terrible', ru: 'ужасный' }, { en: 'village', ru: 'деревня' },
+      { en: 'airport', ru: 'аэропорт' }, { en: 'blanket', ru: 'одеяло' }, { en: 'calendar', ru: 'календарь' },
+      { en: 'customer', ru: 'покупатель' }, { en: 'daughter', ru: 'дочь' }, { en: 'elevator', ru: 'лифт' },
+      { en: 'furniture', ru: 'мебель' }, { en: 'grocery', ru: 'бакалея' }, { en: 'hospital', ru: 'больница' },
+      { en: 'interview', ru: 'собеседование' }, { en: 'kitchen', ru: 'кухня' }, { en: 'laundry', ru: 'стирка' },
+      { en: 'magazine', ru: 'журнал' }, { en: 'notebook', ru: 'тетрадь' }, { en: 'umbrella', ru: 'зонт' }
+    ],
+    'B1-B2': [
+      { en: 'accomplish', ru: 'достигать' }, { en: 'reliable', ru: 'надёжный' },
+      { en: 'opportunity', ru: 'возможность' }, { en: 'environment', ru: 'окружение' },
+      { en: 'encourage', ru: 'поощрять' }, { en: 'essential', ru: 'важный' },
+      { en: 'attitude', ru: 'отношение' }, { en: 'consequence', ru: 'последствие' },
+      { en: 'determine', ru: 'определять' }, { en: 'frequent', ru: 'частый' },
+      { en: 'obstacle', ru: 'препятствие' }, { en: 'persuade', ru: 'убеждать' },
+      { en: 'accurate', ru: 'точный' }, { en: 'reluctant', ru: 'неохотный' }, { en: 'sustainable', ru: 'устойчивый' },
+      { en: 'abandon', ru: 'покидать' }, { en: 'adequate', ru: 'достаточный' },
+      { en: 'anticipate', ru: 'предвидеть' }, { en: 'apparent', ru: 'очевидный' },
+      { en: 'beneficial', ru: 'полезный' }, { en: 'capable', ru: 'способный' },
+      { en: 'circumstance', ru: 'обстоятельство' }, { en: 'collaborate', ru: 'сотрудничать' },
+      { en: 'compelling', ru: 'убедительный' }, { en: 'compromise', ru: 'компромисс' },
+      { en: 'confident', ru: 'уверенный' }, { en: 'considerable', ru: 'значительный' },
+      { en: 'contribute', ru: 'вкладывать' }, { en: 'crucial', ru: 'решающий' },
+      { en: 'curiosity', ru: 'любопытство' }, { en: 'deliberate', ru: 'намеренный' },
+      { en: 'demonstrate', ru: 'показывать' }, { en: 'efficient', ru: 'эффективный' },
+      { en: 'elaborate', ru: 'продуманный' }, { en: 'emphasize', ru: 'подчёркивать' },
+      { en: 'enhance', ru: 'усиливать' }, { en: 'evaluate', ru: 'оценивать' },
+      { en: 'flexible', ru: 'гибкий' }, { en: 'genuine', ru: 'искренний' },
+      { en: 'hesitate', ru: 'колебаться' }, { en: 'implement', ru: 'внедрять' },
+      { en: 'inefficient', ru: 'неэффективный' }, { en: 'maintenance', ru: 'обслуживание' },
+      { en: 'negotiate', ru: 'договариваться' }, { en: 'perceive', ru: 'воспринимать' },
+      { en: 'permanent', ru: 'постоянный' }, { en: 'precaution', ru: 'предосторожность' },
+      { en: 'predictable', ru: 'предсказуемый' }, { en: 'priority', ru: 'приоритет' },
+      { en: 'prohibit', ru: 'запрещать' }, { en: 'prosperity', ru: 'процветание' },
+      { en: 'pursue', ru: 'преследовать' }, { en: 'remarkable', ru: 'выдающийся' },
+      { en: 'reputation', ru: 'репутация' }, { en: 'resistance', ru: 'сопротивление' },
+      { en: 'significant', ru: 'существенный' }, { en: 'sufficient', ru: 'достаточный' },
+      { en: 'temporary', ru: 'временный' }, { en: 'transparent', ru: 'прозрачный' },
+      { en: 'vulnerable', ru: 'уязвимый' }
+    ],
+    'C1-C2': [
+      { en: 'inevitable', ru: 'неизбежный' }, { en: 'ambiguous', ru: 'двусмысленный' },
+      { en: 'meticulous', ru: 'дотошный' }, { en: 'ubiquitous', ru: 'вездесущий' },
+      { en: 'resilient', ru: 'жизнестойкий' }, { en: 'scrutinize', ru: 'изучать' },
+      { en: 'eloquent', ru: 'красноречивый' }, { en: 'ephemeral', ru: 'мимолётный' },
+      { en: 'pragmatic', ru: 'прагматичный' }, { en: 'benevolent', ru: 'доброжелательный' },
+      { en: 'alleviate', ru: 'облегчать' }, { en: 'conundrum', ru: 'головоломка' },
+      { en: 'discrepancy', ru: 'расхождение' }, { en: 'lucrative', ru: 'прибыльный' },
+      { en: 'acumen', ru: 'проницательность' }, { en: 'adverse', ru: 'неблагоприятный' },
+      { en: 'aesthetic', ru: 'эстетический' }, { en: 'altruistic', ru: 'бескорыстный' },
+      { en: 'anomaly', ru: 'аномалия' }, { en: 'arbitrary', ru: 'произвольный' },
+      { en: 'arduous', ru: 'изнурительный' }, { en: 'astute', ru: 'находчивый' },
+      { en: 'audacious', ru: 'дерзкий' }, { en: 'bolster', ru: 'укреплять' },
+      { en: 'candor', ru: 'откровенность' }, { en: 'clandestine', ru: 'тайный' },
+      { en: 'coherent', ru: 'связный' }, { en: 'complacent', ru: 'самодовольный' },
+      { en: 'conspicuous', ru: 'заметный' }, { en: 'corroborate', ru: 'подтверждать' },
+      { en: 'deference', ru: 'почтение' }, { en: 'deleterious', ru: 'пагубный' },
+      { en: 'diligent', ru: 'прилежный' }, { en: 'disparate', ru: 'разнородный' },
+      { en: 'eccentric', ru: 'эксцентричный' }, { en: 'emulate', ru: 'подражать' },
+      { en: 'enigma', ru: 'загадка' }, { en: 'exacerbate', ru: 'обострять' },
+      { en: 'fastidious', ru: 'щепетильный' }, { en: 'formidable', ru: 'грозный' },
+      { en: 'gregarious', ru: 'общительный' }, { en: 'immutable', ru: 'неизменный' },
+      { en: 'impeccable', ru: 'безупречный' }, { en: 'inadvertent', ru: 'непреднамеренный' },
+      { en: 'incisive', ru: 'проницательный' }, { en: 'indigenous', ru: 'коренной' },
+      { en: 'indolent', ru: 'ленивый' }, { en: 'inexorable', ru: 'неумолимый' },
+      { en: 'insidious', ru: 'коварный' }, { en: 'intrepid', ru: 'бесстрашный' },
+      { en: 'juxtapose', ru: 'сопоставлять' }, { en: 'labyrinth', ru: 'лабиринт' },
+      { en: 'magnanimous', ru: 'великодушный' }, { en: 'nefarious', ru: 'злодейский' },
+      { en: 'obsolete', ru: 'устаревший' }, { en: 'ostentatious', ru: 'показной' },
+      { en: 'pernicious', ru: 'губительный' }, { en: 'quandary', ru: 'затруднение' },
+      { en: 'reticent', ru: 'сдержанный' }, { en: 'superfluous', ru: 'излишний' }
+    ]
+  };
+  let me = null, duelMode = 'blitz', duelLevel = 'B1-B2', duelWords = new Array(), friendDuelId = null, friendData = null;
+  let challengeUserId = null, challengeUserName = '';
+  let idx = 0, score = 0, startTime = 0, timerInt = null, locked = false;
+  let matchSlots = new Array(), matchDeck = new Array(), selectedLeft = null, selectedRight = null, matchSecondsLeft = 45;
+
+  function cleanLabel(txt) {
+    return String(txt || '').split('/').at(0).split('(').at(0).split(',').at(0).trim();
+  }
+
+  let bestEnVoice = null;
+  function pickBestEnglishVoice() {
+    if (!('speechSynthesis' in window)) return;
+    const voices = speechSynthesis.getVoices();
+    bestEnVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Microsoft Aria') || v.name.includes('Samantha')))
+      || voices.find(v => v.lang === 'en-US')
+      || voices.find(v => v.lang === 'en-GB')
+      || voices.find(v => v.lang && v.lang.toLowerCase().startsWith('en'))
+      || null;
+  }
+  if ('speechSynthesis' in window) {
+    pickBestEnglishVoice();
+    speechSynthesis.onvoiceschanged = pickBestEnglishVoice;
+  }
+
+  function speakCurrent(rate = 0.92) {
+    const cur = duelWords.at(idx);
+    if (!cur || !('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    if (!bestEnVoice) pickBestEnglishVoice();
+    const u = new SpeechSynthesisUtterance(cur.en);
+    if (bestEnVoice) u.voice = bestEnVoice;
+    u.lang = 'en-US';
+    u.rate = rate;
+    u.pitch = 1.0;
+    speechSynthesis.speak(u);
+  }
+
+  function selectDuelMode(m) {
+    duelMode = m;
+    document.querySelectorAll('.m-pill').forEach(el => el.classList.toggle('active', el.dataset.mode === m));
+    document.getElementById('matchTimeWrap').classList.toggle('hidden', m !== 'match');
+  }
+
   window.addEventListener('DOMContentLoaded', async () => {
     const p = new URLSearchParams(window.location.search);
     const urlDuelId = p.get('d');
@@ -178,6 +313,11 @@
     challengeUserName = p.get('targetName') || '';
 
     if (challengeUserId && challengeUserName && !friendDuelId) {
+      if (challengeUserId === me.user_id) {
+        alert('Нельзя вызвать на дуэль самого себя!');
+        location.href = 'duel.html';
+        return;
+      }
       document.getElementById('opponentTargetInput').value = challengeUserId;
       const ban = document.getElementById('challengeBanner');
       ban.textContent = `⚔️ Прямой вызов игроку ${challengeUserName}! После раунда соперник получит уведомление.`;
@@ -188,9 +328,32 @@
       document.getElementById('opponentPickerWrap').classList.add('hidden');
       try {
         const rows = await sbFetch('duels', { query: `code=eq.${encodeURIComponent(friendDuelId)}` });
-
         friendData = sbFirst(rows);
         if (friendData) {
+          const sameId = friendData.player1_id && friendData.player1_id === me.user_id;
+          const sameName = friendData.player1_name && friendData.player1_name.trim().toLowerCase() === me.nickname.trim().toLowerCase();
+          if (sameId || sameName) {
+            document.getElementById('duelSettingsWrap').classList.add('hidden');
+            document.getElementById('introTitle').textContent = '🚫 Это ваш собственный вызов';
+            document.getElementById('introDesc').textContent = 'Играть против самого себя запрещено, чтобы рейтинг оставался честным. Отправьте эту ссылку другу!';
+            document.getElementById('startDuelBtn').textContent = '📋 Скопировать ссылку для друга';
+            document.getElementById('startDuelBtn').onclick = () => {
+              const link = `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/duel.html?d=${friendData.code}`;
+              navigator.clipboard.writeText(link);
+              alert('Ссылка-вызов скопирована! Отправьте её другу.');
+            };
+            return;
+          }
+
+          if (friendData.player2_name) {
+            document.getElementById('duelSettingsWrap').classList.add('hidden');
+            document.getElementById('introTitle').textContent = '🏁 Эта дуэль уже завершена';
+            document.getElementById('introDesc').textContent = `Поединок уже состоялся: ${friendData.player1_name} (${friendData.player1_score}) против ${friendData.player2_name} (${friendData.player2_score}). Создайте новый вызов!`;
+            document.getElementById('startDuelBtn').textContent = '⚔️ Создать новую дуэль';
+            document.getElementById('startDuelBtn').onclick = () => { location.href = 'duel.html'; };
+            return;
+          }
+
           document.getElementById('introTitle').textContent = `⚔️ Вызов от ${friendData.player1_name}!`;
           document.getElementById('introDesc').textContent = `Результат соперника: ${friendData.player1_score} очков за ${friendData.player1_time} сек. Попробуйте побить!`;
           duelLevel = friendData.level;
@@ -202,93 +365,15 @@
     }
   });
 
-
-  const POOLS = {
-    'A1-A2': [
-      { en: 'journey', ru: 'путешествие' }, { en: 'weather', ru: 'погода' }, { en: 'improve', ru: 'улучшать' },
-      { en: 'decision', ru: 'решение' }, { en: 'mistake', ru: 'ошибка' }, { en: 'prepare', ru: 'готовиться' },
-      { en: 'advice', ru: 'совет' }, { en: 'healthy', ru: 'здоровый' }, { en: 'bridge', ru: 'мост' },
-      { en: 'suddenly', ru: 'внезапно' }, { en: 'borrow', ru: 'брать взаймы' }, { en: 'neighbor', ru: 'сосед' },
-      { en: 'century', ru: 'век, столетие' }, { en: 'believe', ru: 'верить' }, { en: 'careful', ru: 'осторожный' }
-    ],
-    'B1-B2': [
-      { en: 'accomplish', ru: 'выполнять, достигать' }, { en: 'reliable', ru: 'надёжный' },
-      { en: 'opportunity', ru: 'возможность' }, { en: 'environment', ru: 'окружающая среда' },
-      { en: 'encourage', ru: 'поощрять, ободрять' }, { en: 'essential', ru: 'существенный, важный' },
-      { en: 'attitude', ru: 'отношение, позиция' }, { en: 'consequence', ru: 'последствие' },
-      { en: 'determine', ru: 'определять, решать' }, { en: 'frequent', ru: 'частый' },
-      { en: 'obstacle', ru: 'препятствие' }, { en: 'persuade', ru: 'убеждать' },
-      { en: 'accurate', ru: 'точный' }, { en: 'reluctant', ru: 'неохотный' }, { en: 'sustainable', ru: 'устойчивый' }
-    ],
-    'C1-C2': [
-      { en: 'inevitable', ru: 'неизбежный' }, { en: 'ambiguous', ru: 'двусмысленный' },
-      { en: 'meticulous', ru: 'дотошный, скрупулёзный' }, { en: 'ubiquitous', ru: 'вездесущий' },
-      { en: 'resilient', ru: 'стойкий, жизнестойкий' }, { en: 'scrutinize', ru: 'тщательно изучать' },
-      { en: 'eloquent', ru: 'красноречивый' }, { en: 'ephemeral', ru: 'мимолётный' },
-      { en: 'pragmatic', ru: 'прагматичный' }, { en: 'benevolent', ru: 'доброжелательный' },
-      { en: 'alleviate', ru: 'облегчать, смягчать' }, { en: 'conundrum', ru: 'сложная головоломка' },
-      { en: 'discrepancy', ru: 'расхождение, несоответствие' }, { en: 'lucrative', ru: 'прибыльный' }
-    ]
-  };
-
-  let me = null, duelMode = 'blitz', duelLevel = 'B1-B2', duelWords = [], friendDuelId = null, friendData = null;
-  let challengeUserId = null, challengeUserName = '';
-  let idx = 0, score = 0, startTime = 0, timerInt = null, locked = false;
-  let matchSlots = [], matchDeck = [], selectedLeft = null, selectedRight = null, matchSecondsLeft = 45;
-
-  function selectDuelMode(m) {
-    duelMode = m;
-    document.querySelectorAll('.m-pill').forEach(el => el.classList.toggle('active', el.dataset.mode === m));
-    document.getElementById('matchTimeWrap').classList.toggle('hidden', m !== 'match');
-  }
-
-  window.addEventListener('DOMContentLoaded', async () => {
-    me = getCurrentUserProfile();
-    if (!me || !me.user_id) {
-      document.getElementById('authGateCard').classList.remove('hidden');
-      document.getElementById('authRedirectBtn').href = `profile.html?return=${encodeURIComponent(window.location.href)}`;
-      return;
-    }
-
-    document.getElementById('duelIntro').classList.remove('hidden');
-    document.getElementById('activeDuelNick').textContent = `${me.nickname} (${me.user_id})`;
-
-    const p = new URLSearchParams(window.location.search);
-    friendDuelId = p.get('d');
-    challengeUserId = p.get('challenge');
-    challengeUserName = p.get('targetName') || '';
-
-    if (challengeUserId && challengeUserName) {
-      document.getElementById('opponentTargetInput').value = challengeUserId;
-      const ban = document.getElementById('challengeBanner');
-      ban.textContent = `⚔️ Прямой вызов игроку ${challengeUserName}! После раунда соперник получит уведомление.`;
-      ban.classList.remove('hidden');
-    }
-
-    if (friendDuelId) {
-      document.getElementById('opponentPickerWrap').classList.add('hidden');
-      const rows = await sbFetch('duels', { query: `id=eq.${encodeURIComponent(friendDuelId)}` });
-      friendData = sbFirst(rows);
-      if (friendData) {
-        document.getElementById('introTitle').textContent = `⚔️ Вызов от ${friendData.player1_name}!`;
-        document.getElementById('introDesc').textContent = `Результат соперника: ${friendData.player1_score} очков за ${friendData.player1_time} сек. Попробуйте побить!`;
-        duelLevel = friendData.level;
-        duelMode = friendData.mode || 'blitz';
-        selectDuelMode(duelMode);
-        document.getElementById('duelLevel').disabled = true;
-      }
-    }
-  });
-
   function startDuel() {
     duelLevel = friendData ? friendData.level : document.getElementById('duelLevel').value;
-    const pool = [...POOLS[duelLevel]].sort(() => Math.random() - 0.5);
+    const pool = Array.from(POOLS[duelLevel]).sort(() => Math.random() - 0.5);
 
     document.getElementById('duelIntro').classList.add('hidden');
     score = 0;
 
     if (duelMode === 'match') {
-      matchDeck = [...pool, ...pool].sort(() => Math.random() - 0.5);
+      matchDeck = new Array(...pool, ...pool).sort(() => Math.random() - 0.5);
       matchSecondsLeft = friendData ? Math.round(friendData.player1_time) : parseInt(document.getElementById('matchDurationSelect').value, 10);
       startMatchGame();
       return;
@@ -303,13 +388,12 @@
     }, 100);
     renderBlitzQuestion();
   }
-
   function startMatchGame() {
     document.getElementById('duelMatch').classList.remove('hidden');
     document.getElementById('matchScore').textContent = '0';
     document.getElementById('matchTimer').textContent = matchSecondsLeft;
     selectedLeft = null; selectedRight = null;
-    matchSlots = matchDeck.splice(0, 5).map((item, i) => ({ slot: i, en: item.en, ru: item.ru }));
+    matchSlots = matchDeck.splice(0, 5).map((item, i) => ({ slot: i, en: item.en, ru: cleanLabel(item.ru) }));
     renderMatchBoard();
 
     timerInt = setInterval(() => {
@@ -325,10 +409,11 @@
   function renderMatchBoard() {
     const leftCol = document.getElementById('matchLeftCol');
     const rightCol = document.getElementById('matchRightCol');
-    const rightOrder = [...matchSlots].sort(() => Math.random() - 0.5);
+    const rightOrder = Array.from(matchSlots).sort(() => Math.random() - 0.5);
     leftCol.innerHTML = matchSlots.map(s => `<div class="match-card" data-slot="${s.slot}" data-side="left" onclick="pickMatchCard(this, 'left', ${s.slot})">${s.en}</div>`).join('');
     rightCol.innerHTML = rightOrder.map(s => `<div class="match-card" data-slot="${s.slot}" data-side="right" onclick="pickMatchCard(this, 'right', ${s.slot})">${s.ru}</div>`).join('');
   }
+
   function pickMatchCard(el, side, slot) {
     if (el.classList.contains('fading-out') || el.classList.contains('ok')) return;
     document.querySelectorAll(`.match-card[data-side="${side}"]`).forEach(c => c.classList.remove('selected'));
@@ -347,8 +432,9 @@
         setTimeout(() => { L.el.classList.add('fading-out'); R.el.classList.add('fading-out'); }, 250);
         setTimeout(() => {
           const nextPair = matchDeck.shift() || POOLS[duelLevel].at(Math.floor(Math.random() * POOLS[duelLevel].length));
-          matchSlots[L.slot] = { slot: L.slot, en: nextPair.en, ru: nextPair.ru };
-          L.el.textContent = nextPair.en; R.el.textContent = nextPair.ru;
+          const cleanRu = cleanLabel(nextPair.ru);
+          matchSlots[L.slot] = { slot: L.slot, en: nextPair.en, ru: cleanRu };
+          L.el.textContent = nextPair.en; R.el.textContent = cleanRu;
           L.el.className = 'match-card spawning'; R.el.className = 'match-card spawning';
           requestAnimationFrame(() => { L.el.classList.remove('spawning'); R.el.classList.remove('spawning'); });
         }, 1550);
@@ -360,24 +446,22 @@
     }
   }
 
-  function speakCurrent() {
-    const cur = duelWords.at(idx);
-    if (!cur) return;
-    const u = new SpeechSynthesisUtterance(cur.en);
-    u.lang = 'en-US'; u.rate = 0.92;
-    speechSynthesis.speak(u);
-  }
-
   function renderBlitzQuestion() {
     locked = false;
     const cur = duelWords.at(idx);
+    const rightAns = cleanLabel(cur.ru);
     document.getElementById('qIdx').textContent = idx + 1;
     document.getElementById('qScore').textContent = score;
     document.getElementById('qWord').textContent = duelMode === 'listening' ? '🎧 • • • • •' : cur.en;
-    speakCurrent();
+    speakCurrent(0.92);
 
-    const wrong = POOLS[duelLevel].filter(w => w.ru !== cur.ru).sort(() => Math.random() - 0.5).slice(0, 3).map(w => w.ru);
-    const opts = [cur.ru, ...wrong].sort(() => Math.random() - 0.5);
+    const wrong = POOLS[duelLevel]
+      .map(w => cleanLabel(w.ru))
+      .filter(r => r && r !== rightAns)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+    const opts = Array.from(new Set(new Array(rightAns, ...wrong))).slice(0, 4).sort(() => Math.random() - 0.5);
+
     const box = document.getElementById('qOptions');
     box.innerHTML = '';
     opts.forEach(o => {
@@ -388,10 +472,10 @@
         if (locked) return;
         locked = true;
         document.getElementById('qWord').textContent = cur.en;
-        if (o === cur.ru) { b.classList.add('correct'); score++; }
+        if (o === rightAns) { b.classList.add('correct'); score++; }
         else {
           b.classList.add('wrong');
-          document.querySelectorAll('.opt-btn').forEach(x => { if (x.textContent === cur.ru) x.classList.add('correct'); });
+          document.querySelectorAll('.opt-btn').forEach(x => { if (x.textContent === rightAns) x.classList.add('correct'); });
         }
         setTimeout(() => { idx++; idx < 8 ? renderBlitzQuestion() : finishDuel(); }, 650);
       };
@@ -399,7 +483,7 @@
     });
   }
 
-    async function finishDuel(fixedSeconds = null) {
+  async function finishDuel(fixedSeconds = null) {
     clearInterval(timerInt);
     const elapsed = fixedSeconds !== null ? fixedSeconds : parseFloat(((performance.now() - startTime) / 1000).toFixed(1));
     const pName = me.nickname;
@@ -410,6 +494,14 @@
 
     if (friendData) {
       const isWin = score > friendData.player1_score || (score === friendData.player1_score && elapsed < friendData.player1_time);
+      try {
+        await sbFetch('duels', {
+          method: 'PATCH',
+          query: `code=eq.${encodeURIComponent(friendData.code)}`,
+          body: { player2_name: pName, player2_score: Math.round(score), player2_time: Number(elapsed) }
+        });
+      } catch (e) {}
+
       if (isWin) {
         const nextWins = (me.duel_wins || 0) + 1;
         const nextXp = (me.xp || 0) + 25;
@@ -424,19 +516,19 @@
       return;
     }
 
-    // Одиночный раунд для создания вызова — победу в топ НЕ начисляем до ответа соперника
     const unit = duelMode === 'match' ? 'пар' : 'из 8';
     document.getElementById('resHeadline').textContent = '⚔️ Вызов создан!';
-    document.getElementById('resStats').textContent = `${pName}, ваш результат: ${score} ${unit} за ${elapsed} сек. Отправьте ссылку сопернику — победа засчитается в реальном сравнении результатов!`;
+    document.getElementById('resStats').textContent = `${pName}, ваш результат: ${score} ${unit} за ${elapsed} сек. Отправьте ссылку сопернику — победа засчитается в реальном поединке!`;
     const baseUrl = WS_CONFIG.SITE_URL.replace(/\/$/, '');
 
-          try {
+    try {
       const duelCode = generateShortCode('DUEL');
       const res = await sbFetch('duels', {
         method: 'POST',
-               body: {
+        body: {
           code: duelCode,
           challenger_name: pName,
+          player1_id: me.user_id,
           level: duelLevel,
           mode: duelMode,
           words: duelWords || new Array(),
@@ -444,9 +536,8 @@
           player1_score: Math.round(score),
           player1_time: Number(elapsed)
         }
-
       });
-            const created = sbFirst(res);
+      const created = sbFirst(res);
       if (created && created.code) {
         const fullDuelUrl = `${baseUrl}/duel.html?d=${created.code}`;
         document.getElementById('shareLink').value = fullDuelUrl;
@@ -458,24 +549,22 @@
             : `nickname=ilike.${encodeURIComponent(targetRaw)}`;
           const foundRows = await sbFetch('profiles', { query: q });
           const targetUser = sbFirst(foundRows);
-          if (targetUser && targetUser.user_id) {
+          if (targetUser && targetUser.user_id && targetUser.user_id !== me.user_id) {
             await sendAppNotification(
               targetUser.user_id,
               `⚔️ Вызов на дуэль от ${pName}!`,
               `${pName} набрал(а) ${score} ${unit} за ${elapsed} сек. Перейдите по ссылке и попробуйте побить результат!`,
               fullDuelUrl
             );
+          } else if (targetUser && targetUser.user_id === me.user_id) {
+            alert('Вызов самому себе не отправлен, но вы можете скопировать ссылку ниже для друга.');
           }
         }
       }
-
     } catch (e) {
-      alert('Ошибка сохранения дуэли в базу: ' + e.message);
       document.getElementById('shareLink').value = `${baseUrl}/duel.html`;
     }
-
-}
-
+  }
 
   function copyDuelLink() {
     const inp = document.getElementById('shareLink');
@@ -497,7 +586,7 @@
     const url = document.getElementById('shareLink').value;
     if (!url) return;
     if (navigator.share) {
-      navigator.share({ title: 'Вызов на веб-дуэль WordSprint!', text: `Попробуй побить мой результат в WordSprint!`, url });
+      navigator.share({ title: 'Вызов на веб-дуэль WordSprint!', text: 'Попробуй побить мой результат в WordSprint!', url });
     } else {
       copyDuelLink();
     }
