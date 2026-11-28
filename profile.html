@@ -85,16 +85,18 @@
     <div id="loginFormBox">
       <label>Ваш ID (WSU-XXXX) или Никнейм</label>
       <input type="text" id="loginIdOrNick" placeholder="Например: WSU-4812">
-      <label>PIN-код (4 цифры)</label>
-      <input type="password" id="loginPin" maxlength="4" placeholder="••••" onkeydown="if(event.key==='Enter') loginProfile()">
+      <label>Пароль</label>
+<input type="password" id="loginPin" placeholder="Введите пароль" onkeydown="if(event.key==='Enter') loginProfile()">
+
       <button class="btn" id="loginBtn" style="width:100%;" onclick="loginProfile()">🚀 Войти в профиль</button>
     </div>
 
     <div id="registerFormBox" class="hidden">
       <label>Придумайте уникальный Никнейм</label>
       <input type="text" id="regNick" placeholder="Введите никнейм">
-      <label>Придумайте PIN-код (4 цифры)</label>
-      <input type="password" id="regPin" maxlength="4" placeholder="Например: 2580">
+      <label>Придумайте надёжный пароль (минимум 6 символов)</label>
+<input type="password" id="regPin" placeholder="Буквы, цифры или символы (от 6 знаков)">
+
       <label>Email для уведомлений (необязательно)</label>
       <input type="email" id="regEmail" placeholder="name@example.com">
       <button class="btn btn-accent" id="regBtn" style="width:100%;" onclick="registerProfile()">✨ Создать профиль</button>
@@ -206,8 +208,9 @@
     <input type="text" id="setProfBio" maxlength="80" placeholder="Например: Готовлюсь к B2 First">
     <label>Email для уведомлений (дуэли, ДЗ, грамоты)</label>
     <input type="email" id="setProfEmail" placeholder="name@example.com">
-    <label>Новый PIN-код (4 цифры, оставьте пустым чтобы не менять)</label>
-    <input type="password" id="setProfNewPin" maxlength="4" placeholder="••••">
+    <label>Новый пароль (от 6 символов, оставьте пустым чтобы не менять)</label>
+<input type="password" id="setProfNewPin" placeholder="Новый пароль">
+
     <button class="btn btn-accent" style="width:100%; margin-top:16px;" onclick="saveProfileSettings()">💾 Сохранить изменения</button>
   </div>
 </div>
@@ -246,19 +249,21 @@
     }
   });
 
-  async function registerProfile() {
+    async function registerProfile() {
     const nickname = document.getElementById('regNick').value.trim();
-    const pin = document.getElementById('regPin').value.trim();
+    const rawPass = document.getElementById('regPin').value.trim();
     const email = document.getElementById('regEmail').value.trim();
-    if (!nickname || pin.length < 4) return alert('Введите никнейм и 4-значный PIN-код!');
+    if (!nickname) return alert('Введите уникальный никнейм!');
+    if (rawPass.length < 6) return alert('Пароль должен содержать минимум 6 символов (используйте буквы и цифры)!');
 
     const btn = document.getElementById('regBtn');
     btn.disabled = true; btn.textContent = '⏳ Создаём...';
     try {
       const user_id = generateShortCode('WSU');
+      const hashedPin = await hashPassword(rawPass);
       const rows = await sbFetch('profiles', {
         method: 'POST',
-        body: { user_id, nickname, pin, email, bio: '', xp: 0, streak: 1, duel_wins: 0 }
+        body: { user_id, nickname, pin: hashedPin, email, bio: '', xp: 0, streak: 1, duel_wins: 0 }
       });
       const created = sbFirst(rows);
       if (created && created.user_id) {
@@ -276,21 +281,40 @@
       btn.disabled = false; btn.textContent = '✨ Создать профиль';
     }
   }
+
   async function loginProfile() {
     const val = document.getElementById('loginIdOrNick').value.trim();
-    const pin = document.getElementById('loginPin').value.trim();
-    if (!val || !pin) return alert('Введите ID / никнейм и PIN-код!');
+    const rawPass = document.getElementById('loginPin').value.trim();
+    if (!val || !rawPass) return alert('Введите ID / никнейм и пароль!');
 
     const btn = document.getElementById('loginBtn');
     btn.disabled = true; btn.textContent = '⏳ Вход...';
     try {
       const cleanVal = val.replace(/\s+/g, '');
       const query = cleanVal.toUpperCase().startsWith('WSU-')
-        ? `user_id=eq.${encodeURIComponent(cleanVal.toUpperCase())}&pin=eq.${encodeURIComponent(pin)}&limit=1`
-        : `nickname=ilike.${encodeURIComponent(val)}&pin=eq.${encodeURIComponent(pin)}&limit=1`;
+        ? `user_id=eq.${encodeURIComponent(cleanVal.toUpperCase())}&limit=1`
+        : `nickname=ilike.${encodeURIComponent(val)}&limit=1`;
       const rows = await sbFetch('profiles', { query });
       const user = sbFirst(rows);
-      if (!user) return alert('Профиль не найден или неверный PIN-код.');
+      if (!user) return alert('Профиль не найден.');
+
+      const hashedPass = await hashPassword(rawPass);
+      const isHashedMatch = user.pin === hashedPass;
+      const isLegacyMatch = !String(user.pin).startsWith('sha256:') && user.pin === rawPass;
+
+      if (!isHashedMatch && !isLegacyMatch) {
+        return alert('Неверный пароль!');
+      }
+
+      // Автоматически шифруем старый 4-значный PIN при первом входе
+      if (isLegacyMatch) {
+        await sbFetch('profiles', {
+          method: 'PATCH',
+          query: `user_id=eq.${encodeURIComponent(user.user_id)}`,
+          body: { pin: hashedPass }
+        });
+        user.pin = hashedPass;
+      }
 
       localStorage.setItem('ws_user_profile', JSON.stringify(user));
       myProfile = user;
@@ -298,6 +322,21 @@
       await refreshMyProfile();
     } catch (e) { alert('Ошибка входа: ' + e.message); }
     finally { btn.disabled = false; btn.textContent = '🚀 Войти в профиль'; }
+  }
+
+  async function saveProfileSettings() {
+    const bio = document.getElementById('setProfBio').value.trim();
+    const email = document.getElementById('setProfEmail').value.trim();
+    const newPass = document.getElementById('setProfNewPin').value.trim();
+    if (newPass && newPass.length < 6) return alert('Новый пароль должен содержать минимум 6 символов!');
+
+    const patchBody = { bio, email };
+    if (newPass) patchBody.pin = await hashPassword(newPass);
+
+    await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(myProfile.user_id)}`, body: patchBody });
+    closeProfileSettingsModal();
+    alert('Настройки профиля сохранены!');
+    await refreshMyProfile();
   }
 
   function logoutProfile() { localStorage.removeItem('ws_user_profile'); location.href = 'profile.html'; }
@@ -519,21 +558,7 @@
 
   function closeProfileSettingsModal() { document.getElementById('profSettingsModal').classList.add('hidden'); }
 
-  async function saveProfileSettings() {
-    const bio = document.getElementById('setProfBio').value.trim();
-    const email = document.getElementById('setProfEmail').value.trim();
-    const newPin = document.getElementById('setProfNewPin').value.trim();
-    if (newPin && newPin.length < 4) return alert('PIN-код должен состоять из 4 цифр!');
-
-    const patchBody = { bio, email };
-    if (newPin) patchBody.pin = newPin;
-
-    await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(myProfile.user_id)}`, body: patchBody });
-    closeProfileSettingsModal();
-    alert('Настройки профиля сохранены!');
-    await refreshMyProfile();
-  }
-
+  
   function copyMyProfileLink() {
     const url = `${WS_CONFIG.SITE_URL.replace(/\/$/, '')}/profile.html?view=${encodeURIComponent(myProfile.user_id)}`;
     navigator.clipboard.writeText(url);
