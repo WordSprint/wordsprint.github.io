@@ -187,7 +187,8 @@
     if (friendDuelId) {
       document.getElementById('opponentPickerWrap').classList.add('hidden');
       try {
-        const rows = await sbFetch('duels', { query: `id=eq.${encodeURIComponent(friendDuelId)}` });
+        const rows = await sbFetch('duels', { query: `code=eq.${encodeURIComponent(friendDuelId)}` });
+
         friendData = sbFirst(rows);
         if (friendData) {
           document.getElementById('introTitle').textContent = `⚔️ Вызов от ${friendData.player1_name}!`;
@@ -433,8 +434,9 @@
       const duelCode = generateShortCode('DUEL');
       const res = await sbFetch('duels', {
         method: 'POST',
-        body: {
+               body: {
           code: duelCode,
+          challenger_name: pName,
           level: duelLevel,
           mode: duelMode,
           words: duelWords || new Array(),
@@ -442,10 +444,11 @@
           player1_score: Math.round(score),
           player1_time: Number(elapsed)
         }
+
       });
-      const created = sbFirst(res);
-      if (created && created.id) {
-        const fullDuelUrl = `${baseUrl}/duel.html?d=${created.id}`;
+            const created = sbFirst(res);
+      if (created && created.code) {
+        const fullDuelUrl = `${baseUrl}/duel.html?d=${created.code}`;
         document.getElementById('shareLink').value = fullDuelUrl;
 
         const targetRaw = document.getElementById('opponentTargetInput').value.trim();
@@ -465,6 +468,7 @@
           }
         }
       }
+
     } catch (e) {
       alert('Ошибка сохранения дуэли в базу: ' + e.message);
       document.getElementById('shareLink').value = `${baseUrl}/duel.html`;
