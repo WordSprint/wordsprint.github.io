@@ -13,9 +13,10 @@ const WS_CONFIG = {
   const link = document.createElement('link');
   link.rel = 'icon';
   link.type = 'image/svg+xml';
-  link.href = 'favicon.svg';
+  link.href = 'favicon.svg?v=2';
   document.head.appendChild(link);
 })();
+
 
 (function initTheme() {
   const saved = localStorage.getItem('ws_theme') || 'dark';
