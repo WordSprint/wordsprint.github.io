@@ -429,10 +429,12 @@
     document.getElementById('resStats').textContent = `${pName}, ваш результат: ${score} ${unit} за ${elapsed} сек. Отправьте ссылку сопернику — победа засчитается в реальном сравнении результатов!`;
     const baseUrl = WS_CONFIG.SITE_URL.replace(/\/$/, '');
 
-        try {
+          try {
+      const duelCode = generateShortCode('DUEL');
       const res = await sbFetch('duels', {
         method: 'POST',
         body: {
+          code: duelCode,
           level: duelLevel,
           mode: duelMode,
           words: duelWords || new Array(),
@@ -462,13 +464,12 @@
             );
           }
         }
-      } else {
-        alert('Сервер не вернул ID дуэли.');
       }
     } catch (e) {
       alert('Ошибка сохранения дуэли в базу: ' + e.message);
       document.getElementById('shareLink').value = `${baseUrl}/duel.html`;
     }
+
 }
 
 
