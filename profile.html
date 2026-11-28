@@ -93,6 +93,9 @@
       <input type="password" id="regPin" maxlength="4" placeholder="Например: 2580">
       <label>Email (необязательно — для уведомлений)</label>
       <input type="email" id="regEmail" placeholder="name@example.com">
+            <label>Email для уведомлений (необязательно)</label>
+      <input type="email" id="regEmail" placeholder="name@example.com">
+
       <button class="btn btn-accent" id="regBtn" style="width:100%;" onclick="registerProfile()">✨ Создать профиль</button>
     </div>
   </div>
@@ -111,10 +114,12 @@
           </div>
         </div>
 
-        <div id="ownerActions" style="display:flex; gap:8px; flex-wrap:wrap;">
+               <div id="ownerActions" style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-sec btn-sm" onclick="updateProfileEmail()">✉️ Почта</button>
           <button class="btn btn-sec btn-sm" onclick="copyMyProfileLink()">🔗 Ссылка на профиль</button>
           <button class="btn btn-sec btn-sm" onclick="logoutProfile()">Выйти</button>
         </div>
+
 
         <div id="guestActions" class="hidden">
           <a id="guestChallengeBtn" href="duel.html" class="btn btn-accent btn-sm">⚔️ Вызвать на дуэль</a>
@@ -165,6 +170,8 @@
     </div>
   </div>
 </main>
+  
+
 <script>
   let myProfile = null;
   let viewedProfile = null;
@@ -424,6 +431,22 @@
     navigator.clipboard.writeText(url);
     alert('Ссылка на ваш профиль скопирована!');
   }
+    async function updateProfileEmail() {
+    const email = prompt('Введите ваш Email для получения уведомлений (вызовы на дуэль, ДЗ, грамоты):', myProfile.email || '');
+    if (email === null) return;
+    try {
+      await sbFetch('profiles', {
+        method: 'PATCH',
+        query: `user_id=eq.${encodeURIComponent(myProfile.user_id)}`,
+        body: { email: email.trim() }
+      });
+      alert(email.trim() ? `Email ${email.trim()} успешно привязан к профилю!` : 'Email отвязан от профиля.');
+      await refreshMyProfile();
+    } catch (e) {
+      alert('Ошибка сохранения почты: ' + e.message);
+    }
+  }
+
 </script>
 </body>
 </html>
