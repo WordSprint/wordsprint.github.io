@@ -9,6 +9,13 @@ const WS_CONFIG = {
   EMAILJS_SERVICE_ID: 'service_326zpuc',
   EMAILJS_TEMPLATE_ID: 'template_ofg2u88'
 };
+(function initFavicon() {
+  const link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/svg+xml';
+  link.href = 'favicon.svg';
+  document.head.appendChild(link);
+})();
 
 (function initTheme() {
   const saved = localStorage.getItem('ws_theme') || 'dark';
