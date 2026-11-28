@@ -19,37 +19,41 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
     a { color: inherit; text-decoration: none; }
-    .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
     header { border-bottom: 1px solid var(--border); background: var(--card); position: sticky; top: 0; z-index: 50; }
     .nav { display: flex; justify-content: space-between; align-items: center; min-height: 64px; flex-wrap: wrap; gap: 10px; padding: 8px 0; }
     .logo { font-weight: 800; font-size: 1.25rem; }
     .nav-links { display: flex; gap: 15px; font-size: 0.9rem; color: var(--muted); flex-wrap: wrap; align-items: center; }
     .nav-links a:hover, .nav-links a.active { color: var(--primary); font-weight: 600; }
     .theme-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-top: 22px; }
-    h1 { font-size: 1.75rem; font-weight: 800; margin-bottom: 6px; }
-    h2 { font-size: 1.2rem; margin-bottom: 10px; }
-    .desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 14px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-top: 20px; }
+    h1 { font-size: 1.7rem; font-weight: 800; margin-bottom: 4px; }
+    h2 { font-size: 1.15rem; margin-bottom: 10px; }
+    .desc { color: var(--muted); font-size: 0.88rem; margin-bottom: 12px; }
     label { display: block; font-size: 0.84rem; color: var(--muted); margin: 10px 0 4px; }
     input { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 0.95rem; outline: none; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 18px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.92rem; cursor: pointer; background: var(--primary); color: #fff; margin-top: 12px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; background: var(--primary); color: #fff; margin-top: 12px; }
     .btn-accent { background: var(--accent); color: #fff; }
     .btn-sec { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
-    .btn-sm { padding: 7px 12px; font-size: 0.82rem; margin-top: 0; }
+    .btn-sm { padding: 7px 11px; font-size: 0.82rem; margin-top: 0; }
     .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
     .tab-btn { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--muted); font-weight: 700; cursor: pointer; }
     .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-    .prof-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-    .avatar { width: 64px; height: 64px; border-radius: 18px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; font-size: 1.8rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+    .prof-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; }
+    .avatar { width: 64px; height: 64px; border-radius: 18px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; font-size: 1.8rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .rank-bar-bg { width: 100%; height: 8px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; margin-top: 6px; }
+    .rank-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.35s; }
     .stats-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
     @media (max-width: 680px) { .stats-4 { grid-template-columns: 1fr 1fr; } }
     .stat-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
     .stat-box b { font-size: 1.35rem; display: block; color: var(--accent); }
     .stat-box span { font-size: 0.8rem; color: var(--muted); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media (max-width: 760px) { .grid-2 { grid-template-columns: 1fr; } }
-    .notif-item { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+    @media (max-width: 780px) { .grid-2 { grid-template-columns: 1fr; } }
+    .list-row { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; }
     .award-card { background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(99, 102, 241, 0.1)); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+    .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; max-width: 440px; width: 100%; padding: 24px; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -91,11 +95,8 @@
       <input type="text" id="regNick" placeholder="Введите никнейм">
       <label>Придумайте PIN-код (4 цифры)</label>
       <input type="password" id="regPin" maxlength="4" placeholder="Например: 2580">
-      <label>Email (необязательно — для уведомлений)</label>
+      <label>Email для уведомлений (необязательно)</label>
       <input type="email" id="regEmail" placeholder="name@example.com">
-            <label>Email для уведомлений (необязательно)</label>
-      <input type="email" id="regEmail" placeholder="name@example.com">
-
       <button class="btn btn-accent" id="regBtn" style="width:100%;" onclick="registerProfile()">✨ Создать профиль</button>
     </div>
   </div>
@@ -110,20 +111,28 @@
               <h1 id="profNickname" style="margin:0;">—</h1>
               <span id="profRankBadge" style="background:rgba(99,102,241,0.16); color:var(--primary); padding:3px 10px; border-radius:999px; font-size:0.82rem; font-weight:700;">🏅 Новичок</span>
             </div>
-            <div style="color:var(--muted); font-size:0.88rem; margin-top:2px;">Единый ID: <b id="profUserId" style="font-family:monospace; color:var(--accent);">WSU-0000</b></div>
+            <div style="color:var(--muted); font-size:0.86rem; margin-top:2px;">Единый ID: <b id="profUserId" style="font-family:monospace; color:var(--accent);">WSU-0000</b></div>
+            <div id="profBioText" style="color:var(--text); font-size:0.88rem; margin-top:4px; font-style:italic;"></div>
           </div>
         </div>
 
-               <div id="ownerActions" style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="btn btn-sec btn-sm" onclick="updateProfileEmail()">✉️ Почта</button>
-          <button class="btn btn-sec btn-sm" onclick="copyMyProfileLink()">🔗 Ссылка на профиль</button>
+        <div id="ownerActions" style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-sec btn-sm" onclick="openProfileSettingsModal()">⚙️ Настройки</button>
+          <button class="btn btn-sec btn-sm" onclick="copyMyProfileLink()">🔗 Ссылка</button>
           <button class="btn btn-sec btn-sm" onclick="logoutProfile()">Выйти</button>
         </div>
-
 
         <div id="guestActions" class="hidden">
           <a id="guestChallengeBtn" href="duel.html" class="btn btn-accent btn-sm">⚔️ Вызвать на дуэль</a>
         </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--muted);">
+          <span id="rankProgressLabel">Прогресс звания</span>
+          <b id="rankNextTarget">0 / 150 XP</b>
+        </div>
+        <div class="rank-bar-bg"><div class="rank-bar-fill" id="rankProgressFill" style="width:0%"></div></div>
       </div>
 
       <div class="stats-4">
@@ -133,14 +142,14 @@
         <div class="stat-box"><b id="statCert">Нет</b><span>Сертификат CEFR</span></div>
       </div>
     </div>
-
     <div class="grid-2">
       <div class="card" id="notificationsCard">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-  <h2 style="margin:0;">🔔 Входящие уведомления и вызовы</h2>
-  <button class="btn btn-sec btn-sm" id="clearNotifsBtn" onclick="clearAllNotifications()">Очистить все</button>
-</div>
-
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
+          <h2 style="margin:0;">🔔 Уведомления и вызовы</h2>
+          <button class="btn btn-sec btn-sm hidden" id="clearNotifsBtn" onclick="clearAllNotifications()">Очистить все</button>
+        </div>
+        <div id="notificationsList"><p style="color:var(--muted); font-size:0.9rem;">Новых уведомлений пока нет.</p></div>
+      </div>
 
       <div class="card">
         <h2>🏆 Именные грамоты и награды</h2>
@@ -148,32 +157,60 @@
       </div>
     </div>
 
-    <div class="grid-2">
-      <div class="card" id="schoolLinkCard">
-        <h2>🎓 Привязка к репетитору или школе</h2>
-        <p class="desc" id="schoolStatusInfo">Если вы занимаетесь с преподавателем на WordSprint, введите его код для получения домашних заданий.</p>
-        <label>Код преподавателя / школы (TCH-XXXX или SCH-XXXX)</label>
-        <input type="text" id="bindTeacherCode" placeholder="TCH-0000" style="text-transform:uppercase; font-family:monospace;">
-        <label>Ваш код ученика (если выдал учитель, STU-XXXX)</label>
-        <input type="text" id="bindStudentCode" placeholder="STU-0000" style="text-transform:uppercase; font-family:monospace;">
-        <label>Ваше имя и фамилия для журнала</label>
-        <input type="text" id="bindFullName" placeholder="Иван Иванов">
-        <button class="btn" onclick="bindTeacherCode()">🔗 Привязаться к преподавателю</button>
-        <div id="assignedLessonsList" style="margin-top:14px;"></div>
+    <div class="grid-2" id="ownerExtraGrid">
+      <div>
+        <div class="card">
+          <h2>👥 Мои учебные группы</h2>
+          <div id="myGroupsList"><p style="color:var(--muted); font-size:0.9rem;">Вы пока не состоите в группах.</p></div>
+          <a href="groups.html" class="btn btn-sec btn-sm" style="margin-top:8px;">➕ Перейти в раздел групп</a>
+        </div>
+
+        <div class="card">
+          <h2>⚔️ Последние дуэли</h2>
+          <div id="myDuelsHistoryList"><p style="color:var(--muted); font-size:0.9rem;">Дуэлей пока не было.</p></div>
+        </div>
       </div>
 
-      <div class="card" id="syncXpCard">
-        <h2>📲 Офлайн-синхронизация из приложения</h2>
-        <p class="desc">Если в мобильном приложении не было интернета, вставьте сюда короткий код прогресса (например, <b>X450-82</b>):</p>
-        <label>Короткий код прогресса</label>
-        <input type="text" id="shortXpCodeInput" placeholder="X0-13" style="text-transform:uppercase; font-family:monospace; font-weight:700;">
-        <button class="btn btn-accent" onclick="applyShortXpCode()">🔄 Обновить опыт (XP)</button>
+      <div>
+        <div class="card" id="schoolLinkCard">
+          <h2>🎓 Привязка к репетитору или школе</h2>
+          <p class="desc" id="schoolStatusInfo">Если вы занимаетесь с преподавателем на WordSprint, введите его код для получения заданий.</p>
+          <label>Код преподавателя / школы (TCH-XXXX или SCH-XXXX)</label>
+          <input type="text" id="bindTeacherCode" placeholder="TCH-0000" style="text-transform:uppercase; font-family:monospace;">
+          <label>Ваш код ученика (если выдал учитель, STU-XXXX)</label>
+          <input type="text" id="bindStudentCode" placeholder="STU-0000" style="text-transform:uppercase; font-family:monospace;">
+          <label>Ваше имя и фамилия для журнала</label>
+          <input type="text" id="bindFullName" placeholder="Иван Иванов">
+          <button class="btn" onclick="bindTeacherCode()">🔗 Привязаться к преподавателю</button>
+          <div id="assignedLessonsList" style="margin-top:14px;"></div>
+        </div>
+
+        <div class="card" id="syncXpCard">
+          <h2>📲 Офлайн-синхронизация из приложения</h2>
+          <p class="desc">Вставьте короткий код из мобильного приложения, если тренировались без интернета:</p>
+          <input type="text" id="shortXpCodeInput" placeholder="X0-13" style="text-transform:uppercase; font-family:monospace; font-weight:700;">
+          <button class="btn btn-accent" onclick="applyShortXpCode()">🔄 Обновить опыт (XP)</button>
+        </div>
       </div>
     </div>
   </div>
 </main>
-  
 
+<div id="profSettingsModal" class="modal-bg hidden" onclick="if(event.target===this) closeProfileSettingsModal()">
+  <div class="modal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h2 style="margin:0;">⚙️ Настройки профиля</h2>
+      <button onclick="closeProfileSettingsModal()" style="background:none; border:none; color:var(--muted); font-size:1.2rem; cursor:pointer;">✕</button>
+    </div>
+    <label>Короткий статус (виден в вашем профиле)</label>
+    <input type="text" id="setProfBio" maxlength="80" placeholder="Например: Готовлюсь к B2 First">
+    <label>Email для уведомлений (дуэли, ДЗ, грамоты)</label>
+    <input type="email" id="setProfEmail" placeholder="name@example.com">
+    <label>Новый PIN-код (4 цифры, оставьте пустым чтобы не менять)</label>
+    <input type="password" id="setProfNewPin" maxlength="4" placeholder="••••">
+    <button class="btn btn-accent" style="width:100%; margin-top:16px;" onclick="saveProfileSettings()">💾 Сохранить изменения</button>
+  </div>
+</div>
 <script>
   let myProfile = null;
   let viewedProfile = null;
@@ -198,10 +235,7 @@
     }
 
     if (myProfile && myProfile.user_id) {
-      if (returnTargetUrl) {
-        window.location.href = returnTargetUrl;
-        return;
-      }
+      if (returnTargetUrl) { window.location.href = returnTargetUrl; return; }
       await refreshMyProfile();
     } else {
       document.getElementById('authSection').classList.remove('hidden');
@@ -224,30 +258,24 @@
       const user_id = generateShortCode('WSU');
       const rows = await sbFetch('profiles', {
         method: 'POST',
-        body: { user_id, nickname, pin, email, xp: 0, streak: 1, duel_wins: 0 }
+        body: { user_id, nickname, pin, email, bio: '', xp: 0, streak: 1, duel_wins: 0 }
       });
       const created = sbFirst(rows);
       if (created && created.user_id) {
         localStorage.setItem('ws_user_profile', JSON.stringify(created));
         myProfile = created;
         alert(`Профиль создан! Ваш единый ID: ${user_id}`);
-        if (returnTargetUrl) {
-          window.location.href = returnTargetUrl;
-          return;
-        }
+        if (returnTargetUrl) { window.location.href = returnTargetUrl; return; }
         await refreshMyProfile();
       }
     } catch (e) {
       if (String(e.message).includes('23505') || String(e.message).includes('unique')) {
         alert('Этот никнейм уже занят! Выберите другой или войдите во вкладке «Войти».');
-      } else {
-        alert('Ошибка регистрации: ' + e.message);
-      }
+      } else alert('Ошибка регистрации: ' + e.message);
     } finally {
       btn.disabled = false; btn.textContent = '✨ Создать профиль';
     }
   }
-
   async function loginProfile() {
     const val = document.getElementById('loginIdOrNick').value.trim();
     const pin = document.getElementById('loginPin').value.trim();
@@ -266,53 +294,46 @@
 
       localStorage.setItem('ws_user_profile', JSON.stringify(user));
       myProfile = user;
-      if (returnTargetUrl) {
-        window.location.href = returnTargetUrl;
-        return;
-      }
+      if (returnTargetUrl) { window.location.href = returnTargetUrl; return; }
       await refreshMyProfile();
-    } catch (e) {
-      alert('Ошибка входа: ' + e.message);
-    } finally {
-      btn.disabled = false; btn.textContent = '🚀 Войти в профиль';
-    }
+    } catch (e) { alert('Ошибка входа: ' + e.message); }
+    finally { btn.disabled = false; btn.textContent = '🚀 Войти в профиль'; }
   }
 
-  function logoutProfile() {
-    localStorage.removeItem('ws_user_profile');
-    location.href = 'profile.html';
-  }
+  function logoutProfile() { localStorage.removeItem('ws_user_profile'); location.href = 'profile.html'; }
 
   async function refreshMyProfile() {
     const rows = await sbFetch('profiles', { query: `user_id=eq.${encodeURIComponent(myProfile.user_id)}` });
     const fresh = sbFirst(rows);
-    if (fresh) {
-      myProfile = fresh;
-      localStorage.setItem('ws_user_profile', JSON.stringify(fresh));
-    }
-    renderProfileDashboard(myProfile, false);
+    if (fresh) { myProfile = fresh; localStorage.setItem('ws_user_profile', JSON.stringify(fresh)); }
+    await renderProfileDashboard(myProfile, false);
   }
 
   async function loadPublicProfile(userId) {
     const rows = await sbFetch('profiles', { query: `user_id=eq.${encodeURIComponent(userId)}` });
     const user = sbFirst(rows);
-    if (!user) {
-      alert('Профиль не найден.');
-      location.href = 'index.html';
-      return;
-    }
+    if (!user) { alert('Профиль не найден.'); location.href = 'index.html'; return; }
     viewedProfile = user;
-    renderProfileDashboard(user, true);
+    await renderProfileDashboard(user, true);
   }
+
   async function renderProfileDashboard(user, isReadOnly) {
     document.getElementById('authSection').classList.add('hidden');
     document.getElementById('profileDashboard').classList.remove('hidden');
 
+    const xpVal = user.xp || 0;
+    const prog = typeof getRankProgress === 'function' ? getRankProgress(xpVal) : { title: getRankByXp(xpVal), pct: 100, label: `${xpVal} XP` };
+
     document.getElementById('profAvatar').textContent = user.nickname.charAt(0).toUpperCase();
     document.getElementById('profNickname').textContent = user.nickname;
     document.getElementById('profUserId').textContent = user.user_id;
-    document.getElementById('profRankBadge').textContent = `🏅 ${getRankByXp(user.xp || 0)}`;
-    document.getElementById('statXp').textContent = `${user.xp || 0} XP`;
+    document.getElementById('profBioText').textContent = user.bio || '';
+    document.getElementById('profRankBadge').textContent = `🏅 ${prog.title}`;
+    document.getElementById('rankProgressLabel').textContent = prog.nextTitle ? `Следующее звание: ${prog.nextTitle}` : 'Достигнут высший ранг!';
+    document.getElementById('rankNextTarget').textContent = prog.label;
+    document.getElementById('rankProgressFill').style.width = `${prog.pct}%`;
+
+    document.getElementById('statXp').textContent = `${xpVal} XP`;
     document.getElementById('statStreak').textContent = `${user.streak || 1} дн.`;
     document.getElementById('statWins').textContent = user.duel_wins || 0;
     document.getElementById('statCert').textContent = user.cert_id || 'Нет';
@@ -322,17 +343,35 @@
       document.getElementById('guestActions').classList.remove('hidden');
       document.getElementById('guestChallengeBtn').href = `duel.html?challenge=${encodeURIComponent(user.user_id)}&targetName=${encodeURIComponent(user.nickname)}`;
       document.getElementById('notificationsCard').classList.add('hidden');
-      document.getElementById('schoolLinkCard').classList.add('hidden');
-      document.getElementById('syncXpCard').classList.add('hidden');
+      document.getElementById('ownerExtraGrid').classList.add('hidden');
+      await loadAwardsOnly(user);
     } else {
       document.getElementById('ownerActions').classList.remove('hidden');
       document.getElementById('guestActions').classList.add('hidden');
+      document.getElementById('notificationsCard').classList.remove('hidden');
+      document.getElementById('ownerExtraGrid').classList.remove('hidden');
       await loadNotificationsAndAwards(user);
+      await loadMyGroupsAndDuels(user);
       await loadSchoolConnection(user);
     }
   }
+  async function loadAwardsOnly(user) {
+    try {
+      const awards = await sbFetch('student_awards', { query: `student_name=ilike.${encodeURIComponent(user.full_name || user.nickname)}&order=created_at.desc` });
+      const awBox = document.getElementById('awardsList');
+      if (awards && awards.length) {
+        awBox.innerHTML = awards.map(a => `
+          <div class="award-card">
+            <div style="font-size:0.78rem; color:#f59e0b; font-weight:700;">ОФИЦИАЛЬНАЯ ГРАМОТА WORDSPRINT</div>
+            <h3 style="margin:4px 0; font-size:1rem;">${a.award_title}</h3>
+            <div style="font-size:0.84rem; color:var(--muted);">Выдана: <b>${a.student_name}</b> • Преподаватель: ${a.teacher_name}</div>
+          </div>
+        `).join('');
+      }
+    } catch (e) {}
+  }
 
-    async function loadNotificationsAndAwards(user) {
+  async function loadNotificationsAndAwards(user) {
     try {
       const targets = new Array(user.user_id);
       if (user.student_code) targets.push(user.student_code);
@@ -341,38 +380,25 @@
       const clearBtn = document.getElementById('clearNotifsBtn');
 
       if (notifs && notifs.length) {
-        if (clearBtn) clearBtn.classList.remove('hidden');
+        clearBtn.classList.remove('hidden');
         box.innerHTML = notifs.map(n => `
-          <div class="notif-item" id="notif_${n.id}" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <div style="flex:1; min-width:200px;">
+          <div class="list-row" id="notif_${n.id}" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="flex:1; min-width:190px;">
               <b>${n.title}</b>
-              <div style="color:var(--muted); font-size:0.86rem;">${n.body}</div>
+              <div style="color:var(--muted); font-size:0.85rem;">${n.body}</div>
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
               ${n.link ? `<a href="${n.link}" onclick="dismissNotification('${n.id}', true)" class="btn btn-sm btn-accent">⚔️ Открыть</a>` : ''}
-              <button class="btn btn-sec btn-sm" title="Закрыть уведомление" onclick="dismissNotification('${n.id}')">✕</button>
+              <button class="btn btn-sec btn-sm" title="Закрыть" onclick="dismissNotification('${n.id}')">✕</button>
             </div>
           </div>
         `).join('');
       } else {
-        if (clearBtn) clearBtn.classList.add('hidden');
+        clearBtn.classList.add('hidden');
         box.innerHTML = '<p style="color:var(--muted); font-size:0.9rem;">Новых уведомлений пока нет.</p>';
       }
-
-      // Сбрасываем красный счётчик в шапке при просмотре
       document.querySelectorAll('.notif-badge, #navNotifCount').forEach(el => el.remove());
-
-      const awards = await sbFetch('student_awards', { query: `student_name=ilike.${encodeURIComponent(user.full_name || user.nickname)}&order=created_at.desc` });
-      const awBox = document.getElementById('awardsList');
-      if (awards && awards.length) {
-        awBox.innerHTML = awards.map(a => `
-          <div class="award-card">
-            <div style="font-size:0.8rem; color:#f59e0b; font-weight:700;">ОФИЦИАЛЬНАЯ ГРАМОТА WORDSPRINT</div>
-            <h3 style="margin:4px 0;">${a.award_title}</h3>
-            <div style="font-size:0.88rem; color:var(--muted);">Выдана: <b>${a.student_name}</b> • Преподаватель: ${a.teacher_name} (${new Date(a.created_at).toLocaleDateString('ru-RU')})</div>
-          </div>
-        `).join('');
-      }
+      await loadAwardsOnly(user);
     } catch (e) { console.error(e); }
   }
 
@@ -383,13 +409,12 @@
         const el = document.getElementById(`notif_${notifId}`);
         if (el) el.remove();
         const box = document.getElementById('notificationsList');
-        if (box && !box.querySelector('.notif-item')) {
+        if (box && !box.querySelector('.list-row')) {
           box.innerHTML = '<p style="color:var(--muted); font-size:0.9rem;">Новых уведомлений пока нет.</p>';
-          const clearBtn = document.getElementById('clearNotifsBtn');
-          if (clearBtn) clearBtn.classList.add('hidden');
+          document.getElementById('clearNotifsBtn').classList.add('hidden');
         }
       }
-    } catch (e) { console.error(e); }
+    } catch (e) {}
   }
 
   async function clearAllNotifications() {
@@ -399,12 +424,41 @@
       if (myProfile.student_code) targets.push(myProfile.student_code);
       await sbFetch('notifications', { method: 'DELETE', query: `target_id=in.(${targets.join(',')})` });
       document.getElementById('notificationsList').innerHTML = '<p style="color:var(--muted); font-size:0.9rem;">Новых уведомлений пока нет.</p>';
-      const clearBtn = document.getElementById('clearNotifsBtn');
-      if (clearBtn) clearBtn.classList.add('hidden');
-    } catch (e) { console.error(e); }
+      document.getElementById('clearNotifsBtn').classList.add('hidden');
+    } catch (e) {}
   }
 
+  async function loadMyGroupsAndDuels(user) {
+    try {
+      const allGroups = await sbFetch('groups', { query: 'order=created_at.desc&limit=40' });
+      const mine = (allGroups || new Array()).filter(g => Array.isArray(g.members) && g.members.some(m => m.user_id === user.user_id));
+      const gBox = document.getElementById('myGroupsList');
+      if (mine.length) {
+        gBox.innerHTML = mine.map(g => `
+          <div class="list-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <div><b>${g.title}</b> <span style="font-family:monospace; color:var(--accent); font-size:0.84rem;">(${g.code})</span></div>
+            <a href="groups.html?code=${encodeURIComponent(g.code)}" class="btn btn-sm">Открыть</a>
+          </div>
+        `).join('');
+      }
 
+      const duels = await sbFetch('duels', { query: `or=(player1_name.ilike.${encodeURIComponent(user.nickname)},player2_name.ilike.${encodeURIComponent(user.nickname)})&order=created_at.desc&limit=6` });
+      const dBox = document.getElementById('myDuelsHistoryList');
+      if (duels && duels.length) {
+        dBox.innerHTML = duels.map(d => {
+          const isP1 = d.player1_name && d.player1_name.toLowerCase() === user.nickname.toLowerCase();
+          const opp = isP1 ? (d.player2_name || 'Ожидает соперника') : d.player1_name;
+          const mySc = isP1 ? d.player1_score : d.player2_score;
+          const oppSc = isP1 ? d.player2_score : d.player1_score;
+          const status = !d.player2_name ? '⏳ Вызов активен' : (mySc > oppSc ? '🏆 Победа' : (mySc === oppSc ? '🤝 Ничья' : '⚔️ Сыграно'));
+          return `<div class="list-row" style="display:flex; justify-content:space-between; align-items:center; font-size:0.86rem;">
+            <div><b>vs ${opp}</b> (${d.level})</div>
+            <span style="font-weight:700;">${status}</span>
+          </div>`;
+        }).join('');
+      }
+    } catch (e) {}
+  }
   async function loadSchoolConnection(user) {
     const info = document.getElementById('schoolStatusInfo');
     if (user.teacher_code) {
@@ -413,7 +467,7 @@
       const lBox = document.getElementById('assignedLessonsList');
       if (lessons && lessons.length) {
         lBox.innerHTML = lessons.map(l => `
-          <div class="notif-item" style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="list-row" style="display:flex; justify-content:space-between; align-items:center;">
             <div><b>${l.title}</b><div style="font-size:0.82rem; color:var(--muted);">Код: ${l.code} • Слов: ${(l.words || new Array()).length}</div></div>
             <a href="lesson.html?code=${l.code}" class="btn btn-sm">▶ Пройти</a>
           </div>
@@ -432,23 +486,14 @@
     const teacher = sbFirst(tRows);
     if (!teacher) return alert('Преподаватель с таким кодом не найден.');
 
-    await sbFetch('profiles', {
-      method: 'PATCH',
-      query: `user_id=eq.${encodeURIComponent(myProfile.user_id)}`,
-      body: { teacher_code: tCode, student_code: sCode, full_name: fullName }
-    });
-
+    await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(myProfile.user_id)}`, body: { teacher_code: tCode, student_code: sCode, full_name: fullName } });
     const stRows = await sbFetch('teacher_students', { query: `teacher_code=eq.${encodeURIComponent(tCode)}` });
     const existing = (stRows || new Array()).find(s => (sCode && s.student_code === sCode) || s.student_name.toLowerCase() === fullName.toLowerCase());
     if (existing) {
       await sbFetch('teacher_students', { method: 'PATCH', query: `id=eq.${existing.id}`, body: { user_id: myProfile.user_id } });
     } else {
-      await sbFetch('teacher_students', {
-        method: 'POST',
-        body: { teacher_code: tCode, student_name: fullName, student_email: myProfile.email || '', user_id: myProfile.user_id, group_name: 'Общая группа' }
-      });
+      await sbFetch('teacher_students', { method: 'POST', body: { teacher_code: tCode, student_name: fullName, student_email: myProfile.email || '', user_id: myProfile.user_id, group_name: 'Общая группа' } });
     }
-
     alert('Вы успешно привязаны к преподавателю/школе!');
     await refreshMyProfile();
   }
@@ -457,13 +502,35 @@
     const raw = document.getElementById('shortXpCodeInput').value.trim().toUpperCase();
     const parts = raw.split('-');
     if (parts.length !== 2 || !parts.at(0).startsWith('X')) return alert('Неверный формат кода. Пример: X450-82');
-
     const newXp = parseInt(parts.at(0).slice(1), 10);
     const sig = parseInt(parts.at(1), 10);
     if (isNaN(newXp) || sig !== (newXp * 7 + 13) % 97) return alert('Контрольная сумма кода не совпадает.');
-
     await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(myProfile.user_id)}`, body: { xp: newXp } });
     alert(`Опыт успешно обновлён до ${newXp} XP!`);
+    await refreshMyProfile();
+  }
+
+  function openProfileSettingsModal() {
+    document.getElementById('setProfBio').value = myProfile.bio || '';
+    document.getElementById('setProfEmail').value = myProfile.email || '';
+    document.getElementById('setProfNewPin').value = '';
+    document.getElementById('profSettingsModal').classList.remove('hidden');
+  }
+
+  function closeProfileSettingsModal() { document.getElementById('profSettingsModal').classList.add('hidden'); }
+
+  async function saveProfileSettings() {
+    const bio = document.getElementById('setProfBio').value.trim();
+    const email = document.getElementById('setProfEmail').value.trim();
+    const newPin = document.getElementById('setProfNewPin').value.trim();
+    if (newPin && newPin.length < 4) return alert('PIN-код должен состоять из 4 цифр!');
+
+    const patchBody = { bio, email };
+    if (newPin) patchBody.pin = newPin;
+
+    await sbFetch('profiles', { method: 'PATCH', query: `user_id=eq.${encodeURIComponent(myProfile.user_id)}`, body: patchBody });
+    closeProfileSettingsModal();
+    alert('Настройки профиля сохранены!');
     await refreshMyProfile();
   }
 
@@ -472,22 +539,6 @@
     navigator.clipboard.writeText(url);
     alert('Ссылка на ваш профиль скопирована!');
   }
-    async function updateProfileEmail() {
-    const email = prompt('Введите ваш Email для получения уведомлений (вызовы на дуэль, ДЗ, грамоты):', myProfile.email || '');
-    if (email === null) return;
-    try {
-      await sbFetch('profiles', {
-        method: 'PATCH',
-        query: `user_id=eq.${encodeURIComponent(myProfile.user_id)}`,
-        body: { email: email.trim() }
-      });
-      alert(email.trim() ? `Email ${email.trim()} успешно привязан к профилю!` : 'Email отвязан от профиля.');
-      await refreshMyProfile();
-    } catch (e) {
-      alert('Ошибка сохранения почты: ' + e.message);
-    }
-  }
-
 </script>
 </body>
 </html>

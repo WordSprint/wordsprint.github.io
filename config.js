@@ -57,13 +57,39 @@ function generateShortCode(prefix) {
   return `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
 }
 
+const WS_RANKS = [
+  { min: 0, title: 'Новичок' },
+  { min: 250, title: 'Ученик' },
+  { min: 750, title: 'Спринтер' },
+  { min: 1800, title: 'Знаток' },
+  { min: 4000, title: 'Эксперт' },
+  { min: 8000, title: 'Полиглот' },
+  { min: 15000, title: 'Мастер слов' },
+  { min: 25000, title: 'Легенда WordSprint' }
+];
+
 function getRankByXp(xp) {
-  if (xp >= 2500) return 'Мастер слов';
-  if (xp >= 1200) return 'Эксперт';
-  if (xp >= 500) return 'Знаток';
-  if (xp >= 150) return 'Спринтер';
-  return 'Новичок';
+  let current = WS_RANKS.at(0).title;
+  for (const r of WS_RANKS) {
+    if (xp >= r.min) current = r.title;
+  }
+  return current;
 }
+
+function getRankProgress(xp) {
+  let curIdx = 0;
+  for (let i = 0; i < WS_RANKS.length; i++) {
+    if (xp >= WS_RANKS.at(i).min) curIdx = i;
+  }
+  const cur = WS_RANKS.at(curIdx);
+  const next = WS_RANKS.at(curIdx + 1);
+  if (!next) return { title: cur.title, nextTitle: null, pct: 100, label: `${xp} XP (Максимальный ранг!)` };
+  const span = next.min - cur.min;
+  const done = Math.max(0, xp - cur.min);
+  const pct = Math.min(100, Math.round((done / span) * 100));
+  return { title: cur.title, nextTitle: next.title, pct, label: `${xp} / ${next.min} XP до «${next.title}»` };
+}
+
 
 async function sendEmailAlert(toEmail, toName, subject, message, link = '') {
   if (!toEmail || !WS_CONFIG.EMAILJS_PUBLIC_KEY) return;
