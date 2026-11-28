@@ -272,55 +272,36 @@
     speechSynthesis.onvoiceschanged = pickBestEnglishVoice;
   }
 
-    const AUDIO_URL_CACHE = {};
-  let activeAudioPlayer = null;
+    let activeAudioPlayer = null;
 
-  async function speakCurrent(rate = 0.92) {
+  function speakCurrent(rate = 0.92) {
     const cur = duelWords.at(idx);
     if (!cur) return;
-    const word = cur.en.toLowerCase().trim();
+    const word = cur.en.trim();
 
     if (activeAudioPlayer) {
       activeAudioPlayer.pause();
       activeAudioPlayer = null;
     }
 
-    try {
-      let mp3Url = AUDIO_URL_CACHE[word];
-      if (mp3Url === undefined) {
-        const res = await fetch(`https://dictionaryapi.dev{encodeURIComponent(word)}`);
-        if (res.ok) {
-          const data = await res.json();
-          const phonetics = (data && data.at(0) && data.at(0).phonetics) || new Array();
-          const withAudio = phonetics.find(p => p.audio && p.audio.includes('-us.mp3'))
-            || phonetics.find(p => p.audio && p.audio.length > 5);
-          mp3Url = withAudio ? withAudio.audio : '';
-        } else {
-          mp3Url = '';
-        }
-        AUDIO_URL_CACHE[word] = mp3Url;
-      }
+    const ttsUrl = `https://google.com{encodeURIComponent(word)}`;
+    const audio = new Audio(ttsUrl);
+    audio.playbackRate = rate;
+    activeAudioPlayer = audio;
 
-      if (mp3Url) {
-        const audio = new Audio(mp3Url);
-        audio.playbackRate = rate;
-        activeAudioPlayer = audio;
-        await audio.play();
-        return;
-      }
-    } catch (e) {}
-
-    // Запасной вариант, если слово не найдено в аудио-словаре
-    if ('speechSynthesis' in window) {
+    audio.play().catch(() => {
+      if (!('speechSynthesis' in window)) return;
+      const enVoice = speechSynthesis.getVoices().find(v => v.lang && v.lang.toLowerCase().startsWith('en'));
+      if (!enVoice) return;
       speechSynthesis.cancel();
-      if (!bestEnVoice) pickBestEnglishVoice();
-      const u = new SpeechSynthesisUtterance(cur.en);
-      if (bestEnVoice) u.voice = bestEnVoice;
+      const u = new SpeechSynthesisUtterance(word);
+      u.voice = enVoice;
       u.lang = 'en-US';
       u.rate = rate;
       speechSynthesis.speak(u);
-    }
+    });
   }
+
 
 
   function selectDuelMode(m) {
