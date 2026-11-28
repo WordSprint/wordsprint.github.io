@@ -136,9 +136,11 @@
 
     <div class="grid-2">
       <div class="card" id="notificationsCard">
-        <h2>🔔 Входящие уведомления и вызовы</h2>
-        <div id="notificationsList"><p style="color:var(--muted); font-size:0.9rem;">Новых уведомлений пока нет.</p></div>
-      </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+  <h2 style="margin:0;">🔔 Входящие уведомления и вызовы</h2>
+  <button class="btn btn-sec btn-sm" id="clearNotifsBtn" onclick="clearAllNotifications()">Очистить все</button>
+</div>
+
 
       <div class="card">
         <h2>🏆 Именные грамоты и награды</h2>
@@ -330,25 +332,35 @@
     }
   }
 
-  async function loadNotificationsAndAwards(user) {
+    async function loadNotificationsAndAwards(user) {
     try {
       const targets = new Array(user.user_id);
       if (user.student_code) targets.push(user.student_code);
       const notifs = await sbFetch('notifications', { query: `target_id=in.(${targets.join(',')})&order=created_at.desc&limit=15` });
       const box = document.getElementById('notificationsList');
+      const clearBtn = document.getElementById('clearNotifsBtn');
+
       if (notifs && notifs.length) {
+        if (clearBtn) clearBtn.classList.remove('hidden');
         box.innerHTML = notifs.map(n => `
-          <div class="notif-item" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <div>
+          <div class="notif-item" id="notif_${n.id}" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <div style="flex:1; min-width:200px;">
               <b>${n.title}</b>
               <div style="color:var(--muted); font-size:0.86rem;">${n.body}</div>
             </div>
-            ${n.link ? `<a href="${n.link}" class="btn btn-sm btn-accent">⚔️ Открыть</a>` : ''}
+            <div style="display:flex; align-items:center; gap:6px;">
+              ${n.link ? `<a href="${n.link}" onclick="dismissNotification('${n.id}', true)" class="btn btn-sm btn-accent">⚔️ Открыть</a>` : ''}
+              <button class="btn btn-sec btn-sm" title="Закрыть уведомление" onclick="dismissNotification('${n.id}')">✕</button>
+            </div>
           </div>
         `).join('');
       } else {
+        if (clearBtn) clearBtn.classList.add('hidden');
         box.innerHTML = '<p style="color:var(--muted); font-size:0.9rem;">Новых уведомлений пока нет.</p>';
       }
+
+      // Сбрасываем красный счётчик в шапке при просмотре
+      document.querySelectorAll('.notif-badge, #navNotifCount').forEach(el => el.remove());
 
       const awards = await sbFetch('student_awards', { query: `student_name=ilike.${encodeURIComponent(user.full_name || user.nickname)}&order=created_at.desc` });
       const awBox = document.getElementById('awardsList');
@@ -363,6 +375,35 @@
       }
     } catch (e) { console.error(e); }
   }
+
+  async function dismissNotification(notifId, silent = false) {
+    try {
+      await sbFetch('notifications', { method: 'DELETE', query: `id=eq.${encodeURIComponent(notifId)}` });
+      if (!silent) {
+        const el = document.getElementById(`notif_${notifId}`);
+        if (el) el.remove();
+        const box = document.getElementById('notificationsList');
+        if (box && !box.querySelector('.notif-item')) {
+          box.innerHTML = '<p style="color:var(--muted); font-size:0.9rem;">Новых уведомлений пока нет.</p>';
+          const clearBtn = document.getElementById('clearNotifsBtn');
+          if (clearBtn) clearBtn.classList.add('hidden');
+        }
+      }
+    } catch (e) { console.error(e); }
+  }
+
+  async function clearAllNotifications() {
+    if (!myProfile) return;
+    try {
+      const targets = new Array(myProfile.user_id);
+      if (myProfile.student_code) targets.push(myProfile.student_code);
+      await sbFetch('notifications', { method: 'DELETE', query: `target_id=in.(${targets.join(',')})` });
+      document.getElementById('notificationsList').innerHTML = '<p style="color:var(--muted); font-size:0.9rem;">Новых уведомлений пока нет.</p>';
+      const clearBtn = document.getElementById('clearNotifsBtn');
+      if (clearBtn) clearBtn.classList.add('hidden');
+    } catch (e) { console.error(e); }
+  }
+
 
   async function loadSchoolConnection(user) {
     const info = document.getElementById('schoolStatusInfo');
